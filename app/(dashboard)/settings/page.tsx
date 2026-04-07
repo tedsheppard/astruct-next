@@ -8,7 +8,8 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
-import { User, Building2, Save, Image } from 'lucide-react'
+import { User, Building2, Save, Image, Moon, Sun } from 'lucide-react'
+import { useTheme } from '@/lib/theme'
 
 interface Profile {
   id: string
@@ -25,6 +26,7 @@ interface Profile {
 }
 
 export default function SettingsPage() {
+  const { theme, setTheme } = useTheme()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [email, setEmail] = useState('')
@@ -317,12 +319,36 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
+      {/* Appearance */}
+      <Card className="bg-card border-border">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-foreground text-base">
+            {theme === 'dark' ? <Moon className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} /> : <Sun className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />}
+            Appearance
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-foreground">Dark mode</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Switch between light and dark themes</p>
+            </div>
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${theme === 'dark' ? 'bg-foreground' : 'bg-border'}`}
+            >
+              <span className={`inline-block h-4 w-4 transform rounded-full bg-background transition-transform ${theme === 'dark' ? 'translate-x-6' : 'translate-x-1'}`} />
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Save Button */}
       <div className="flex justify-end">
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="accent-gradient text-white btn-press"
+          className="bg-foreground text-background hover:bg-foreground/90 btn-press"
         >
           <Save className="mr-2 h-4 w-4" />
           {saving ? 'Saving...' : 'Save Changes'}

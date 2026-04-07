@@ -160,7 +160,7 @@ export default function CorrespondencePage() {
         .map((t) => t.trim())
         .filter(Boolean)
 
-      const { error } = await supabase.from('correspondence').insert({
+      const { data: newCorr, error } = await supabase.from('correspondence').insert({
         contract_id: selectedContractId,
         subject: subject.trim(),
         from_party: fromParty.trim(),
@@ -168,11 +168,25 @@ export default function CorrespondencePage() {
         content: content.trim(),
         category,
         clause_tags: clauseTags,
-      })
+      }).select('id').single()
 
       if (error) throw error
 
       toast.success('Correspondence added')
+
+      // Trigger deadline scan in background
+      if (newCorr?.id && content.trim().length > 20) {
+        fetch('/api/deadlines/scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contract_id: selectedContractId, correspondence_id: newCorr.id, trigger: 'correspondence' }),
+        }).then(res => res.json()).then(data => {
+          if (data.deadlines_created > 0) {
+            toast.success(`${data.deadlines_created} deadline${data.deadlines_created !== 1 ? 's' : ''} added to calendar`)
+          }
+        }).catch(() => {})
+      }
+
       resetForm()
       fetchCorrespondence()
     } catch (err) {
@@ -238,10 +252,16 @@ export default function CorrespondencePage() {
               <Button
                 variant="outline"
                 size="sm"
-                disabled
-                className="shrink-0 opacity-50"
+                onClick={() => {
+                  if (selectedContractId) {
+                    window.location.href = `/contracts/${selectedContractId}/correspondence`
+                  } else {
+                    toast.error('Select a contract first to set up integrations')
+                  }
+                }}
+                className="shrink-0"
               >
-                Coming Soon
+                Set up
               </Button>
             </div>
           ))}

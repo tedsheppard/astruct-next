@@ -75,7 +75,7 @@ export default function ContractsPage() {
         </div>
         <Button
           onClick={() => router.push('/contracts/new')}
-          className="accent-gradient text-white btn-press"
+          className="bg-foreground text-background hover:bg-foreground/90 btn-press"
           data-testid="create-contract-btn"
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -101,7 +101,7 @@ export default function ContractsPage() {
             </p>
             <Button
               onClick={() => router.push('/contracts/new')}
-              className="accent-gradient text-white btn-press"
+              className="bg-foreground text-background hover:bg-foreground/90 btn-press"
               data-testid="onboarding-create-contract"
             >
               Create Contract

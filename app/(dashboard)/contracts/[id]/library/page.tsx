@@ -8,6 +8,7 @@ import {
   getCategoryColor,
   BADGE_COLORS,
 } from '@/lib/document-categories'
+import { toast } from 'sonner'
 import {
   FileText,
   Trash2,
@@ -18,6 +19,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Upload,
+  RefreshCw,
 } from 'lucide-react'
 
 interface DocumentFile {
@@ -70,6 +72,7 @@ export default function LibraryPage() {
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [reindexing, setReindexing] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const fetchData = useCallback(async () => {
@@ -143,8 +146,38 @@ export default function LibraryPage() {
     <div className="p-6 overflow-y-auto h-[calc(100vh-3.5rem)]">
       <div className="max-w-5xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-xl font-semibold text-foreground">Library</h1>
-          <p className="text-sm text-muted-foreground mt-1">Upload and manage contract documents. AI auto-classifies and indexes for search.</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-semibold text-foreground">Library</h1>
+              <p className="text-sm text-muted-foreground mt-1">Upload and manage contract documents. AI auto-classifies and indexes for search.</p>
+            </div>
+            {documents.length > 0 && (
+              <button
+                onClick={async () => {
+                  setReindexing(true)
+                  try {
+                    const res = await fetch('/api/documents/reembed', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ contract_id: contractId }),
+                    })
+                    if (res.ok) {
+                      const data = await res.json()
+                      toast.success(`Re-indexed ${data.documents_processed} documents (${data.total_chunks} chunks)`)
+                    } else {
+                      toast.error('Re-indexing failed')
+                    }
+                  } catch { toast.error('Re-indexing failed') }
+                  finally { setReindexing(false) }
+                }}
+                disabled={reindexing}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground border border-border hover:border-foreground/20 transition-colors disabled:opacity-50"
+              >
+                {reindexing ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
+                {reindexing ? 'Re-indexing...' : 'Re-index All'}
+              </button>
+            )}
+          </div>
         </div>
         {/* Upload zone */}
         <div
@@ -168,13 +201,27 @@ export default function LibraryPage() {
             {uploadingFiles.map((f, i) => (
               <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border">
                 {f.status === 'uploading' && <Loader2 className="h-4 w-4 text-blue-400 animate-spin flex-shrink-0" />}
-                {f.status === 'processing' && <Sparkles className="h-4 w-4 text-amber-400 animate-pulse flex-shrink-0" />}
+                {f.status === 'processing' && <div className="w-4 flex-shrink-0" />}
                 {f.status === 'done' && <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0" />}
                 {f.status === 'error' && <AlertCircle className="h-4 w-4 text-red-400 flex-shrink-0" />}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-foreground truncate">{f.name}</p>
                   {f.status === 'uploading' && <p className="text-xs text-muted-foreground">Uploading...</p>}
-                  {f.status === 'processing' && <p className="text-xs text-amber-500">AI is analyzing...</p>}
+                  {f.status === 'processing' && (
+                    <span
+                      className="text-xs"
+                      style={{
+                        background: 'linear-gradient(90deg, #9ca3af 0%, #d1d5db 35%, #e5e7eb 50%, #d1d5db 65%, #9ca3af 100%)',
+                        backgroundSize: '200% 100%',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        animation: 'shimmer-sweep 2s ease-in-out infinite',
+                      }}
+                    >
+                      Analysing...
+                    </span>
+                  )}
                   {f.status === 'done' && f.category && (
                     <div className="flex items-center gap-2 mt-1">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs border ${BADGE_COLORS[getCategoryColor(f.category)] || BADGE_COLORS.zinc}`}>{getCategoryLabel(f.category)}</span>

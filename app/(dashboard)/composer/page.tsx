@@ -653,6 +653,7 @@ export default function ComposerPage() {
           message: trimmed,
           contract_id: selectedContractId,
           session_id: sessionId,
+          selected_document_ids: [],
         }),
         signal: abortControllerRef.current.signal,
       })
@@ -684,6 +685,9 @@ export default function ComposerPage() {
           try {
             const data = JSON.parse(jsonStr)
 
+            if (data.thinking) {
+              // Silently consume
+            }
             if (data.content) {
               fullContent += data.content
               setMessages((prev) => {

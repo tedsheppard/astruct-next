@@ -13,7 +13,10 @@ import {
   ChevronLeft,
   ChevronRight,
   CalendarDays,
+  Loader2,
+  Search,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import {
   startOfMonth,
   endOfMonth,
@@ -79,6 +82,7 @@ export default function CalendarPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [obligations, setObligations] = useState<Obligation[]>([])
   const [loading, setLoading] = useState(true)
+  const [scanning, setScanning] = useState(false)
 
   const calendarDays = useMemo(() => {
     const monthStart = startOfMonth(currentMonth)
@@ -109,7 +113,7 @@ export default function CalendarPage() {
   const obligationsByDate = useMemo(() => {
     const map = new Map<string, Obligation[]>()
     for (const ob of obligations) {
-      const key = ob.due_date
+      const key = ob.due_date.slice(0, 10)
       if (!map.has(key)) map.set(key, [])
       map.get(key)!.push(ob)
     }
@@ -232,7 +236,42 @@ export default function CalendarPage() {
             <CalendarDays className="h-8 w-8 text-muted-foreground" strokeWidth={1.5} />
           </div>
           <h3 className="text-lg font-medium text-foreground mb-2">No deadlines tracked yet</h3>
-          <p className="text-sm text-muted-foreground max-w-sm">Use the Assistant to extract obligations from your contract documents.</p>
+          <p className="text-sm text-muted-foreground max-w-sm mb-4">Scan your uploaded documents and correspondence to automatically identify response deadlines, time-bars, and contractual obligations.</p>
+          <button
+            onClick={async () => {
+              setScanning(true)
+              try {
+                const res = await fetch('/api/deadlines/scan', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ contract_id: contractId, trigger: 'manual' }),
+                })
+                const data = await res.json()
+                if (res.ok && data.deadlines_created > 0) {
+                  toast.success(`Found ${data.deadlines_created} deadline${data.deadlines_created !== 1 ? 's' : ''}`)
+                  // Reload obligations
+                  const supabase = createClient()
+                  const rangeStart = format(calendarDays[0], 'yyyy-MM-dd')
+                  const rangeEnd = format(calendarDays[calendarDays.length - 1], 'yyyy-MM-dd')
+                  const { data: reloaded } = await supabase
+                    .from('obligations')
+                    .select('*, contracts(name)')
+                    .eq('contract_id', contractId)
+                    .gte('due_date', rangeStart)
+                    .lte('due_date', rangeEnd)
+                  if (reloaded) setObligations(reloaded)
+                } else {
+                  toast('No actionable deadlines found in current documents')
+                }
+              } catch { toast.error('Scan failed') }
+              finally { setScanning(false) }
+            }}
+            disabled={scanning}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-foreground text-background hover:bg-foreground/90 transition-colors disabled:opacity-50"
+          >
+            {scanning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+            {scanning ? 'Scanning documents...' : 'Scan for Deadlines'}
+          </button>
         </div>
       )}
 

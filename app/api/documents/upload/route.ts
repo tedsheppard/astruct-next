@@ -2,6 +2,7 @@ import { type NextRequest } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { CATEGORY_VALUES } from '@/lib/document-categories'
+import { chunkText, extractClauseNumbers, detectSectionHeading, generateEmbeddings } from '@/lib/chunking'
 import OpenAI from 'openai'
 
 export const dynamic = 'force-dynamic'
@@ -21,47 +22,6 @@ async function ensureBucket() {
       fileSizeLimit: 52428800, // 50MB
     })
   }
-}
-
-// Simple recursive text splitter (~500 tokens per chunk, 50 token overlap)
-function chunkText(text: string, maxTokens = 500, overlapTokens = 50): string[] {
-  // Rough estimate: 1 token ~= 4 chars
-  const charsPerToken = 4
-  const maxChars = maxTokens * charsPerToken
-  const overlapChars = overlapTokens * charsPerToken
-
-  if (!text || text.length === 0) return []
-  if (text.length <= maxChars) return [text]
-
-  const chunks: string[] = []
-  let start = 0
-
-  while (start < text.length) {
-    let end = start + maxChars
-
-    // Try to break at sentence/paragraph boundaries
-    if (end < text.length) {
-      const slice = text.slice(start, end)
-      const lastParagraph = slice.lastIndexOf('\n\n')
-      const lastSentence = slice.lastIndexOf('. ')
-      const lastNewline = slice.lastIndexOf('\n')
-
-      if (lastParagraph > maxChars * 0.5) {
-        end = start + lastParagraph + 2
-      } else if (lastSentence > maxChars * 0.5) {
-        end = start + lastSentence + 2
-      } else if (lastNewline > maxChars * 0.5) {
-        end = start + lastNewline + 1
-      }
-    }
-
-    chunks.push(text.slice(start, end).trim())
-    start = end - overlapChars
-    if (start < 0) start = 0
-    if (end >= text.length) break
-  }
-
-  return chunks.filter((c) => c.length > 0)
 }
 
 // Classify document and generate summary using GPT-4o
@@ -127,17 +87,8 @@ Identify the key parties, subject matter, and reference numbers.`,
   }
 }
 
-// Generate embeddings for text chunks
-async function generateEmbeddings(chunks: string[]): Promise<number[][]> {
-  if (chunks.length === 0) return []
-
-  const response = await openai.embeddings.create({
-    model: 'text-embedding-3-small',
-    input: chunks,
-  })
-
-  return response.data.map((d) => d.embedding)
-}
+// chunkText, extractClauseNumbers, detectSectionHeading, generateEmbeddings
+// imported from @/lib/chunking
 
 // Extract text from PDF using pdf-parse v2
 async function extractPdfText(buffer: Buffer): Promise<string> {
@@ -277,7 +228,9 @@ export async function POST(request: NextRequest) {
               chunk_index: index,
               content,
               embedding: JSON.stringify(embeddings[index]),
-              metadata: { filename, chunk_of: chunks.length },
+              section_heading: detectSectionHeading(content),
+              clause_numbers: extractClauseNumbers(content),
+              metadata: { filename, chunk_of: chunks.length, clause_numbers: extractClauseNumbers(content) },
             }))
 
             const { error: chunkError } = await admin
@@ -294,6 +247,18 @@ export async function POST(request: NextRequest) {
       }
 
       uploadedDocuments.push(doc)
+
+      // Trigger deadline scan in background (don't await — let it run async)
+      if (doc && extractedText.length > 100) {
+        fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL ? '' : 'http://localhost:3000'}/api/deadlines/scan`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Cookie': request.headers.get('cookie') || '',
+          },
+          body: JSON.stringify({ contract_id: contractId, document_id: doc.id, trigger: 'upload' }),
+        }).catch(err => console.error('[Upload] Deadline scan trigger failed:', err))
+      }
     }
 
     return Response.json({ documents: uploadedDocuments })

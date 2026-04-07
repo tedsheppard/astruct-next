@@ -3,7 +3,9 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 export async function proxy(request: NextRequest) {
   // Skip proxy for file upload routes — the body must not be consumed by middleware
-  if (request.nextUrl.pathname.startsWith('/api/documents/upload')) {
+  if (request.nextUrl.pathname.startsWith('/api/documents/upload') ||
+      request.nextUrl.pathname.startsWith('/api/correspondence/upload') ||
+      request.nextUrl.pathname.startsWith('/api/waitlist')) {
     return NextResponse.next()
   }
 
@@ -40,7 +42,16 @@ export async function proxy(request: NextRequest) {
     !request.nextUrl.pathname.startsWith('/login') &&
     !request.nextUrl.pathname.startsWith('/register') &&
     !request.nextUrl.pathname.startsWith('/auth') &&
-    !request.nextUrl.pathname.startsWith('/api')
+    !request.nextUrl.pathname.startsWith('/api') &&
+    !request.nextUrl.pathname.startsWith('/platform') &&
+    !request.nextUrl.pathname.startsWith('/solutions') &&
+    !request.nextUrl.pathname.startsWith('/pricing') &&
+    !request.nextUrl.pathname.startsWith('/security') &&
+    !request.nextUrl.pathname.startsWith('/company') &&
+    !request.nextUrl.pathname.startsWith('/privacy') &&
+    !request.nextUrl.pathname.startsWith('/terms') &&
+    !request.nextUrl.pathname.startsWith('/contact') &&
+    !request.nextUrl.pathname.startsWith('/landing')
   ) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'

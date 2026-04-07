@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
-import { Inter, Manrope, JetBrains_Mono } from 'next/font/google'
+import { Inter, Manrope, JetBrains_Mono, DM_Serif_Display } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
+import { ThemeProvider } from '@/lib/theme'
 import './globals.css'
 
 const inter = Inter({
@@ -18,6 +19,12 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-mono',
 })
 
+const dmSerifDisplay = DM_Serif_Display({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-serif-display',
+})
+
 export const metadata: Metadata = {
   title: 'Astruct — Contract Intelligence',
   description:
@@ -32,11 +39,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${manrope.variable} ${jetbrainsMono.variable}`}
+      className={`${inter.variable} ${manrope.variable} ${jetbrainsMono.variable} ${dmSerifDisplay.variable}`}
     >
       <body className="min-h-screen bg-background text-foreground antialiased">
-        {children}
-        <Toaster />
+        <ThemeProvider>
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   )

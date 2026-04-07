@@ -8,6 +8,10 @@ import {
   AlignmentType,
   HeadingLevel,
   BorderStyle,
+  Table,
+  TableRow,
+  TableCell,
+  WidthType,
   convertMillimetersToTwip,
 } from 'docx'
 
@@ -102,17 +106,61 @@ export async function POST(request: NextRequest) {
       return runs
     }
 
+    // Parse markdown tables into docx Table objects
+    function parseMarkdownTable(tableLines: string[]): Table {
+      const rows = tableLines
+        .filter(l => !l.match(/^\|[\s-:|]+\|$/)) // skip separator rows
+        .map(l => l.replace(/^\|/, '').replace(/\|$/, '').split('|').map(c => c.trim()))
+
+      const isHeader = (idx: number) => idx === 0
+      const colCount = rows[0]?.length || 1
+
+      return new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        rows: rows.map((cells, rowIdx) =>
+          new TableRow({
+            children: cells.map(cell =>
+              new TableCell({
+                width: { size: Math.floor(100 / colCount), type: WidthType.PERCENTAGE },
+                children: [new Paragraph({
+                  children: parseInline(cell),
+                  spacing: { before: 40, after: 40 },
+                })],
+                shading: isHeader(rowIdx) ? { fill: 'F2F2F2' } : undefined,
+              })
+            ),
+          })
+        ),
+      })
+    }
+
     // Parse markdown content into paragraphs
     const lines = content.split('\n')
-    for (const line of lines) {
-      const trimmed = line.trim()
+    let i = 0
+    while (i < lines.length) {
+      const trimmed = lines[i].trim()
 
       if (!trimmed) {
         children.push(new Paragraph({ spacing: { after: 120 } }))
+        i++
         continue
       }
 
-      // Headings — check from most # to least
+      // Detect markdown table (starts with |)
+      if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+        const tableLines: string[] = []
+        while (i < lines.length && lines[i].trim().startsWith('|')) {
+          tableLines.push(lines[i].trim())
+          i++
+        }
+        if (tableLines.length >= 2) {
+          children.push(parseMarkdownTable(tableLines))
+          children.push(new Paragraph({ spacing: { after: 120 } }))
+        }
+        continue
+      }
+
+      // Headings
       const headingMatch = trimmed.match(/^(#{1,6})\s+(.+)$/)
       if (headingMatch) {
         const level = headingMatch[1].length
@@ -129,7 +177,7 @@ export async function POST(request: NextRequest) {
             spacing: { before: 200, after: 100 },
           })
         )
-      } else if (trimmed.startsWith('---')) {
+      } else if (trimmed.match(/^---+$/) || trimmed.match(/^\*\*\*+$/) || trimmed.match(/^___+$/)) {
         children.push(
           new Paragraph({
             border: { bottom: { style: BorderStyle.SINGLE, size: 1, color: 'CCCCCC' } },
@@ -137,7 +185,6 @@ export async function POST(request: NextRequest) {
           })
         )
       } else if (trimmed.match(/^[-*]\s+/)) {
-        // Bullet list item
         const text = trimmed.replace(/^[-*]\s+/, '')
         children.push(
           new Paragraph({
@@ -147,7 +194,6 @@ export async function POST(request: NextRequest) {
           })
         )
       } else if (trimmed.match(/^\d+\.\s+/)) {
-        // Numbered list item
         const text = trimmed.replace(/^\d+\.\s+/, '')
         children.push(
           new Paragraph({
@@ -157,7 +203,6 @@ export async function POST(request: NextRequest) {
           })
         )
       } else {
-        // Regular paragraph
         children.push(
           new Paragraph({
             children: parseInline(trimmed),
@@ -165,6 +210,7 @@ export async function POST(request: NextRequest) {
           })
         )
       }
+      i++
     }
 
     // Signatory block

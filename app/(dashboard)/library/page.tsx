@@ -363,7 +363,7 @@ export default function LibraryPage() {
                   <Loader2 className="h-4 w-4 text-blue-400 animate-spin flex-shrink-0" />
                 )}
                 {f.status === 'processing' && (
-                  <Sparkles className="h-4 w-4 text-amber-400 animate-pulse flex-shrink-0" />
+                  <div className="w-4 flex-shrink-0" />
                 )}
                 {f.status === 'done' && (
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0" />
@@ -378,9 +378,19 @@ export default function LibraryPage() {
                     <p className="text-xs text-muted-foreground">Uploading...</p>
                   )}
                   {f.status === 'processing' && (
-                    <p className="text-xs text-amber-400">
-                      AI is analyzing and classifying...
-                    </p>
+                    <span
+                      className="text-xs"
+                      style={{
+                        background: 'linear-gradient(90deg, #9ca3af 0%, #d1d5db 35%, #e5e7eb 50%, #d1d5db 65%, #9ca3af 100%)',
+                        backgroundSize: '200% 100%',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        animation: 'shimmer-sweep 2s ease-in-out infinite',
+                      }}
+                    >
+                      Analysing...
+                    </span>
                   )}
                   {f.status === 'done' && f.category && (
                     <div className="flex items-center gap-2 mt-1">
