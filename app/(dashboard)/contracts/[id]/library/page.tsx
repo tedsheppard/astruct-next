@@ -97,38 +97,73 @@ export default function LibraryPage() {
   const handleUpload = async (files: FileList | File[]) => {
     if (files.length === 0) return
     const fileArray = Array.from(files)
+    const MAX_SIZE = 50 * 1024 * 1024 // 50MB
+
+    // Check file sizes upfront
+    const oversized = fileArray.filter(f => f.size > MAX_SIZE)
+    if (oversized.length > 0) {
+      toast.error(`${oversized.map(f => f.name).join(', ')} exceed${oversized.length === 1 ? 's' : ''} the 50MB limit`)
+      return
+    }
+
     setUploadingFiles(fileArray.map(f => ({ name: f.name, size: f.size, status: 'uploading' as const })))
 
-    // Upload files one at a time to avoid Vercel's 4.5MB body limit
+    const supabase = createClient()
+
     for (let i = 0; i < fileArray.length; i++) {
       const file = fileArray[i]
       setUploadingFiles(prev => prev.map((f, j) => j === i ? { ...f, status: 'uploading' as const } : f))
 
-      const formData = new FormData()
-      formData.append('contract_id', contractId)
-      formData.append('files', file)
-
       try {
-        const res = await fetch('/api/documents/upload', { method: 'POST', body: formData })
+        // Step 1: Upload directly to Supabase Storage (bypasses Vercel body limit)
+        const storagePath = `${contractId}/${Date.now()}_${file.name}`
+        const { error: storageError } = await supabase.storage
+          .from('documents')
+          .upload(storagePath, file, { contentType: file.type || 'application/octet-stream', upsert: false })
+
+        if (storageError) {
+          console.error(`[Upload] Storage error for ${file.name}:`, storageError)
+          setUploadingFiles(prev => prev.map((f, j) => j === i
+            ? { ...f, status: 'error' as const, error: storageError.message || 'Storage upload failed' }
+            : f
+          ))
+          continue
+        }
+
+        // Step 2: Call processing API (small JSON body, no file data)
+        setUploadingFiles(prev => prev.map((f, j) => j === i ? { ...f, status: 'processing' as const } : f))
+
+        const res = await fetch('/api/documents/process', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contract_id: contractId,
+            file_path: storagePath,
+            filename: file.name,
+            file_type: file.type,
+            file_size: file.size,
+          }),
+        })
+
         if (res.ok) {
           const data = await res.json()
-          const doc = data.documents?.[0]
+          const doc = data.document
           setUploadingFiles(prev => prev.map((f, j) => j === i
-            ? (doc ? { ...f, status: 'done' as const, category: doc.category, summary: doc.ai_summary } : { ...f, status: 'error' as const, error: 'Upload failed' })
+            ? (doc ? { ...f, status: 'done' as const, category: doc.category, summary: doc.ai_summary } : { ...f, status: 'error' as const, error: 'Processing failed' })
             : f
           ))
         } else {
           const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
-          console.error(`[Library Upload] Error for ${file.name}:`, res.status, err)
+          console.error(`[Upload] Process error for ${file.name}:`, res.status, err)
           setUploadingFiles(prev => prev.map((f, j) => j === i
             ? { ...f, status: 'error' as const, error: err.error || `Failed (${res.status})` }
             : f
           ))
         }
       } catch (e) {
-        console.error(`[Library Upload] Network error for ${file.name}:`, e)
+        console.error(`[Upload] Error for ${file.name}:`, e)
         setUploadingFiles(prev => prev.map((f, j) => j === i
-          ? { ...f, status: 'error' as const, error: 'Network error' }
+          ? { ...f, status: 'error' as const, error: 'Upload failed' }
           : f
         ))
       }
@@ -207,7 +242,7 @@ export default function LibraryPage() {
           <input id="library-file-upload" ref={fileInputRef} type="file" multiple accept=".pdf,.doc,.docx,.txt,.csv,.xlsx,.xls,.png,.jpg,.jpeg" onChange={e => { if (e.target.files) handleUpload(e.target.files); e.target.value = '' }} className="sr-only" />
           <Upload className={`h-6 w-6 mx-auto mb-2 ${isDragging ? 'text-blue-400' : 'text-muted-foreground/50'}`} strokeWidth={1.5} />
           <p className="text-sm font-medium text-foreground mb-0.5">{isDragging ? 'Drop files here' : 'Upload Documents'}</p>
-          <p className="text-xs text-muted-foreground">Drag and drop files, or click to browse. PDFs will be analyzed by AI.</p>
+          <p className="text-xs text-muted-foreground">Drag and drop files, or click to browse. Max 50MB per file. PDFs will be analyzed by AI.</p>
         </label>
 
         {/* Upload progress */}
