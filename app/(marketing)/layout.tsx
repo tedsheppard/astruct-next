@@ -166,14 +166,14 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                     ))}
                   </div>
                   <div className="col-span-7">
-                    <Link href="/platform" className="block group" onClick={() => setSolutionsOpen(false)}>
+                    <Link href="/platform/library" className="block group" onClick={() => setSolutionsOpen(false)}>
                       <div className="rounded-sm overflow-hidden border border-[#e5e5e3] bg-[#f2f1f0]">
-                        <video autoPlay muted loop playsInline className="w-full block" poster="/marketing/app-assistant.webp">
-                          <source src="/marketing/assistant-movie.mp4" type="video/mp4" />
+                        <video autoPlay muted loop playsInline className="w-full block" poster="/marketing/app-library.webp">
+                          <source src="/marketing/library-movie.mp4" type="video/mp4" />
                         </video>
                       </div>
-                      <p className="text-sm font-semibold text-[#0f0e0d] mt-4">See Astruct in action</p>
-                      <p className="text-sm text-[#706d66] mt-1">Watch how construction teams use Astruct to draft notices, track deadlines, and search across thousands of documents.</p>
+                      <p className="text-sm font-semibold text-[#0f0e0d] mt-4">Document Library</p>
+                      <p className="text-sm text-[#706d66] mt-1">Upload, classify, and search your entire project document set with AI-powered indexing.</p>
                     </Link>
                   </div>
                 </div>
