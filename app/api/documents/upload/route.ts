@@ -32,8 +32,9 @@ async function classifyDocument(
   const truncatedText = text.slice(0, 8000)
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-5.4-nano',
+    model: 'gpt-4o-mini',
     temperature: 0,
+    max_tokens: 200,
     messages: [
       {
         role: 'system',
