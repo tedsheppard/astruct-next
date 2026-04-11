@@ -98,31 +98,44 @@ export default function LibraryPage() {
     if (files.length === 0) return
     const fileArray = Array.from(files)
     setUploadingFiles(fileArray.map(f => ({ name: f.name, size: f.size, status: 'uploading' as const })))
-    const formData = new FormData()
-    formData.append('contract_id', contractId)
-    for (const file of fileArray) formData.append('files', file)
-    setUploadingFiles(prev => prev.map(f => ({ ...f, status: 'processing' as const })))
-    try {
-      const res = await fetch('/api/documents/upload', { method: 'POST', body: formData })
-      if (res.ok) {
-        const data = await res.json()
-        const uploaded = data.documents || []
-        setUploadingFiles(prev => prev.map(f => {
-          const match = uploaded.find((d: DocumentFile) => d.filename === f.name)
-          if (match) return { ...f, status: 'done' as const, category: match.category, summary: match.ai_summary }
-          return { ...f, status: 'error' as const, error: 'Upload failed' }
-        }))
-        await fetchData()
-        setTimeout(() => setUploadingFiles([]), 8000)
-      } else {
-        const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
-        console.error('[Library Upload] Error:', res.status, err)
-        setUploadingFiles(prev => prev.map(f => ({ ...f, status: 'error' as const, error: err.error || `Upload failed (${res.status})` })))
+
+    // Upload files one at a time to avoid Vercel's 4.5MB body limit
+    for (let i = 0; i < fileArray.length; i++) {
+      const file = fileArray[i]
+      setUploadingFiles(prev => prev.map((f, j) => j === i ? { ...f, status: 'uploading' as const } : f))
+
+      const formData = new FormData()
+      formData.append('contract_id', contractId)
+      formData.append('files', file)
+
+      try {
+        const res = await fetch('/api/documents/upload', { method: 'POST', body: formData })
+        if (res.ok) {
+          const data = await res.json()
+          const doc = data.documents?.[0]
+          setUploadingFiles(prev => prev.map((f, j) => j === i
+            ? (doc ? { ...f, status: 'done' as const, category: doc.category, summary: doc.ai_summary } : { ...f, status: 'error' as const, error: 'Upload failed' })
+            : f
+          ))
+        } else {
+          const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
+          console.error(`[Library Upload] Error for ${file.name}:`, res.status, err)
+          setUploadingFiles(prev => prev.map((f, j) => j === i
+            ? { ...f, status: 'error' as const, error: err.error || `Failed (${res.status})` }
+            : f
+          ))
+        }
+      } catch (e) {
+        console.error(`[Library Upload] Network error for ${file.name}:`, e)
+        setUploadingFiles(prev => prev.map((f, j) => j === i
+          ? { ...f, status: 'error' as const, error: 'Network error' }
+          : f
+        ))
       }
-    } catch (e) {
-      console.error('[Library Upload] Network error:', e)
-      setUploadingFiles(prev => prev.map(f => ({ ...f, status: 'error' as const, error: 'Network error' })))
     }
+
+    await fetchData()
+    setTimeout(() => setUploadingFiles([]), 8000)
   }
 
   const handleDelete = async (id: string) => {
