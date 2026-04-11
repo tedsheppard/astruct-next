@@ -646,7 +646,7 @@ export default function HomePage() {
                           <source src={product.video} type="video/mp4" />
                         </video>
                       ) : (
-                        <img src={product.src} alt={product.title} className="w-full block" loading="lazy" />
+                        <div className="aspect-video bg-[#f2f1f0] flex items-center justify-center text-sm text-[#adaba5]">{product.title}</div>
                       )}
                     </div>
                   </div>
