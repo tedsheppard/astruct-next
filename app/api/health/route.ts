@@ -31,6 +31,26 @@ export async function GET() {
     checks.ANTHROPIC_TEST = `ERROR: ${e instanceof Error ? e.message : 'unknown'}`
   }
 
+  // Test OpenAI API connectivity
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY || ''}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        max_tokens: 5,
+        messages: [{ role: 'user', content: 'Say ok' }],
+      }),
+    })
+    const data = await res.json()
+    checks.OPENAI_TEST = res.ok ? 'OK' : `FAIL: ${data.error?.message || res.status}`
+  } catch (e) {
+    checks.OPENAI_TEST = `ERROR: ${e instanceof Error ? e.message : 'unknown'}`
+  }
+
   // Test Supabase connectivity
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/contracts?select=count&limit=1`, {

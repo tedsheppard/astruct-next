@@ -9,32 +9,29 @@ function isClaudeModel(model: string): boolean {
   return model.startsWith('claude-')
 }
 
-const WEAK_MODELS = ['gpt-5-nano', 'gpt-5.4-nano', 'claude-haiku-4-5-20251001']
-const MIN_DRAFTING_MODEL = 'claude-sonnet-4-6'
-const MIN_ANALYSIS_MODEL = 'claude-sonnet-4-6'
+const WEAK_CLAUDE = ['claude-haiku-4-5-20251001']
+const WEAK_GPT = ['gpt-5-nano', 'gpt-5.4-nano']
 
 function selectModel(query: ClassifiedQuery, requestedModel: string): { model: string; wasUpgraded: boolean } {
-  const isWeak = WEAK_MODELS.includes(requestedModel)
+  const isClaude = isClaudeModel(requestedModel)
+  const isWeak = [...WEAK_CLAUDE, ...WEAK_GPT].includes(requestedModel)
 
-  // For complex tasks, override weak models
-  if (query.queryType === 'drafting' && isWeak) {
-    console.log(`[RAG:Generator] Upgraded model from ${requestedModel} to ${MIN_DRAFTING_MODEL} for drafting`)
-    return { model: MIN_DRAFTING_MODEL, wasUpgraded: true }
-  }
-  if ((query.queryType === 'analysis' || query.complexity === 'complex') && isWeak) {
-    console.log(`[RAG:Generator] Upgraded model from ${requestedModel} to ${MIN_ANALYSIS_MODEL} for analysis`)
-    return { model: MIN_ANALYSIS_MODEL, wasUpgraded: true }
+  // For complex tasks, upgrade within the same provider (never cross providers)
+  if ((query.queryType === 'drafting' || query.queryType === 'analysis' || query.complexity === 'complex') && isWeak) {
+    const upgraded = isClaude ? 'claude-sonnet-4-6' : 'gpt-5.4'
+    console.log(`[RAG:Generator] Upgraded model from ${requestedModel} to ${upgraded}`)
+    return { model: upgraded, wasUpgraded: true }
   }
 
-  // If user explicitly chose a model and it's capable enough, respect it
-  if (requestedModel && requestedModel !== 'claude-sonnet-4-6') {
+  // Respect user's explicit model choice
+  if (requestedModel) {
     return { model: requestedModel, wasUpgraded: false }
   }
 
-  // Auto-route based on query type
+  // Default
   switch (query.queryType) {
     case 'casual': return { model: 'claude-haiku-4-5-20251001', wasUpgraded: false }
-    default: return { model: 'claude-sonnet-4-6', wasUpgraded: false }
+    default: return { model: requestedModel || 'claude-sonnet-4-6', wasUpgraded: false }
   }
 }
 
