@@ -528,6 +528,20 @@ export default function AssistantPage() {
           const jsonStr = line.slice(6)
           try {
             const data = JSON.parse(jsonStr)
+            if (data.debug) {
+              console.log('[Chat Debug]', data.debug)
+            }
+            if (data.error) {
+              console.error('[Chat Error]', data.error)
+              setMessages(prev => {
+                const updated = [...prev]
+                const last = updated[updated.length - 1]
+                if (last && last.role === 'assistant') {
+                  updated[updated.length - 1] = { ...last, content: `Error: ${data.error}` }
+                }
+                return updated
+              })
+            }
             if (data.thinking || data.thinking_sources) {
               // ThinkingIndicator handles display while isStreaming
             }

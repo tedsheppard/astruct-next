@@ -6,49 +6,69 @@ export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
 export async function POST(request: NextRequest) {
-  // Parse the request body BEFORE creating the stream
-  // This is the only sync work we do before returning the Response
-  const body = await request.json()
-  const { message, contract_id, session_id, model: requestedModel, selected_document_ids } = body
+  const encoder = new TextEncoder()
+
+  // Helper to send debug logs as SSE events
+  function sendLog(controller: ReadableStreamDefaultController, msg: string) {
+    console.log(`[Chat] ${msg}`)
+    controller.enqueue(encoder.encode(`data: ${JSON.stringify({ debug: msg })}\n\n`))
+  }
+
+  let body: Record<string, unknown>
+  try {
+    body = await request.json()
+  } catch (e) {
+    return Response.json({ error: 'Invalid JSON body' }, { status: 400 })
+  }
+
+  const { message, contract_id, session_id, model: requestedModel, selected_document_ids } = body as {
+    message: string; contract_id: string; session_id?: string; model?: string; selected_document_ids?: string[]
+  }
 
   if (!message || !contract_id) {
     return Response.json({ error: 'message and contract_id are required' }, { status: 400 })
   }
 
-  const encoder = new TextEncoder()
-
-  // Return the streaming response IMMEDIATELY
-  // All heavy work (auth, DB, AI calls) happens inside the stream
   const readable = new ReadableStream({
     async start(controller) {
       try {
-        // Heartbeat — first byte goes out instantly
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ thinking: 'Starting...' })}\n\n`))
+        sendLog(controller, 'Stream started')
 
-        // Now do auth + DB work inside the stream (connection is already alive)
         const supabase = await createClient()
-        const { data: { user } } = await supabase.auth.getUser()
+        sendLog(controller, 'Supabase client created')
 
-        if (!user) {
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: 'Unauthorized' })}\n\n`))
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError) {
+          sendLog(controller, `Auth error: ${authError.message}`)
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: `Auth failed: ${authError.message}` })}\n\n`))
           controller.close()
           return
         }
+        if (!user) {
+          sendLog(controller, 'No user found')
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: 'Not authenticated' })}\n\n`))
+          controller.close()
+          return
+        }
+        sendLog(controller, `User: ${user.email}`)
 
-        const model = requestedModel || 'claude-sonnet-4-6'
+        const model = (requestedModel as string) || 'claude-sonnet-4-6'
+        sendLog(controller, `Model: ${model}`)
 
         // Load contract
-        const { data: contract } = await supabase
+        const { data: contract, error: contractError } = await supabase
           .from('contracts')
           .select('*')
           .eq('id', contract_id)
           .single()
 
-        if (!contract) {
+        if (contractError || !contract) {
+          sendLog(controller, `Contract error: ${contractError?.message || 'not found'}`)
           controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: 'Contract not found' })}\n\n`))
           controller.close()
           return
         }
+        sendLog(controller, `Contract: ${contract.name}`)
 
         // Load profile
         const { data: profile } = await supabase
@@ -56,9 +76,10 @@ export async function POST(request: NextRequest) {
           .select('company_name, company_abn, company_address, company_phone, signatory_name, signatory_title')
           .eq('id', user.id)
           .single()
+        sendLog(controller, 'Profile loaded')
 
         // Create or get session
-        let currentSessionId = session_id
+        let currentSessionId = session_id as string | undefined
 
         if (!currentSessionId) {
           const title = message.length > 50 ? message.substring(0, 50) + '...' : message
@@ -69,26 +90,23 @@ export async function POST(request: NextRequest) {
             .single()
 
           if (sessionError || !newSession) {
+            sendLog(controller, `Session error: ${sessionError?.message || 'failed'}`)
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: 'Failed to create session' })}\n\n`))
             controller.close()
             return
           }
           currentSessionId = newSession.id
+          sendLog(controller, `New session: ${currentSessionId}`)
         } else {
-          await supabase
-            .from('chat_sessions')
-            .update({ updated_at: new Date().toISOString() })
-            .eq('id', currentSessionId)
+          await supabase.from('chat_sessions').update({ updated_at: new Date().toISOString() }).eq('id', currentSessionId)
+          sendLog(controller, `Existing session: ${currentSessionId}`)
         }
 
         // Save user message
-        await supabase.from('chat_messages').insert({
-          session_id: currentSessionId,
-          role: 'user',
-          content: message,
-        })
+        await supabase.from('chat_messages').insert({ session_id: currentSessionId, role: 'user', content: message })
+        sendLog(controller, 'User message saved')
 
-        // Load conversation history
+        // Load history
         const { data: history } = await supabase
           .from('chat_messages')
           .select('role, content')
@@ -99,14 +117,16 @@ export async function POST(request: NextRequest) {
           role: m.role as 'user' | 'assistant',
           content: m.content,
         }))
+        sendLog(controller, `History: ${conversationMessages.length} messages`)
+        sendLog(controller, 'Starting RAG pipeline...')
 
-        // Run RAG pipeline
+        // Run pipeline
         await runRAGPipeline(
           {
             contractId: contract_id,
             userId: user.id,
             sessionId: currentSessionId,
-            selectedDocumentIds: selected_document_ids,
+            selectedDocumentIds: selected_document_ids as string[] | undefined,
             model,
             conversationHistory: conversationMessages,
             contract,
@@ -127,21 +147,23 @@ export async function POST(request: NextRequest) {
               controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`))
             },
             onDone(result) {
+              sendLog(controller, 'Pipeline complete')
               controller.enqueue(
                 encoder.encode(`data: ${JSON.stringify({ done: true, session_id: result.sessionId, notice_id: result.noticeId })}\n\n`)
               )
               controller.close()
             },
             onError(error) {
-              console.error('[Chat] Pipeline error:', error)
-              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: 'Stream error occurred' })}\n\n`))
+              sendLog(controller, `Pipeline error: ${error}`)
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: `Pipeline error: ${error}` })}\n\n`))
               controller.close()
             },
           }
         )
       } catch (err) {
-        console.error('[Chat] Fatal error:', err)
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: 'Internal error' })}\n\n`))
+        const msg = err instanceof Error ? err.message : String(err)
+        sendLog(controller, `Fatal error: ${msg}`)
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: `Fatal: ${msg}` })}\n\n`))
         controller.close()
       }
     },
