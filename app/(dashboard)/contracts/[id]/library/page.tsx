@@ -184,7 +184,7 @@ export default function LibraryPage() {
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
+          onClick={() => { console.log('Upload zone clicked'); fileInputRef.current?.click() }}
           className={`border-2 border-dashed rounded-xl p-6 mb-6 text-center cursor-pointer transition-all ${
             isDragging ? 'border-blue-500 bg-blue-500/5' : 'border-border hover:border-ring bg-muted/30'
           }`}
