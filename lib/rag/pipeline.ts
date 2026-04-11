@@ -75,8 +75,9 @@ export async function runRAGPipeline(
       }
     }
 
-    // ─── Step 7: Self-Review (for drafting/analysis) ─────────────────────
-    if (classifiedQuery.queryType === 'drafting' || classifiedQuery.queryType === 'analysis') {
+    // ─── Step 7: Self-Review (for drafting/analysis) — skip if using non-Claude model
+    const modelIsClaude = config.model.startsWith('claude-')
+    if (modelIsClaude && (classifiedQuery.queryType === 'drafting' || classifiedQuery.queryType === 'analysis')) {
       const review = await selfReview(finalResponse, chunks)
       if (review) {
         console.log('[RAG:Pipeline] Self-review quality:', review.overallQuality, 'issues:', review.issues.length)

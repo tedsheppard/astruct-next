@@ -352,7 +352,7 @@ export default function AssistantPage() {
   const [webConstruction, setWebConstruction] = useState(false)
   const [webAll, setWebAll] = useState(false)
   const [activePromptTab, setActivePromptTab] = useState(0)
-  const [selectedModel, setSelectedModel] = useState('claude-sonnet-4-6')
+  const [selectedModel, setSelectedModel] = useState('gpt-5.4-mini')
   const [modelPopoverOpen, setModelPopoverOpen] = useState(false)
   const [modelPopoverOpen2, setModelPopoverOpen2] = useState(false)
   const [expandedSources, setExpandedSources] = useState<number | null>(null)
@@ -609,7 +609,7 @@ export default function AssistantPage() {
       setIsStreaming(false)
       abortControllerRef.current = null
     }
-  }, [contractId, sessionId, isStreaming]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [contractId, sessionId, isStreaming, selectedModel]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sendMessage = useCallback(() => {
     const trimmed = input.trim()

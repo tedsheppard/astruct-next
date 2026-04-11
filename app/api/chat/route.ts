@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
         }
         sendLog(controller, `User: ${user.email}`)
 
-        const model = (requestedModel as string) || 'claude-sonnet-4-6'
+        const model = (requestedModel as string) || 'gpt-5.4-mini'
         sendLog(controller, `Model: ${model}`)
 
         // Load contract
