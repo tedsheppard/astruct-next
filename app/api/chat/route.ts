@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
         sendLog(controller, 'Profile loaded')
 
         // Create or get session
-        let currentSessionId = session_id as string | undefined
+        let currentSessionId: string | null = (session_id as string) || null
 
         if (!currentSessionId) {
           const title = message.length > 50 ? message.substring(0, 50) + '...' : message
