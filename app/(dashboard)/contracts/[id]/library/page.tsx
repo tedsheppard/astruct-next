@@ -189,7 +189,7 @@ export default function LibraryPage() {
             isDragging ? 'border-blue-500 bg-blue-500/5' : 'border-border hover:border-ring bg-muted/30'
           }`}
         >
-          <input id="library-file-upload" ref={fileInputRef} type="file" multiple accept=".pdf,.doc,.docx,.txt,.csv,.xlsx,.xls,.png,.jpg,.jpeg" onChange={e => { if (e.target.files) handleUpload(e.target.files); e.target.value = '' }} className="hidden" />
+          <input id="library-file-upload" ref={fileInputRef} type="file" multiple accept=".pdf,.doc,.docx,.txt,.csv,.xlsx,.xls,.png,.jpg,.jpeg" onChange={e => { if (e.target.files) handleUpload(e.target.files); e.target.value = '' }} className="sr-only" />
           <Upload className={`h-6 w-6 mx-auto mb-2 ${isDragging ? 'text-blue-400' : 'text-muted-foreground/50'}`} strokeWidth={1.5} />
           <p className="text-sm font-medium text-foreground mb-0.5">{isDragging ? 'Drop files here' : 'Upload Documents'}</p>
           <p className="text-xs text-muted-foreground">Drag and drop files, or click to browse. PDFs will be analyzed by AI.</p>
