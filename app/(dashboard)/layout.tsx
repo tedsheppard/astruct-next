@@ -180,7 +180,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       setLoaded(true)
     }
     loadData()
-  }, [setSelectedContractId])
+  }, [setSelectedContractId, pathname])
 
   // Redirect / to the selected contract's assistant
   useEffect(() => {
