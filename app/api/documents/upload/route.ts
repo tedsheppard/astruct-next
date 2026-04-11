@@ -250,7 +250,7 @@ export async function POST(request: NextRequest) {
 
       // Trigger deadline scan in background (don't await — let it run async)
       if (doc && extractedText.length > 100) {
-        fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL ? '' : 'http://localhost:3000'}/api/deadlines/scan`, {
+        fetch(`${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'}/api/deadlines/scan`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -263,9 +263,10 @@ export async function POST(request: NextRequest) {
 
     return Response.json({ documents: uploadedDocuments })
   } catch (err) {
-    console.error('Upload error:', err)
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error('Upload error:', msg, err)
     return Response.json(
-      { error: 'Internal server error' },
+      { error: `Upload failed: ${msg}` },
       { status: 500 }
     )
   }

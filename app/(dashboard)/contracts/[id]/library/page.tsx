@@ -115,10 +115,12 @@ export default function LibraryPage() {
         await fetchData()
         setTimeout(() => setUploadingFiles([]), 8000)
       } else {
-        const err = await res.json()
-        setUploadingFiles(prev => prev.map(f => ({ ...f, status: 'error' as const, error: err.error || 'Upload failed' })))
+        const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
+        console.error('[Library Upload] Error:', res.status, err)
+        setUploadingFiles(prev => prev.map(f => ({ ...f, status: 'error' as const, error: err.error || `Upload failed (${res.status})` })))
       }
-    } catch {
+    } catch (e) {
+      console.error('[Library Upload] Network error:', e)
       setUploadingFiles(prev => prev.map(f => ({ ...f, status: 'error' as const, error: 'Network error' })))
     }
   }
