@@ -41,14 +41,14 @@ export default function LoginPage() {
 
         <div className="max-w-md">
           <h2 className="text-4xl text-white font-normal leading-[1.15]" style={{ fontFamily: "var(--font-serif-display), 'DM Serif Display', Georgia, serif", letterSpacing: '-0.02em' }}>
-            Your contracts, always at hand
+            For building in the modern era
           </h2>
           <p className="mt-6 text-[#a8a29e] leading-relaxed">
             Pick up where you left off. Your documents, conversations, and deadlines are all here.
           </p>
         </div>
 
-        <p className="text-xs text-[#524f49]">Built for AS4000 &middot; AS4902 &middot; AS2124 &middot; AS4000-2025</p>
+        <div />
       </div>
 
       {/* Right Panel - Form */}

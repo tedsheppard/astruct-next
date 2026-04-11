@@ -37,25 +37,21 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   // Redirect unauthenticated users to login (except auth pages and API routes)
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/register') &&
-    !request.nextUrl.pathname.startsWith('/auth') &&
-    !request.nextUrl.pathname.startsWith('/api') &&
-    !request.nextUrl.pathname.startsWith('/platform') &&
-    !request.nextUrl.pathname.startsWith('/solutions') &&
-    !request.nextUrl.pathname.startsWith('/pricing') &&
-    !request.nextUrl.pathname.startsWith('/security') &&
-    !request.nextUrl.pathname.startsWith('/company') &&
-    !request.nextUrl.pathname.startsWith('/privacy') &&
-    !request.nextUrl.pathname.startsWith('/terms') &&
-    !request.nextUrl.pathname.startsWith('/contact') &&
-    !request.nextUrl.pathname.startsWith('/landing')
-  ) {
+  // Public routes that don't require auth
+  const publicPaths = ['/login', '/register', '/auth', '/api', '/platform', '/solutions', '/pricing', '/security', '/company', '/privacy', '/terms', '/contact', '/landing']
+  const isPublicPath = request.nextUrl.pathname === '/' || publicPaths.some(p => request.nextUrl.pathname.startsWith(p))
+
+  if (!user && !isPublicPath) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
+  }
+
+  // Unauthenticated users at root → show landing page
+  if (!user && request.nextUrl.pathname === '/') {
+    const url = request.nextUrl.clone()
+    url.pathname = '/landing'
+    return NextResponse.rewrite(url)
   }
 
   // Redirect authenticated users away from auth pages
