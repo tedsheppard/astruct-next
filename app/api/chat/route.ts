@@ -93,6 +93,9 @@ export async function POST(request: NextRequest) {
 
     const readable = new ReadableStream({
       async start(controller) {
+        // Send immediate heartbeat so Vercel keeps the connection alive
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ thinking: 'Starting...' })}\n\n`))
+
         await runRAGPipeline(
           {
             contractId: contract_id,
