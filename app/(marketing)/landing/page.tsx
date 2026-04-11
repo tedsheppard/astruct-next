@@ -515,10 +515,8 @@ export default function HomePage() {
         {/* Product screenshot below the text, full-width, like Harvey */}
         <FadeIn>
           <div className="max-w-[1200px] mx-auto mt-16">
-            <div className="rounded-t-sm overflow-hidden border border-b-0 border-[#e5e5e3]" style={{ boxShadow: '0 -10px 40px -10px rgba(0,0,0,0.06)' }}>
-              <video autoPlay muted loop playsInline className="w-full block">
-                <source src="/marketing/astruct-sample-video.mp4" type="video/mp4" />
-              </video>
+            <div className="rounded-t-sm overflow-hidden border border-b-0 border-[#e5e5e3] aspect-video bg-[#f2f1f0] flex items-center justify-center" style={{ boxShadow: '0 -10px 40px -10px rgba(0,0,0,0.06)' }}>
+              <img src="/marketing/app-assistant.webp" alt="Astruct AI Assistant" className="w-full block" onError={(e) => { e.currentTarget.style.display = 'none' }} />
             </div>
           </div>
         </FadeIn>
@@ -640,14 +638,8 @@ export default function HomePage() {
                     </Link>
                   </div>
                   <div className={`lg:col-span-8 ${i % 2 === 1 ? 'lg:order-1' : ''}`}>
-                    <div className="rounded-sm overflow-hidden border border-[#e5e5e3]" style={{ boxShadow: '0 20px 50px -12px rgba(0,0,0,0.08)' }}>
-                      {'video' in product && product.video ? (
-                        <video autoPlay muted loop playsInline className="w-full block">
-                          <source src={product.video} type="video/mp4" />
-                        </video>
-                      ) : (
-                        <div className="aspect-video bg-[#f2f1f0] flex items-center justify-center text-sm text-[#adaba5]">{product.title}</div>
-                      )}
+                    <div className="rounded-sm overflow-hidden border border-[#e5e5e3] aspect-video bg-[#f2f1f0] flex items-center justify-center" style={{ boxShadow: '0 20px 50px -12px rgba(0,0,0,0.08)' }}>
+                      <p className="text-sm text-[#adaba5]">{product.title}</p>
                     </div>
                   </div>
                 </div>

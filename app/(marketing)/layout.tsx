@@ -144,10 +144,8 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                   </div>
                   <div className="col-span-7">
                     <Link href="/platform" className="block group" onClick={() => setPlatformOpen(false)}>
-                      <div className="rounded-sm overflow-hidden border border-[#e5e5e3] bg-[#f2f1f0]">
-                        <video autoPlay muted loop playsInline className="w-full block">
-                          <source src="/marketing/astruct-sample-video.mp4" type="video/mp4" />
-                        </video>
+                      <div className="rounded-sm overflow-hidden border border-[#e5e5e3] bg-[#f2f1f0] aspect-video flex items-center justify-center">
+                        <img src="/marketing/app-assistant.webp" alt="Astruct" className="w-full block" onError={(e) => { e.currentTarget.style.display = 'none' }} />
                       </div>
                       <p className="text-sm font-semibold text-[#0f0e0d] mt-4">Overview</p>
                       <p className="text-sm text-[#706d66] mt-1">See how Astruct works across the entire contract lifecycle.</p>
@@ -167,10 +165,8 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                   </div>
                   <div className="col-span-7">
                     <Link href="/platform" className="block group" onClick={() => setSolutionsOpen(false)}>
-                      <div className="rounded-sm overflow-hidden border border-[#e5e5e3] bg-[#f2f1f0]">
-                        <video autoPlay muted loop playsInline className="w-full block">
-                          <source src="/marketing/astruct-sample-video.mp4" type="video/mp4" />
-                        </video>
+                      <div className="rounded-sm overflow-hidden border border-[#e5e5e3] bg-[#f2f1f0] aspect-video flex items-center justify-center">
+                        <img src="/marketing/app-assistant.webp" alt="Astruct" className="w-full block" onError={(e) => { e.currentTarget.style.display = 'none' }} />
                       </div>
                       <p className="text-sm font-semibold text-[#0f0e0d] mt-4">See Astruct in action</p>
                       <p className="text-sm text-[#706d66] mt-1">Watch how construction teams use Astruct to draft notices, track deadlines, and search across thousands of documents.</p>
