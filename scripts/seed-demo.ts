@@ -558,39 +558,135 @@ async function main() {
   // ── Create obligations ──
   const today = new Date()
 
+  // Helper: offset days from today, skip weekends
+  function businessDay(daysFromToday: number): string {
+    const d = new Date(today.getTime() + daysFromToday * 24 * 60 * 60 * 1000)
+    const dow = d.getDay()
+    if (dow === 0) d.setDate(d.getDate() + 1) // Sun → Mon
+    if (dow === 6) d.setDate(d.getDate() + 2) // Sat → Mon
+    return d.toISOString().split('T')[0]
+  }
+
+  // Helper: specific day of current month (or next if past), skip weekends
+  function dayOfMonth(day: number, monthOffset = 0): string {
+    const d = new Date(today.getFullYear(), today.getMonth() + monthOffset, day)
+    const dow = d.getDay()
+    if (dow === 0) d.setDate(d.getDate() + 1)
+    if (dow === 6) d.setDate(d.getDate() + 2)
+    return d.toISOString().split('T')[0]
+  }
+
   const obligations = [
+    // ── Past / Expired ──
     {
-      contract_id: contract.id,
-      user_id: userId,
-      description: 'EOT Notice due — Variation VD-007 delay impact',
-      clause_reference: 'Clause 33.1 / Special Condition 1.1',
-      due_date: new Date(today.getTime() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      status: 'pending',
-      notice_type: 'extension_of_time',
-      completed: false,
-      source: 'manual',
-    },
-    {
-      contract_id: contract.id,
-      user_id: userId,
-      description: 'Progress Claim #7 submission deadline',
-      clause_reference: 'Clause 37.1',
-      due_date: new Date(today.getTime() + 12 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      status: 'pending',
-      notice_type: 'payment_claim',
-      completed: false,
-      source: 'manual',
-    },
-    {
-      contract_id: contract.id,
-      user_id: userId,
+      contract_id: contract.id, user_id: userId,
       description: 'Respond to Superintendent\'s direction RE: facade panels',
       clause_reference: 'Clause 13.3',
-      due_date: new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      status: 'overdue',
-      notice_type: 'variation',
-      completed: false,
-      source: 'manual',
+      due_date: businessDay(-2),
+      status: 'overdue', notice_type: 'variation', completed: false, source: 'manual',
+    },
+    {
+      contract_id: contract.id, user_id: userId,
+      description: 'EOT Claim 003 — Failure to respond within time bar',
+      clause_reference: 'Clause 34.3',
+      due_date: businessDay(-5),
+      status: 'overdue', notice_type: 'extension_of_time', completed: false, source: 'ai_extracted',
+    },
+    // ── Upcoming (within 7 days) ──
+    {
+      contract_id: contract.id, user_id: userId,
+      description: 'Weekly delay update #6 — wet weather impact',
+      clause_reference: 'Clause 34.2',
+      due_date: businessDay(2),
+      status: 'pending', notice_type: 'delay', completed: false, source: 'ai_extracted',
+    },
+    {
+      contract_id: contract.id, user_id: userId,
+      description: 'EOT Notice due — Variation VD-007 delay impact',
+      clause_reference: 'Clause 33.1 / Special Condition 1.1',
+      due_date: businessDay(5),
+      status: 'pending', notice_type: 'extension_of_time', completed: false, source: 'manual',
+    },
+    {
+      contract_id: contract.id, user_id: userId,
+      description: 'Respond to RFI-042 — structural steel connection details',
+      clause_reference: 'Clause 13.1',
+      due_date: businessDay(3),
+      status: 'pending', notice_type: 'other', completed: false, source: 'ai_extracted',
+    },
+    // ── Payment cycle ──
+    {
+      contract_id: contract.id, user_id: userId,
+      description: 'Progress Claim #7 submission deadline',
+      clause_reference: 'Clause 37.1',
+      due_date: dayOfMonth(25),
+      status: 'pending', notice_type: 'payment_claim', completed: false, source: 'manual',
+    },
+    {
+      contract_id: contract.id, user_id: userId,
+      description: 'Payment Schedule #7 due from Principal',
+      clause_reference: 'Clause 37.2 / SOPA s14',
+      due_date: dayOfMonth(14, 1),
+      status: 'pending', notice_type: 'payment_schedule', completed: false, source: 'ai_extracted',
+    },
+    {
+      contract_id: contract.id, user_id: userId,
+      description: 'Progress Claim #8 submission deadline',
+      clause_reference: 'Clause 37.1',
+      due_date: dayOfMonth(25, 1),
+      status: 'pending', notice_type: 'payment_claim', completed: false, source: 'manual',
+    },
+    // ── Recurring delay updates (every 7 days) ──
+    {
+      contract_id: contract.id, user_id: userId,
+      description: 'Weekly delay update #7 — wet weather impact',
+      clause_reference: 'Clause 34.2',
+      due_date: businessDay(9),
+      status: 'pending', notice_type: 'delay', completed: false, source: 'ai_extracted',
+    },
+    {
+      contract_id: contract.id, user_id: userId,
+      description: 'Weekly delay update #8 — wet weather impact',
+      clause_reference: 'Clause 34.2',
+      due_date: businessDay(16),
+      status: 'pending', notice_type: 'delay', completed: false, source: 'ai_extracted',
+    },
+    {
+      contract_id: contract.id, user_id: userId,
+      description: 'Weekly delay update #9 — wet weather impact',
+      clause_reference: 'Clause 34.2',
+      due_date: businessDay(23),
+      status: 'pending', notice_type: 'delay', completed: false, source: 'ai_extracted',
+    },
+    // ── Other one-off deadlines ──
+    {
+      contract_id: contract.id, user_id: userId,
+      description: 'Respond to Notice of Dispute — defects rectification',
+      clause_reference: 'Clause 25.1',
+      due_date: businessDay(11),
+      status: 'pending', notice_type: 'dispute', completed: false, source: 'ai_extracted',
+    },
+    {
+      contract_id: contract.id, user_id: userId,
+      description: 'Submit variation proposal VO-013 — fire rating upgrade',
+      clause_reference: 'Clause 36.2',
+      due_date: businessDay(18),
+      status: 'pending', notice_type: 'variation', completed: false, source: 'manual',
+    },
+    {
+      contract_id: contract.id, user_id: userId,
+      description: 'Respond to show cause notice — programme non-compliance',
+      clause_reference: 'Clause 39.2',
+      due_date: businessDay(7),
+      status: 'pending', notice_type: 'show_cause', completed: false, source: 'ai_extracted',
+    },
+    // ── Compliant / completed ──
+    {
+      contract_id: contract.id, user_id: userId,
+      description: 'Respond to Notice of Intent to claim — waterproofing delay',
+      clause_reference: 'Clause 34.1',
+      due_date: businessDay(20),
+      status: 'compliant', notice_type: 'delay', completed: true, source: 'ai_extracted',
     },
   ]
 
@@ -601,7 +697,7 @@ async function main() {
   if (obligationsError) {
     console.error('Failed to create obligations:', obligationsError)
   } else {
-    console.log('\nCreated 3 obligations (amber / green / red)')
+    console.log(`\nCreated ${obligations.length} obligations`)
   }
 
   // ── Create chat session with pre-loaded exchanges ──

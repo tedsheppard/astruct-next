@@ -343,6 +343,30 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
+      {/* Help */}
+      <Card className="bg-card border-border">
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-foreground">Product walkthrough</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Replay the onboarding guide</p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                const supabase = createClient()
+                const { data: { user: u } } = await supabase.auth.getUser()
+                if (u) await supabase.from('profiles').update({ walkthrough_completed: false }).eq('id', u.id)
+                window.location.href = '/contracts?walkthrough=1'
+              }}
+            >
+              Replay
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Save Button */}
       <div className="flex justify-end">
         <Button

@@ -5,68 +5,86 @@ import { FadeIn } from '../../layout'
 
 const headlineFont = "var(--font-serif-display), 'DM Serif Display', Georgia, serif"
 
-const FEATURES = [
+const PAIN_POINTS = [
   {
-    title: 'Search your entire contract set instantly',
+    title: 'Obligations across multiple parties',
     description:
-      'Upload your head contract, subcontracts, special conditions, schedules, and amendments. Ask questions in plain English — "What is the defects liability period for the electrical subcontract?" — and get answers with clause references in seconds.',
+      'You are tracking obligations for the principal, head contractor, and every subcontractor on the project. Each contract has different notice periods, response deadlines, and requirements. Keeping it all straight in spreadsheets does not scale.',
   },
   {
-    title: 'Answer your team without digging through folders',
+    title: 'Tracking correspondence',
     description:
-      'Site managers, project managers, and superintendents constantly ask contract questions. Instead of opening PDFs and searching manually, point them to Astruct. They get instant, accurate answers grounded in the actual contract documents.',
+      'Hundreds of letters, emails, and directions flow through your office every month. When a dispute arises six months later, you need to find the relevant correspondence quickly -- not spend hours searching through folders.',
   },
   {
-    title: 'Track every notice period and deadline',
+    title: 'Ensuring compliance',
     description:
-      'Astruct extracts notice periods, response deadlines, defects liability dates, and time bars from every contract on your project. A single calendar view shows what is due across all contracts — no more relying on memory or spreadsheets.',
+      'Every notice, direction, and response needs to meet the contractual requirements -- the right clause, the right format, the right recipient, and the right deadline. One mistake can undermine a claim or expose your client to liability.',
+  },
+]
+
+const CAPABILITIES = [
+  {
+    title: 'Correspondence management',
+    description:
+      'Upload incoming and outgoing correspondence. Astruct indexes it, links it to the relevant contract clauses, and makes it searchable. Find the relevant letter in seconds, not hours.',
   },
   {
-    title: 'Maintain a correspondence register with AI',
+    title: 'Obligation tracking',
     description:
-      'Upload incoming and outgoing correspondence. Astruct indexes it, links it to the relevant contract clauses, and makes it searchable. When a dispute arises six months later, you can find the relevant letter in seconds — not hours.',
+      'Every notice period, defects liability window, and payment milestone is extracted from every contract on your project. A single dashboard shows what is due across all contracts -- no more relying on memory.',
   },
   {
-    title: 'Compare amendments and variations',
+    title: 'Document analysis',
     description:
-      'When the principal issues amended special conditions or a deed of variation, Astruct highlights exactly what changed — clause by clause. Understand the impact of each amendment before you sign.',
+      'Search across your entire contract set in seconds. Ask questions in plain English and get answers with clause references. Your site teams get instant, accurate answers grounded in the actual contract documents.',
+  },
+  {
+    title: 'Deadline monitoring',
+    description:
+      'Astruct tracks every deadline across every contract and alerts you before they pass. Time bars, response periods, and submission deadlines are all visible in a single calendar view.',
   },
   {
     title: 'Draft contract correspondence',
     description:
-      'Generate first drafts of notices, directions, responses to claims, and other contract correspondence. Astruct references the correct clauses, uses appropriate contractual language, and saves your team hours of drafting time.',
+      'Generate first drafts of notices, directions, responses to claims, and other contract correspondence. Astruct references the correct clauses and uses appropriate contractual language.',
+  },
+  {
+    title: 'Compare amendments and variations',
+    description:
+      'When the principal issues amended special conditions or a deed of variation, Astruct highlights exactly what changed -- clause by clause. Understand the impact before you advise.',
   },
 ]
 
 export default function ContractAdministratorsPage() {
   return (
     <div>
-      {/* Hero */}
-      <section className="bg-[#0C0C0C] py-24 md:py-32">
+      {/* Hero — light */}
+      <section className="bg-[#fafaf9] py-32">
         <div className="max-w-[1200px] mx-auto px-6">
           <FadeIn>
-            <p className="text-[#6B7F5E] text-sm font-medium tracking-wide uppercase mb-4">
+            <p className="text-[#8f8b85] text-sm font-medium tracking-wide uppercase mb-4">
               For Contract Administrators
             </p>
             <h1
-              className="text-white text-4xl md:text-5xl lg:text-6xl leading-tight max-w-3xl"
-              style={{ fontFamily: headlineFont }}
+              className="text-[#0f0e0d] text-4xl md:text-5xl lg:text-6xl leading-tight max-w-3xl"
+              style={{ fontFamily: headlineFont, letterSpacing: '-0.02em' }}
             >
               Your entire contract set, searchable in seconds
             </h1>
-            <p className="text-[#a8a29e] text-lg md:text-xl mt-6 max-w-2xl leading-relaxed">
-              You are the person everyone comes to with contract questions. Astruct gives you an AI assistant that knows every clause in every document on your project — so you can answer in seconds, not hours.
+            <p className="text-[#706d66] text-lg md:text-xl mt-6 max-w-2xl leading-relaxed">
+              You are the person everyone comes to with contract questions. Astruct gives you an AI assistant that knows every clause in every document on your project -- so you can answer in seconds, not hours.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <Link
                 href="/register"
-                className="inline-flex items-center px-6 py-3 rounded-lg bg-[#6B7F5E] text-white font-medium hover:bg-[#5a6e4e] transition-colors"
+                className="inline-flex items-center px-6 py-3 rounded-lg bg-[#0f0e0d] text-[#fafaf9] font-medium hover:bg-[#2a2927] transition-colors"
               >
                 Start free trial
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center px-6 py-3 rounded-lg border border-[#333] text-[#a8a29e] hover:text-white hover:border-[#555] transition-colors"
+                className="inline-flex items-center px-6 py-3 rounded-lg border border-[#d6d3ce] text-[#706d66] hover:text-[#0f0e0d] hover:border-[#0f0e0d] transition-colors"
               >
                 Book a demo
               </Link>
@@ -75,37 +93,57 @@ export default function ContractAdministratorsPage() {
         </div>
       </section>
 
-      {/* Problem */}
-      <section className="bg-[#0C0C0C] border-t border-[#1a1a1a] py-20 md:py-28">
+      {/* Problem — dark */}
+      <section className="bg-[#0f0e0d] py-20 md:py-28">
         <div className="max-w-[1200px] mx-auto px-6">
           <FadeIn>
             <h2
-              className="text-white text-3xl md:text-4xl max-w-2xl"
-              style={{ fontFamily: headlineFont }}
+              className="text-[#fafaf9] text-3xl md:text-4xl max-w-2xl mb-14"
+              style={{ fontFamily: headlineFont, letterSpacing: '-0.02em' }}
             >
               Managing 30+ documents across a project is unsustainable without better tools
             </h2>
-            <p className="text-[#a8a29e] text-lg mt-6 max-w-2xl leading-relaxed">
-              A single commercial construction project can involve a head contract, dozens of subcontracts, multiple amendments, schedules, annexures, and hundreds of pieces of correspondence. Contract administrators are expected to know the answer to any question, from any document, at any time. The current approach — folder structures, Ctrl+F, and institutional memory — does not scale.
-            </p>
           </FadeIn>
+          <div className="grid md:grid-cols-3 gap-8">
+            {PAIN_POINTS.map((point, i) => (
+              <FadeIn key={point.title} delay={i * 100}>
+                <div className="border-l-2 border-[#3a3835] pl-6">
+                  <h3
+                    className="text-[#fafaf9] text-lg mb-3"
+                    style={{ fontFamily: headlineFont, letterSpacing: '-0.02em' }}
+                  >
+                    {point.title}
+                  </h3>
+                  <p className="text-[#a8a29e] text-sm leading-relaxed">{point.description}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="bg-[#0C0C0C] border-t border-[#1a1a1a] py-20 md:py-28">
+      {/* Capabilities — light */}
+      <section className="bg-[#fafaf9] py-20 md:py-28">
         <div className="max-w-[1200px] mx-auto px-6">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {FEATURES.map((feature, i) => (
-              <FadeIn key={feature.title} delay={i * 80}>
-                <div className="bg-[#1a1a1a] rounded-xl p-8 border border-[#2a2a2a] h-full">
+          <FadeIn>
+            <h2
+              className="text-[#0f0e0d] text-3xl md:text-4xl mb-14"
+              style={{ fontFamily: headlineFont, letterSpacing: '-0.02em' }}
+            >
+              How Astruct helps
+            </h2>
+          </FadeIn>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
+            {CAPABILITIES.map((cap, i) => (
+              <FadeIn key={cap.title} delay={i * 80}>
+                <div className="border-l-2 border-[#d6d3ce] pl-6">
                   <h3
-                    className="text-white text-lg mb-3"
-                    style={{ fontFamily: headlineFont }}
+                    className="text-[#0f0e0d] text-xl mb-4"
+                    style={{ fontFamily: headlineFont, letterSpacing: '-0.02em' }}
                   >
-                    {feature.title}
+                    {cap.title}
                   </h3>
-                  <p className="text-[#a8a29e] text-sm leading-relaxed">{feature.description}</p>
+                  <p className="text-[#706d66] text-sm leading-relaxed">{cap.description}</p>
                 </div>
               </FadeIn>
             ))}
@@ -114,21 +152,21 @@ export default function ContractAdministratorsPage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-[#0C0C0C] border-t border-[#1a1a1a] py-20 md:py-28">
+      <section className="bg-[#fafaf9] border-t border-[#e5e5e3] py-20 md:py-28">
         <div className="max-w-[1200px] mx-auto px-6 text-center">
           <FadeIn>
             <h2
-              className="text-white text-3xl md:text-4xl mb-6"
-              style={{ fontFamily: headlineFont }}
+              className="text-[#0f0e0d] text-3xl md:text-4xl mb-6"
+              style={{ fontFamily: headlineFont, letterSpacing: '-0.02em' }}
             >
               Spend less time searching. More time administering.
             </h2>
-            <p className="text-[#a8a29e] text-lg max-w-xl mx-auto mb-10">
-              Astruct is the AI-powered contract administration tool built for the people who actually run construction projects.
+            <p className="text-[#706d66] text-lg max-w-xl mx-auto mb-10">
+              Astruct is the contract administration tool built for the people who actually run construction projects.
             </p>
             <Link
               href="/register"
-              className="inline-flex items-center px-8 py-3.5 rounded-lg bg-[#6B7F5E] text-white font-medium hover:bg-[#5a6e4e] transition-colors"
+              className="inline-flex items-center px-8 py-3.5 rounded-lg bg-[#0f0e0d] text-[#fafaf9] font-medium hover:bg-[#2a2927] transition-colors"
             >
               Start your free trial
             </Link>

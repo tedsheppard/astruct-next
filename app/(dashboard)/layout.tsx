@@ -161,8 +161,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     async function loadData() {
       const { data: { user: authUser } } = await supabase.auth.getUser()
       if (!authUser) return
-      const { data: profile } = await supabase.from('profiles').select('name, email, company_name').eq('id', authUser.id).single()
-      if (profile) setUser(profile)
+      const { data: profile } = await supabase.from('profiles').select('name, email, company_name, onboarding_completed').eq('id', authUser.id).single()
+      if (profile) {
+        // Redirect to setup if onboarding not completed (skip if already on setup page)
+        if (!profile.onboarding_completed && !window.location.pathname.startsWith('/setup')) {
+          router.push('/setup')
+          return
+        }
+        setUser(profile)
+      }
       const { data: contractData } = await supabase.from('contracts').select('id, name, reference_number, contract_form, status').order('created_at', { ascending: false })
       if (contractData) {
         setContracts(contractData)

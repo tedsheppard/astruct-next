@@ -73,6 +73,83 @@ function getObligationStatus(obligation: Obligation): ObligationStatus {
   return 'compliant'
 }
 
+// ─── Upcoming Deadlines ────────────────────────────────────────────────────
+
+function UpcomingDeadlines({ contractId }: { contractId: string }) {
+  const [deadlines, setDeadlines] = useState<Obligation[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const supabase = createClient()
+    async function load() {
+      setLoading(true)
+      const today = format(new Date(), 'yyyy-MM-dd')
+      const futureLimit = format(new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd')
+      const { data } = await supabase
+        .from('obligations')
+        .select('*, contracts(name)')
+        .eq('contract_id', contractId)
+        .gte('due_date', today)
+        .lte('due_date', futureLimit)
+        .order('due_date', { ascending: true })
+      if (data) setDeadlines(data.filter(d => d.status !== 'completed' && d.status !== 'compliant'))
+      setLoading(false)
+    }
+    load()
+  }, [contractId])
+
+  if (loading || deadlines.length === 0) return null
+
+  return (
+    <div className="mt-2">
+      <h3 className="text-sm font-medium text-foreground mb-3">Upcoming Deadlines</h3>
+      <div className="rounded-lg border border-border overflow-hidden">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-border bg-main-panel">
+              <th className="px-4 py-2.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Deadline</th>
+              <th className="px-4 py-2.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Due Date</th>
+              <th className="px-4 py-2.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Clause</th>
+              <th className="px-4 py-2.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {deadlines.map(ob => {
+              const status = getObligationStatus(ob)
+              const dueDate = new Date(ob.due_date)
+              const daysUntil = differenceInDays(startOfDay(dueDate), startOfDay(new Date()))
+              const daysLabel = daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : `${daysUntil} days`
+
+              return (
+                <tr key={ob.id} className="border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors">
+                  <td className="px-4 py-3">
+                    <p className="text-foreground leading-snug">{ob.description}</p>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <p className="text-foreground">{format(dueDate, 'd MMM yyyy')}</p>
+                    <p className="text-xs text-muted-foreground">{daysLabel}</p>
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{ob.clause_reference || '—'}</td>
+                  <td className="px-4 py-3">
+                    <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded ${
+                      status === 'expired' ? 'bg-red-500/10 text-red-400' :
+                      status === 'upcoming' ? 'bg-amber-500/10 text-amber-400' :
+                      'bg-emerald-500/10 text-emerald-400'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${STATUS_COLORS[status]}`} />
+                      {STATUS_LABELS[status]}
+                    </span>
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
 // ─── Calendar Page ──────────────────────────────────────────────────────────
 
 export default function CalendarPage() {
@@ -229,6 +306,9 @@ export default function CalendarPage() {
         <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500" />Upcoming (within 7 days)</div>
         <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" />Compliant</div>
       </div>
+
+      {/* Upcoming deadlines list */}
+      <UpcomingDeadlines contractId={contractId} />
 
       {!loading && obligations.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center">

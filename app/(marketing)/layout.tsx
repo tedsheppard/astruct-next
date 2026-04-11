@@ -37,16 +37,15 @@ export function FadeIn({ children, className = '', delay = 0 }: { children: Reac
 const PLATFORM_LINKS = [
   { href: '/platform/assistant', title: 'AI Assistant', desc: 'Ask questions, draft notices, analyse clauses' },
   { href: '/platform/library', title: 'Document Library', desc: 'Upload, classify, and search documents' },
-  { href: '/platform/review', title: 'Review Tables', desc: 'Extract structured data across documents' },
   { href: '/platform/calendar', title: 'Time-Bar Calendar', desc: 'Track every contractual deadline' },
   { href: '/platform/correspondence', title: 'Correspondence', desc: 'Manage project correspondence with AI' },
 ]
 
 const SOLUTION_LINKS = [
-  { href: '/solutions/contractors', title: 'Contractors' },
-  { href: '/solutions/subcontractors', title: 'Subcontractors' },
-  { href: '/solutions/contract-administrators', title: 'Contract Administrators' },
-  { href: '/solutions/construction-lawyers', title: 'Construction Lawyers' },
+  { href: '/solutions/developers', title: 'Developers / Principals', desc: 'Protect your position across every project in your portfolio.' },
+  { href: '/solutions/contractors', title: 'Contractors', desc: 'Manage subcontracts, obligations, and payment cycles at scale.' },
+  { href: '/solutions/subcontractors', title: 'Subcontractors', desc: 'Never miss a time-bar or lose a claim to a missed deadline.' },
+  { href: '/solutions/contract-administrators', title: 'Contract Administrators', desc: 'Track correspondence, obligations, and compliance across all parties.' },
 ]
 
 const FOOTER_SECTIONS = [
@@ -56,7 +55,6 @@ const FOOTER_SECTIONS = [
       { href: '/platform', label: 'Overview' },
       { href: '/platform/assistant', label: 'AI Assistant' },
       { href: '/platform/library', label: 'Document Library' },
-      { href: '/platform/review', label: 'Review Tables' },
       { href: '/platform/calendar', label: 'Calendar' },
       { href: '/platform/correspondence', label: 'Correspondence' },
     ],
@@ -65,16 +63,15 @@ const FOOTER_SECTIONS = [
     title: 'Solutions',
     links: [
       { href: '/solutions/contractors', label: 'Contractors' },
+      { href: '/solutions/developers', label: 'Developers / Principals' },
       { href: '/solutions/subcontractors', label: 'Subcontractors' },
       { href: '/solutions/contract-administrators', label: 'Contract Administrators' },
-      { href: '/solutions/construction-lawyers', label: 'Construction Lawyers' },
     ],
   },
   {
     title: 'Company',
     links: [
       { href: '/pricing', label: 'Pricing' },
-      { href: '/security', label: 'Security' },
       { href: '/company', label: 'About' },
       { href: '/privacy', label: 'Privacy' },
       { href: '/terms', label: 'Terms' },
@@ -117,78 +114,109 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
 
   return (
     <div style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
-      {/* Announcement banner */}
-      {!bannerDismissed && (
-        <div className="bg-[#1a1a1a] text-white text-center text-xs py-2.5 px-6 relative">
-          <span className="text-[#a8a29e]">Now supporting </span>
-          <span className="font-medium">AS4000-2025</span>
-          <span className="text-[#a8a29e]"> - the first major update in 28 years. </span>
-          <Link href="/platform" className="underline text-white hover:text-[#6B7F5E] transition-colors">Learn more &rarr;</Link>
-          <button onClick={dismissBanner} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#666] hover:text-white transition-colors">&times;</button>
+      {/* Navigation */}
+      {/* Full-width dropdown panels (Harvey-style mega menu) */}
+      {(platformOpen || solutionsOpen) && (
+        <div className="fixed inset-0 top-0 z-40">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/20" onClick={() => { setPlatformOpen(false); setSolutionsOpen(false) }} />
+
+          {/* Panel */}
+          <div
+            className="relative bg-[#fafaf9] border-b border-[#e5e5e3]"
+            style={{ paddingTop: bannerDismissed ? '64px' : '104px' }}
+            onMouseLeave={() => { setPlatformOpen(false); setSolutionsOpen(false) }}
+          >
+            <div className="max-w-[1200px] mx-auto px-10 py-12">
+              {platformOpen && (
+                <div className="grid grid-cols-12 gap-10">
+                  <div className="col-span-5 space-y-6">
+                    <Link href="/platform" className="block group" onClick={() => setPlatformOpen(false)}>
+                      <p className="text-sm font-semibold text-[#0f0e0d]">Overview</p>
+                      <p className="text-sm text-[#706d66] mt-1">A unified view of how Astruct&rsquo;s products work together.</p>
+                    </Link>
+                    {PLATFORM_LINKS.map(l => (
+                      <Link key={l.href} href={l.href} className="block group" onClick={() => setPlatformOpen(false)}>
+                        <p className="text-sm font-semibold text-[#0f0e0d]">{l.title}</p>
+                        <p className="text-sm text-[#706d66] mt-1">{l.desc}</p>
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="col-span-7">
+                    <Link href="/platform" className="block group" onClick={() => setPlatformOpen(false)}>
+                      <div className="rounded-sm overflow-hidden border border-[#e5e5e3] bg-[#f2f1f0]">
+                        <video autoPlay muted loop playsInline className="w-full block">
+                          <source src="/marketing/astruct-sample-video.mp4" type="video/mp4" />
+                        </video>
+                      </div>
+                      <p className="text-sm font-semibold text-[#0f0e0d] mt-4">Overview</p>
+                      <p className="text-sm text-[#706d66] mt-1">See how Astruct works across the entire contract lifecycle.</p>
+                    </Link>
+                  </div>
+                </div>
+              )}
+              {solutionsOpen && (
+                <div className="grid grid-cols-12 gap-10">
+                  <div className="col-span-5 space-y-6">
+                    {SOLUTION_LINKS.map(l => (
+                      <Link key={l.href} href={l.href} className="block group" onClick={() => setSolutionsOpen(false)}>
+                        <p className="text-sm font-semibold text-[#0f0e0d]">{l.title}</p>
+                        <p className="text-sm text-[#706d66] mt-1">{l.desc}</p>
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="col-span-7">
+                    <Link href="/platform" className="block group" onClick={() => setSolutionsOpen(false)}>
+                      <div className="rounded-sm overflow-hidden border border-[#e5e5e3] bg-[#f2f1f0]">
+                        <video autoPlay muted loop playsInline className="w-full block">
+                          <source src="/marketing/astruct-sample-video.mp4" type="video/mp4" />
+                        </video>
+                      </div>
+                      <p className="text-sm font-semibold text-[#0f0e0d] mt-4">See Astruct in action</p>
+                      <p className="text-sm text-[#706d66] mt-1">Watch how construction teams use Astruct to draft notices, track deadlines, and search across thousands of documents.</p>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Navigation */}
-      <nav className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#0C0C0C]/95 backdrop-blur-md border-b border-[#222]' : 'bg-[#0C0C0C]'}`}>
-        <div className="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
+      <nav className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#0f0e0d]/95 backdrop-blur-md border-b border-[#33312c]' : 'bg-[#0f0e0d]'}`}>
+        <div className="max-w-[1200px] mx-auto px-10 h-16 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/landing" className="text-white text-lg font-semibold tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+          <Link href="/landing" className="text-[#fafaf9] text-xl font-light tracking-tight" style={{ letterSpacing: '-0.02em' }}>
             Astruct
           </Link>
 
           {/* Desktop nav */}
-          <div className="hidden lg:flex items-center gap-7">
+          <div className="hidden lg:flex items-center gap-8">
             {/* Platform dropdown */}
-            <div className="relative" onMouseEnter={() => setPlatformOpen(true)} onMouseLeave={() => setPlatformOpen(false)}>
-              <button className="text-sm text-[#a8a29e] hover:text-white transition-colors flex items-center gap-1">
+            <div className="relative h-full flex items-center" onMouseEnter={() => { setPlatformOpen(true); setSolutionsOpen(false) }}>
+              <button className={`text-sm font-medium transition-colors duration-300 flex items-center gap-1 ${platformOpen ? 'text-[#fafaf9]' : 'text-[#8f8b85] hover:text-[#fafaf9]'}`} style={{ transitionTimingFunction: 'cubic-bezier(0, 0.7, 0.3, 1)' }}>
                 Platform
-                <svg className={`w-3 h-3 transition-transform ${platformOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                <svg className={`w-3 h-3 transition-transform duration-300 ${platformOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
               </button>
-              {platformOpen && (
-                <div className="absolute top-full left-0 pt-3">
-                  <div className="bg-[#1a1a1a] rounded-xl border border-[#2a2a2a] shadow-2xl p-4 w-[340px]">
-                    <Link href="/platform" className="block px-3 py-2 rounded-lg text-sm font-medium text-white hover:bg-[#252525] transition-colors mb-1">
-                      Platform Overview
-                    </Link>
-                    <div className="border-t border-[#2a2a2a] my-2" />
-                    {PLATFORM_LINKS.map(l => (
-                      <Link key={l.href} href={l.href} className="block px-3 py-2.5 rounded-lg hover:bg-[#252525] transition-colors">
-                        <p className="text-sm font-medium text-white">{l.title}</p>
-                        <p className="text-xs text-[#888] mt-0.5">{l.desc}</p>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {platformOpen && <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#fafaf9]" />}
             </div>
 
             {/* Solutions dropdown */}
-            <div className="relative" onMouseEnter={() => setSolutionsOpen(true)} onMouseLeave={() => setSolutionsOpen(false)}>
-              <button className="text-sm text-[#a8a29e] hover:text-white transition-colors flex items-center gap-1">
+            <div className="relative h-full flex items-center" onMouseEnter={() => { setSolutionsOpen(true); setPlatformOpen(false) }}>
+              <button className={`text-sm font-medium transition-colors duration-300 flex items-center gap-1 ${solutionsOpen ? 'text-[#fafaf9]' : 'text-[#8f8b85] hover:text-[#fafaf9]'}`} style={{ transitionTimingFunction: 'cubic-bezier(0, 0.7, 0.3, 1)' }}>
                 Solutions
-                <svg className={`w-3 h-3 transition-transform ${solutionsOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                <svg className={`w-3 h-3 transition-transform duration-300 ${solutionsOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
               </button>
-              {solutionsOpen && (
-                <div className="absolute top-full left-0 pt-3">
-                  <div className="bg-[#1a1a1a] rounded-xl border border-[#2a2a2a] shadow-2xl p-2 w-[240px]">
-                    {SOLUTION_LINKS.map(l => (
-                      <Link key={l.href} href={l.href} className="block px-3 py-2.5 rounded-lg text-sm text-[#ccc] hover:text-white hover:bg-[#252525] transition-colors">
-                        {l.title}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {solutionsOpen && <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#fafaf9]" />}
             </div>
 
             <Link href="/pricing" className="text-sm text-[#a8a29e] hover:text-white transition-colors">Pricing</Link>
-            <Link href="/security" className="text-sm text-[#a8a29e] hover:text-white transition-colors">Security</Link>
           </div>
 
           {/* Right side */}
           <div className="hidden lg:flex items-center gap-4">
             <Link href="/login" className="text-sm text-[#a8a29e] hover:text-white transition-colors">Log in</Link>
-            <Link href="/register" className="text-sm font-medium px-5 py-2 rounded-lg bg-[#6B7F5E] text-white hover:bg-[#5a6e4e] transition-colors">
+            <Link href="/register" className="text-sm font-medium px-5 py-2 rounded-lg bg-[#fafaf9] text-[#0f0e0d] hover:bg-[#e5e5e3] transition-colors">
               Start free
             </Link>
           </div>
@@ -206,7 +234,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
 
         {/* Mobile menu overlay */}
         {mobileOpen && (
-          <div className="lg:hidden fixed inset-0 top-16 bg-[#0C0C0C] z-40 overflow-y-auto px-6 py-8">
+          <div className="lg:hidden fixed inset-0 top-16 bg-[#0f0e0d] z-40 overflow-y-auto px-6 py-8">
             <div className="space-y-1">
               <Link href="/platform" className="block py-3 text-lg text-white font-medium">Platform</Link>
               {PLATFORM_LINKS.map(l => (
@@ -214,7 +242,6 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               ))}
               <div className="border-t border-[#222] my-4" />
               <Link href="/pricing" className="block py-3 text-lg text-white font-medium">Pricing</Link>
-              <Link href="/security" className="block py-3 text-lg text-white font-medium">Security</Link>
               <div className="border-t border-[#222] my-4" />
               {SOLUTION_LINKS.map(l => (
                 <Link key={l.href} href={l.href} className="block py-2 text-sm text-[#888]">{l.title}</Link>
@@ -222,7 +249,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               <div className="border-t border-[#222] my-4" />
               <div className="flex gap-3 pt-2">
                 <Link href="/login" className="text-sm text-[#888]">Log in</Link>
-                <Link href="/register" className="text-sm font-medium px-5 py-2 rounded-lg bg-[#6B7F5E] text-white">Start free</Link>
+                <Link href="/register" className="text-sm font-medium px-5 py-2 rounded-lg bg-[#fafaf9] text-[#0f0e0d]">Start free</Link>
               </div>
             </div>
           </div>
@@ -233,7 +260,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
       <main>{children}</main>
 
       {/* Footer */}
-      <footer className="bg-[#0C0C0C] border-t border-[#1a1a1a]">
+      <footer className="bg-[#0f0e0d] border-t border-[#1a1a1a]">
         <div className="max-w-[1200px] mx-auto px-6 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
             {/* Brand col */}
@@ -259,7 +286,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
           </div>
 
           <div className="mt-14 pt-6 border-t border-[#1a1a1a] flex flex-col sm:flex-row items-center justify-between gap-2">
-            <span className="text-xs text-[#444]">&copy; 2026 Astruct Pty Ltd</span>
+            <span className="text-xs text-[#444]">&copy; Astruct</span>
             <a href="mailto:hello@astruct.io" className="text-xs text-[#444] hover:text-[#888] transition-colors">hello@astruct.io</a>
           </div>
         </div>

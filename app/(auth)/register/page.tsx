@@ -4,10 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { ArrowRight } from 'lucide-react'
 
 export default function RegisterPage() {
   const [name, setName] = useState('')
@@ -26,9 +22,7 @@ export default function RegisterPage() {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: { name },
-      },
+      options: { data: { name } },
     })
 
     if (error) {
@@ -37,150 +31,86 @@ export default function RegisterPage() {
       return
     }
 
-    router.push('/')
+    router.push('/setup')
     router.refresh()
   }
 
   return (
-    <div className="min-h-screen flex bg-sidebar">
-      {/* Left Panel - Brand */}
-      <div className="hidden lg:flex w-1/2 relative overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1761287347585-9b4f871820fb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA3MDR8MHwxfHNlYXJjaHwzfHxhYnN0cmFjdCUyMGNvbmNyZXRlJTIwbWluaW1hbGlzdCUyMGFyY2hpdGVjdHVyZSUyMGRldGFpbHxlbnwwfHx8fDE3NzExMzE3MDh8MA&ixlib=rb-4.1.0&q=85')`,
-            filter: 'grayscale(100%)',
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a1a]/95 via-[#1a1a1a]/80 to-transparent" />
-        <div className="relative z-10 p-12 flex flex-col justify-between h-full">
-          <div>
-            <h1 className="text-3xl font-semibold tracking-tight text-white">
-              Astruct
-            </h1>
-            <p className="mt-1 text-sm text-white/40">
-              Contract Intelligence
-            </p>
-          </div>
+    <div className="min-h-screen flex" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      {/* Left Panel */}
+      <div className="hidden lg:flex w-1/2 bg-[#0f0e0d] p-12 flex-col justify-between">
+        <div>
+          <Link href="/landing" className="text-2xl text-white font-light" style={{ letterSpacing: '-0.02em' }}>Astruct</Link>
+          <p className="text-xs text-[#706d66] mt-1">Contract Intelligence</p>
+        </div>
 
-          <div className="max-w-md">
-            <h2 className="text-4xl font-light leading-tight text-white">
-              Detect risk early.
-              <br />
-              <span className="accent-gradient-text font-medium">
-                Comply automatically.
-              </span>
-            </h2>
-            <p className="mt-6 leading-relaxed text-white/60">
-              The operating system for construction contract administration.
-              Convert information into required contractual actions.
-            </p>
-          </div>
+        <div className="max-w-md">
+          <h2 className="text-4xl text-white font-normal leading-[1.15]" style={{ fontFamily: "var(--font-serif-display), 'DM Serif Display', Georgia, serif", letterSpacing: '-0.02em' }}>
+            Start managing your contracts with AI
+          </h2>
+          <p className="mt-6 text-[#a8a29e] leading-relaxed">
+            Upload your construction contracts. Ask questions. Draft notices. Track deadlines.
+          </p>
 
-          <div className="text-xs text-white/30">
-            Trusted by contractors worldwide
+          <div className="mt-8 space-y-3">
+            {[
+              'Ask your contract anything - cited answers in seconds',
+              'Draft compliant notices, EOT claims, and payment claims',
+              'Every time-bar tracked automatically',
+            ].map((item, i) => (
+              <div key={i} className="flex items-start gap-3">
+                <svg className="w-4 h-4 mt-0.5 text-[#6B7F5E] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                <span className="text-sm text-[#cccac6]">{item}</span>
+              </div>
+            ))}
           </div>
         </div>
+
+        <p className="text-xs text-[#524f49]">Built for AS4000 &middot; AS4902 &middot; AS2124 &middot; AS4000-2025</p>
       </div>
 
-      {/* Right Panel - Register Form */}
-      <div className="flex-1 flex items-center justify-center p-8 relative bg-main-panel rounded-tl-2xl">
+      {/* Right Panel - Form */}
+      <div className="flex-1 flex items-center justify-center p-8 bg-[#fafaf9]">
         <div className="w-full max-w-sm">
-          {/* Mobile Logo */}
-          <div className="lg:hidden mb-12 text-center">
-            <h1 className="text-2xl font-semibold text-main-fg">Astruct</h1>
-            <p className="text-sm mt-1 text-main-fg/40">
-              Contract Intelligence
-            </p>
+          <div className="lg:hidden mb-10 text-center">
+            <h1 className="text-2xl font-light text-[#0f0e0d]">Astruct</h1>
           </div>
 
           <div className="space-y-6">
             <div>
-              <h2 className="text-xl font-medium text-main-fg">
-                Create your account
-              </h2>
-              <p className="text-sm mt-1 text-main-fg/50">
-                Start managing contracts intelligently
-              </p>
+              <h2 className="text-xl font-semibold text-[#0f0e0d]">Create your account</h2>
+              <p className="text-sm mt-1 text-[#706d66]">Free for your first project</p>
             </div>
 
             {error && (
-              <div className="p-3 rounded-md bg-red-500/10 border border-red-500/20 text-red-600 text-sm">
-                {error}
-              </div>
+              <div className="p-3 rounded-md bg-red-50 border border-red-200 text-red-600 text-sm">{error}</div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-main-fg/60">
-                  Name
-                </Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="h-11"
-                  required
-                />
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs text-[#8f8b85] mb-1.5">Name</label>
+                <input required value={name} onChange={e => setName(e.target.value)} placeholder="Your name"
+                  className="w-full h-11 px-3.5 rounded-md border border-[#e5e5e3] bg-white text-sm text-[#0f0e0d] placeholder:text-[#adaba5] focus:outline-none focus:border-[#0f0e0d] transition-colors" />
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-main-fg/60">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="h-11"
-                  required
-                />
+              <div>
+                <label className="block text-xs text-[#8f8b85] mb-1.5">Email</label>
+                <input required type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@company.com"
+                  className="w-full h-11 px-3.5 rounded-md border border-[#e5e5e3] bg-white text-sm text-[#0f0e0d] placeholder:text-[#adaba5] focus:outline-none focus:border-[#0f0e0d] transition-colors" />
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-main-fg/60">
-                  Password
-                </Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="h-11"
-                  required
-                />
+              <div>
+                <label className="block text-xs text-[#8f8b85] mb-1.5">Password</label>
+                <input required type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Min 6 characters"
+                  className="w-full h-11 px-3.5 rounded-md border border-[#e5e5e3] bg-white text-sm text-[#0f0e0d] placeholder:text-[#adaba5] focus:outline-none focus:border-[#0f0e0d] transition-colors" />
               </div>
-
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full h-11 font-medium accent-gradient text-white btn-press"
-              >
-                {loading ? (
-                  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <>
-                    Create account
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </>
-                )}
-              </Button>
+              <button type="submit" disabled={loading}
+                className="w-full h-11 rounded-md bg-[#0f0e0d] text-[#fafaf9] text-sm font-medium hover:bg-[#33312c] transition-colors disabled:opacity-60 flex items-center justify-center">
+                {loading ? <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : 'Create account'}
+              </button>
             </form>
 
-            <div className="text-center">
-              <Link
-                href="/login"
-                className="text-sm text-main-fg/50 hover:text-main-fg transition-colors"
-              >
-                Already have an account?{' '}
-                <span className="text-main-fg font-medium">Sign in</span>
-              </Link>
-            </div>
+            <p className="text-center text-sm text-[#8f8b85]">
+              Already have an account? <Link href="/login" className="text-[#0f0e0d] font-medium hover:underline">Sign in</Link>
+            </p>
           </div>
         </div>
       </div>

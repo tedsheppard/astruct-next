@@ -12,6 +12,7 @@ import {
   ArrowRight,
   ChevronRight,
 } from 'lucide-react'
+import { OnboardingWalkthrough } from '@/components/onboarding-walkthrough'
 
 interface Contract {
   id: string
@@ -62,6 +63,8 @@ export default function ContractsPage() {
   }
 
   return (
+    <>
+    <OnboardingWalkthrough />
     <div className="p-6 overflow-y-auto h-[calc(100vh-3.5rem)]">
       <div className="max-w-5xl mx-auto space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
@@ -158,5 +161,6 @@ export default function ContractsPage() {
       )}
       </div>
     </div>
+    </>
   )
 }
