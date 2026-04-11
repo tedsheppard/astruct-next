@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     // Build document sections
-    const children: Paragraph[] = []
+    const children: (Paragraph | Table)[] = []
 
     // Letterhead
     if (profile?.company_name) {
