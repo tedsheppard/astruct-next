@@ -15,7 +15,8 @@ async function extractPdfText(buffer: Buffer): Promise<string> {
     // Try unpdf first (works on serverless/Vercel)
     const { extractText } = await import('unpdf')
     const result = await extractText(new Uint8Array(buffer))
-    if (result.text && result.text.length > 10) return result.text
+    const text = Array.isArray(result.text) ? result.text.join('\n') : result.text
+    if (text && text.length > 10) return text
   } catch (e) {
     console.log('[Process] unpdf failed, trying pdf-parse:', e instanceof Error ? e.message : e)
   }
