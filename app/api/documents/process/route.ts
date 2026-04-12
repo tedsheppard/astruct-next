@@ -11,13 +11,28 @@ export const maxDuration = 60
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 async function extractPdfText(buffer: Buffer): Promise<string> {
-  const { PDFParse } = await import('pdf-parse')
-  const parser = new PDFParse({ data: new Uint8Array(buffer), verbosity: 0 })
   try {
-    const result = await parser.getText()
-    return result.text
-  } finally {
-    await parser.destroy().catch(() => {})
+    // Try unpdf first (works on serverless/Vercel)
+    const { extractText } = await import('unpdf')
+    const result = await extractText(new Uint8Array(buffer))
+    if (result.text && result.text.length > 10) return result.text
+  } catch (e) {
+    console.log('[Process] unpdf failed, trying pdf-parse:', e instanceof Error ? e.message : e)
+  }
+
+  try {
+    // Fallback to pdf-parse v2
+    const { PDFParse } = await import('pdf-parse')
+    const parser = new PDFParse({ data: new Uint8Array(buffer), verbosity: 0 })
+    try {
+      const result = await parser.getText()
+      return result.text
+    } finally {
+      await parser.destroy().catch(() => {})
+    }
+  } catch (e) {
+    console.error('[Process] pdf-parse also failed:', e instanceof Error ? e.message : e)
+    return ''
   }
 }
 
