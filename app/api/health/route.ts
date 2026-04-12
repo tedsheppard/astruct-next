@@ -64,5 +64,32 @@ export async function GET() {
     checks.SUPABASE_TEST = `ERROR: ${e instanceof Error ? e.message : 'unknown'}`
   }
 
+  // Test PDF extraction
+  try {
+    const { createClient: createSB } = await import('@supabase/supabase-js')
+    const sb = createSB(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+    const { data: files } = await sb.storage.from('documents').list('e4cbf605-51d2-4d8a-bbf8-8434eb856132', { limit: 1 })
+    if (files && files.length > 0) {
+      const path = 'e4cbf605-51d2-4d8a-bbf8-8434eb856132/' + files[0].name
+      const { data } = await sb.storage.from('documents').download(path)
+      if (data) {
+        const buffer = Buffer.from(await data.arrayBuffer())
+        checks.PDF_FILE = `${files[0].name} (${buffer.length} bytes)`
+        try {
+          const { extractText } = await import('unpdf')
+          const result = await extractText(new Uint8Array(buffer))
+          const text = Array.isArray(result.text) ? result.text.join('\n') : result.text
+          checks.PDF_EXTRACT = `OK: ${text.length} chars`
+        } catch (e) {
+          checks.PDF_EXTRACT = `FAIL: ${e instanceof Error ? e.message : e}`
+        }
+      }
+    } else {
+      checks.PDF_EXTRACT = 'NO_FILES'
+    }
+  } catch (e) {
+    checks.PDF_EXTRACT = `ERROR: ${e instanceof Error ? e.message : e}`
+  }
+
   return Response.json({ status: 'ok', timestamp: new Date().toISOString(), checks })
 }
