@@ -95,6 +95,30 @@ export async function POST(request: NextRequest) {
           role: 'system',
           content: `You are an expert Australian construction contract administrator drafting a reusable notice template.
 
+ABSOLUTE RULE — PLACEHOLDER FORMAT:
+Every variable data point in the template body MUST be emitted as a {{TOKEN}} with a corresponding entry in the placeholders metadata object.
+
+FORBIDDEN — NEVER DO THESE:
+- Square-bracket placeholders like [Like This] or [Fill in here] — NEVER emit these
+- Wrapping a smart token in square brackets like [Date: {{CURRENT_DATE}}] — just emit {{CURRENT_DATE}}
+- Parenthetical instructions like (enter date here) — use a smart token instead
+- Labels before tokens like "Date:" before {{DATE}} — just emit the token
+
+EXAMPLES:
+❌ WRONG: [Date: {{CURRENT_DATE}}]
+✅ RIGHT: {{CURRENT_DATE}}
+
+❌ WRONG: [Provide detailed description of the delay]
+✅ RIGHT: {{DELAY_DESCRIPTION}}
+
+❌ WRONG: [Recipient Name: {{RECIPIENT_NAME}}]
+✅ RIGHT: {{RECIPIENT_NAME}}
+
+❌ WRONG: Dear [Principal's Contact Name],
+✅ RIGHT: Dear {{RECIPIENT_CONTACT_NAME}},
+
+If you catch yourself about to write a square bracket for a placeholder, stop. Emit a {{TOKEN}} instead.
+
 STEP 1 — EXTRACT ACTUAL DETAILS FROM THE CONTRACT:
 Before drafting, identify from the contract text:
 (a) The full legal name of each party (use these, NOT generic "Principal"/"Contractor")
@@ -169,6 +193,30 @@ Write the template in markdown format.`
 
     // Extract template body (everything before PLACEHOLDERS block)
     let body = fullText.replace(/---PLACEHOLDERS---[\s\S]*---END_PLACEHOLDERS---/, '').trim()
+
+    // Programmatic cleanup: remove any remaining bracketed placeholders
+    // Pattern: [Text Like This] but NOT markdown links [text](url)
+    const bracketPattern = /\[([A-Z][^\]]*?)\](?!\()/g
+    const bracketMatches = body.match(bracketPattern)
+    if (bracketMatches && bracketMatches.length > 0) {
+      console.log(`[NoticeTemplates] Found ${bracketMatches.length} bracketed placeholders, cleaning up:`, bracketMatches)
+      // Convert bracketed placeholders to smart tokens
+      body = body.replace(bracketPattern, (match, content) => {
+        // If it already contains a {{TOKEN}}, extract just the token
+        const tokenMatch = content.match(/\{\{([A-Z_]+)\}\}/)
+        if (tokenMatch) return `{{${tokenMatch[1]}}}`
+        // Otherwise, create a token from the content
+        const token = content.toUpperCase().replace(/[^A-Z0-9\s]/g, '').replace(/\s+/g, '_').slice(0, 40)
+        if (token && !(placeholders as Record<string, unknown>)[token]) {
+          (placeholders as Record<string, { label: string; hint: string; type: string }>)[token] = {
+            label: content,
+            hint: `Enter: ${content}`,
+            type: 'text',
+          }
+        }
+        return `{{${token}}}`
+      })
+    }
 
     // Check for existing template (for regeneration)
     const { data: existing } = await admin

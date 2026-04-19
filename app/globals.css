@@ -422,6 +422,20 @@
   font-size: 13.3px;
   line-height: 1.6;
   color: #1a1a1a;
+  max-width: 100%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+.notice-template-editor * {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+}
+.notice-template-editor pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
 }
 .notice-template-editor h1 {
   font-size: 16px;
