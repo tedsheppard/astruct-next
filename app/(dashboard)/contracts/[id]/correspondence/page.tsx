@@ -143,11 +143,12 @@ export default function CorrespondencePage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] overflow-hidden">
+    <div className={`${selectedItem ? 'flex' : ''} h-[calc(100vh-3.5rem)] overflow-hidden`}>
       {/* Main area */}
-      <div className={`flex-1 flex flex-col min-w-0 ${selectedItem ? 'border-r border-border' : ''}`}>
+      <div className={`flex-1 flex flex-col min-w-0 ${selectedItem ? 'border-r border-border' : 'overflow-y-auto'}`}>
+        <div className={`${selectedItem ? '' : 'max-w-4xl mx-auto w-full'} p-6 pb-0`}>
         {/* Tabs */}
-        <div className="flex items-center gap-4 px-6 pt-4 pb-0">
+        <div className="flex items-center gap-4 pb-0">
           <button
             onClick={() => setActiveTab('manual')}
             className={`text-sm font-medium pb-2 border-b-2 transition-colors ${activeTab === 'manual' ? 'text-foreground border-foreground' : 'text-muted-foreground border-transparent hover:text-foreground'}`}
@@ -164,9 +165,11 @@ export default function CorrespondencePage() {
         </div>
 
         <div className="border-b border-border" />
+        </div>
 
         {activeTab === 'manual' ? (
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className={`flex-1 overflow-y-auto p-6 ${selectedItem ? '' : ''}`}>
+            <div className={`${selectedItem ? '' : 'max-w-4xl mx-auto'}`}>
             {/* Upload zone */}
             <div
               onDragOver={e => { e.preventDefault(); setIsDragging(true) }}
@@ -261,9 +264,11 @@ export default function CorrespondencePage() {
               </div>
             )}
           </div>
+          </div>
         ) : (
           /* Integrations tab */
           <div className="flex-1 overflow-y-auto p-6">
+            <div className={`${selectedItem ? '' : 'max-w-4xl mx-auto'}`}>
             <div className="border border-border rounded-xl overflow-hidden">
               <div className="flex items-center px-5 py-2.5 bg-muted/50 border-b border-border text-xs font-medium text-muted-foreground">
                 <div className="flex-1">Platform</div>
@@ -313,6 +318,7 @@ export default function CorrespondencePage() {
               })}
             </div>
             <p className="text-xs text-muted-foreground mt-3">Connect your project management platform to automatically sync correspondence.</p>
+          </div>
           </div>
         )}
       </div>
