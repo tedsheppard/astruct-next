@@ -506,7 +506,7 @@ export default function HomePage() {
         <div className="max-w-[1200px] mx-auto">
           <FadeIn>
             <p className="text-[clamp(1.5rem,3vw,2.25rem)] leading-[1.35] max-w-[600px]">
-              <span className="text-[#0f0e0d] font-semibold">AI designed for developers, builders and subcontractors.</span>
+              <span className="text-[#0f0e0d] font-semibold">AI designed by construction lawyers for developers, builders and subcontractors.</span>
               <span className="text-[#adaba5]"> Manage the admin side of your projects more than 100x faster.</span>
             </p>
           </FadeIn>
@@ -597,7 +597,6 @@ export default function HomePage() {
       <section className="bg-[#fafaf9] py-32 px-7 sm:px-10">
         <div className="max-w-[1200px] mx-auto">
           <FadeIn>
-            <p className="text-sm text-[#706d66] mb-3">The Platform</p>
             <h2 className="text-[clamp(2rem,4vw,3rem)] text-[#0f0e0d] font-normal max-w-[600px] mb-20" style={{ fontFamily: "var(--font-serif-display), 'DM Serif Display', Georgia, serif", letterSpacing: '-0.02em' }}>
               One platform for your entire contract lifecycle
             </h2>
