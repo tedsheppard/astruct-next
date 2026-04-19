@@ -163,7 +163,18 @@ ${(noticeType.formal_requirements || []).map((r: string) => `- ${r}`).join('\n')
 RELEVANT CONTRACT TEXT:
 ${contractContext.slice(0, 15000)}
 
-${contract.template_rules ? `USER'S DRAFTING RULES (follow these strictly):\n${contract.template_rules}\n` : ''}
+${contract.template_rules ? `USER'S DRAFTING RULES — YOU MUST FOLLOW ALL OF THESE:
+${contract.template_rules}
+
+FORMATTING REQUIREMENTS:
+- Number ALL body paragraphs sequentially: 1. 2. 3. etc.
+- Sub-paragraphs use (a), (b), (c) etc.
+- Sub-sub-paragraphs use (i), (ii), (iii) etc.
+- Sub-paragraph lists end each item with a semicolon (;)
+- The penultimate sub-paragraph item ends with "; and" or "; or" or "; and/or"
+- The final sub-paragraph item ends with a full stop (.)
+- Do NOT use "we", "our", "us" — use the party's defined name (e.g. "Pensar Water Pty Ltd" or "the Subcontractor")
+` : ''}
 CRITICAL RULES:
 1. Use the ACTUAL party names from the contract (e.g. "${party1}" and "${party2}"), NOT "Principal"/"Contractor" — except as defined terms after introducing the actual names
 2. NEVER use [bracketed] placeholders like [Contract Date] or [Principal's Name]. ONLY use {{SMART_TOKENS}}

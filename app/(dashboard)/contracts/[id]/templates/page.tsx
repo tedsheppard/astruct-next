@@ -72,8 +72,13 @@ export default function ContractTemplatesPage() {
   useEffect(() => {
     const supabase = createClient()
     supabase.from('contracts').select('template_rules').eq('id', contractId).single().then(({ data }) => {
-      if (data?.template_rules) setRules(data.template_rules)
-      else setRules(DEFAULT_RULES)
+      if (data?.template_rules) {
+        setRules(data.template_rules)
+      } else {
+        // Auto-save defaults on first visit
+        setRules(DEFAULT_RULES)
+        supabase.from('contracts').update({ template_rules: DEFAULT_RULES }).eq('id', contractId)
+      }
     })
   }, [contractId])
 
