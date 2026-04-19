@@ -93,16 +93,9 @@ export async function POST(request: NextRequest) {
     const otherRole = contract.user_is_party === 'party1' ? (contract.party2_role || 'Contractor') : (contract.party1_role || 'Principal')
     const otherAddress = contract.user_is_party === 'party1' ? contract.party2_address : contract.party1_address
 
-    // Build sender block from letterhead
-    const hasLetterhead = !!(profile?.company_name)
-    const senderBlock = hasLetterhead
-      ? [
-          profile.company_name,
-          profile.company_abn ? `ABN: ${profile.company_abn}` : null,
-          profile.company_address,
-          profile.company_phone ? `Phone: ${profile.company_phone}` : null,
-        ].filter(Boolean).join('\n')
-      : '{{SENDER_COMPANY_NAME}}\n{{SENDER_ADDRESS}}'
+    // NOTE: Do NOT use profile.company_name as the sender — that's the user's
+    // account company, not necessarily the contract party. The AI must extract
+    // the actual sender party name from the contract text.
 
     // Generate template
     const response = await openai.chat.completions.create({
@@ -154,9 +147,12 @@ CONTRACT METADATA (may be incomplete — extract real details from the contract 
 - Contract form: ${contract.contract_form || 'Standard form'}
 - Project name: ${contract.name}
 
-SENDER LETTERHEAD (hard-code these into the sender block):
-${senderBlock}
-Signatory: ${profile?.signatory_name || '{{SIGNATORY_NAME}}'}${profile?.signatory_title ? ', ' + profile.signatory_title : ''}
+IMPORTANT: Extract BOTH the sender and recipient party names from the contract text below.
+- The sender is the party giving the notice (read the notice type to determine which party gives it)
+- The recipient is the other party
+- Use the ACTUAL legal entity names from the contract (e.g. "Pensar Water Pty Ltd"), NOT generic role names
+- Include ABN, address, and contact person if stated in the contract
+- For the signatory: ${profile?.signatory_name ? `use "${profile.signatory_name}${profile?.signatory_title ? ', ' + profile.signatory_title : ''}"` : 'use {{SIGNATORY_NAME}} placeholder'}
 
 NOTICE TYPE: ${noticeType.name}
 DESCRIPTION: ${noticeType.description}
