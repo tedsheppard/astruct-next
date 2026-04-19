@@ -77,12 +77,14 @@ export async function buildContext(
       // Find the most relevant template by matching query terms to template names
       const queryLower = query.rewrittenQuery.toLowerCase()
       const matched = templates.find(t => {
-        const name = ((t.notice_types as { name: string } | null)?.name || '').toLowerCase()
+        const nt = t.notice_types as unknown as { name: string } | { name: string }[] | null
+        const name = (Array.isArray(nt) ? nt[0]?.name : nt?.name || '').toLowerCase()
         return queryLower.includes(name) || name.split(' ').some(word => word.length > 3 && queryLower.includes(word))
       })
 
       if (matched) {
-        const name = (matched.notice_types as { name: string } | null)?.name || 'Notice'
+        const mnt = matched.notice_types as unknown as { name: string } | { name: string }[] | null
+        const name = (Array.isArray(mnt) ? mnt[0]?.name : mnt?.name) || 'Notice'
         templateContext = `\nEXISTING TEMPLATE FOR "${name.toUpperCase()}" (status: ${matched.status}):\n\n${matched.body.slice(0, 8000)}\n\nWhen drafting this type of notice, use the above template as the structural and substantive basis. Deviate only if the user's specific circumstances require additional content not covered by the template, and flag any deviation.\n`
       }
     }
