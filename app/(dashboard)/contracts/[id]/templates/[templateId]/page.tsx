@@ -138,40 +138,32 @@ export default function TemplateEditorPage() {
     setChatLoading(true)
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch('/api/notice-templates/refine', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: `Context: I'm editing a "${template?.notice_types?.name}" template. Current template body:\n\n${body.slice(0, 3000)}\n\nUser request: ${userMsg}`,
+          template_body: body,
+          notice_type_name: template?.notice_types?.name,
+          user_request: userMsg,
           contract_id: contractId,
-          model: 'gpt-4o-mini',
         }),
       })
 
-      const reader = res.body?.getReader()
-      if (!reader) throw new Error('No reader')
-      const decoder = new TextDecoder()
-      let buffer = ''
-      let response = ''
+      if (!res.ok) throw new Error('Request failed')
 
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        buffer += decoder.decode(value, { stream: true })
-        const lines = buffer.split('\n')
-        buffer = lines.pop() || ''
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue
-          try {
-            const data = JSON.parse(line.slice(6))
-            if (data.content) response += data.content
-          } catch {}
-        }
+      const data = await res.json()
+
+      // Show the message in chat
+      setChatMessages(prev => [...prev, { role: 'assistant', content: data.message || 'Done.' }])
+
+      // Apply the edit to the template if one was returned
+      if (data.updated_body) {
+        setBody(data.updated_body)
+        setSaved(false)
+        toast.success('Template updated')
       }
-
-      setChatMessages(prev => [...prev, { role: 'assistant', content: response }])
     } catch {
-      setChatMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error.' }])
+      setChatMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }])
     } finally {
       setChatLoading(false)
     }
@@ -238,20 +230,43 @@ export default function TemplateEditorPage() {
           </div>
         )}
 
-        {/* Editor */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-3xl mx-auto">
-            <textarea
-              value={body}
-              onChange={e => { setBody(e.target.value); setSaved(false) }}
-              onBlur={() => { if (!saved) handleSave() }}
-              className="w-full min-h-[600px] bg-transparent text-sm text-foreground font-mono leading-relaxed resize-none outline-none"
-              placeholder="Template body..."
-            />
+        {/* Editor — A4 document view */}
+        <div className="flex-1 overflow-y-auto" style={{ background: '#e8e5e0' }}>
+          <div className="py-8 px-6">
+            <div
+              className="mx-auto bg-white"
+              style={{
+                maxWidth: '800px',
+                minHeight: '1130px',
+                padding: '96px 96px 96px 96px',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.12)',
+                fontFamily: 'Arial, Helvetica, sans-serif',
+                fontSize: '13.3px',
+                lineHeight: '1.6',
+                color: '#1a1a1a',
+              }}
+            >
+              <div className="notice-template-editor">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
+              </div>
+            </div>
+          </div>
+          {/* Raw editor below for editing */}
+          <div className="py-4 px-6">
+            <details className="mx-auto" style={{ maxWidth: '800px' }}>
+              <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors py-2">
+                Edit source
+              </summary>
+              <textarea
+                value={body}
+                onChange={e => { setBody(e.target.value); setSaved(false) }}
+                onBlur={() => { if (!saved) handleSave() }}
+                className="w-full min-h-[400px] bg-white border border-border rounded-lg p-4 text-sm text-foreground font-mono leading-relaxed resize-y outline-none focus:ring-1 focus:ring-ring"
+                placeholder="Template body..."
+              />
+            </details>
           </div>
         </div>
-
-        {/* Preview toggle could go here */}
       </div>
 
       {/* Right pane — AI chat (25%) */}

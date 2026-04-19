@@ -58,13 +58,28 @@ export async function POST(request: NextRequest) {
     // Load user profile for letterhead defaults
     const { data: profile } = await admin
       .from('profiles')
-      .select('company_name, signatory_name, signatory_title')
+      .select('company_name, company_abn, company_address, company_phone, signatory_name, signatory_title')
       .eq('id', user.id)
       .single()
 
-    const party1 = contract.party1_name || 'Principal'
-    const party2 = contract.party2_name || 'Contractor'
+    const party1 = contract.party1_name || ''
+    const party2 = contract.party2_name || ''
     const userParty = contract.user_is_party === 'party1' ? party1 : party2
+    const otherParty = contract.user_is_party === 'party1' ? party2 : party1
+    const userRole = contract.user_is_party === 'party1' ? (contract.party1_role || 'Principal') : (contract.party2_role || 'Contractor')
+    const otherRole = contract.user_is_party === 'party1' ? (contract.party2_role || 'Contractor') : (contract.party1_role || 'Principal')
+    const otherAddress = contract.user_is_party === 'party1' ? contract.party2_address : contract.party1_address
+
+    // Build sender block from letterhead
+    const hasLetterhead = !!(profile?.company_name)
+    const senderBlock = hasLetterhead
+      ? [
+          profile.company_name,
+          profile.company_abn ? `ABN: ${profile.company_abn}` : null,
+          profile.company_address,
+          profile.company_phone ? `Phone: ${profile.company_phone}` : null,
+        ].filter(Boolean).join('\n')
+      : '{{SENDER_COMPANY_NAME}}\n{{SENDER_ADDRESS}}'
 
     // Generate template
     const response = await openai.chat.completions.create({
@@ -74,16 +89,32 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: 'system',
-          content: `You are an expert Australian construction contract administrator drafting a reusable notice template. Create a complete, formal notice template for "${noticeType.name}" under ${contract.contract_form || 'a standard form'} contract.
+          content: `You are an expert Australian construction contract administrator drafting a reusable notice template.
 
-CONTRACT CONTEXT:
-- Contract: ${contract.name}
-- ${contract.party1_role || 'Principal'}: ${party1}${contract.party1_address ? ', ' + contract.party1_address : ''}
-- ${contract.party2_role || 'Contractor'}: ${party2}${contract.party2_address ? ', ' + contract.party2_address : ''}
-- ${contract.administrator_role || 'Superintendent'}: ${contract.administrator_name || 'Not specified'}
-- User is: ${userParty}
-- Company: ${profile?.company_name || 'Not set'}
-- Signatory: ${profile?.signatory_name || 'Not set'}, ${profile?.signatory_title || ''}
+STEP 1 — EXTRACT ACTUAL DETAILS FROM THE CONTRACT:
+Before drafting, identify from the contract text:
+(a) The full legal name of each party (use these, NOT generic "Principal"/"Contractor")
+(b) Each party's registered address if stated
+(c) The contract date
+(d) Any named signatory or contact person
+(e) The contract reference number
+Use these actual values in the draft. If any is not clearly stated in the contract, use a smart placeholder token.
+
+STEP 2 — DRAFT THE TEMPLATE:
+
+CONTRACT PARTIES:
+- ${userRole}: ${party1 || '{{PARTY_1_NAME}}'}${contract.party1_address ? ', ' + contract.party1_address : ''}
+- ${otherRole}: ${party2 || '{{PARTY_2_NAME}}'}${contract.party2_address ? ', ' + contract.party2_address : ''}
+- ${contract.administrator_role || 'Superintendent'}: ${contract.administrator_name || '{{SUPERINTENDENT_NAME}}'}
+- Contract form: ${contract.contract_form || 'Standard form'}
+- Contract name: ${contract.name}
+
+SENDER (user's letterhead — hard-code these, do NOT use placeholders):
+${senderBlock}
+Signatory: ${profile?.signatory_name || '{{SIGNATORY_NAME}}'}${profile?.signatory_title ? ', ' + profile.signatory_title : ''}
+
+RECIPIENT: ${otherParty || '{{RECIPIENT_NAME}}'}
+${otherAddress || '{{RECIPIENT_ADDRESS}}'}
 
 NOTICE TYPE: ${noticeType.name}
 DESCRIPTION: ${noticeType.description}
@@ -94,19 +125,21 @@ ${(noticeType.formal_requirements || []).map((r: string) => `- ${r}`).join('\n')
 RELEVANT CONTRACT TEXT:
 ${contractContext.slice(0, 15000)}
 
-TEMPLATE REQUIREMENTS:
-1. Include every formal requirement mandated by the relevant clauses
-2. Use SMART PLACEHOLDERS — not generic [FILL IN] blanks. Each placeholder must be a distinct token like {{DATE_OF_DELAY_EVENT}}, {{NUMBER_OF_DAYS_CLAIMED}}, {{DESCRIPTION_OF_EVENT}}
-3. Use real party names from the contract (${party1}, ${party2})
-4. Include: date, addressee block, reference line, subject, factual recitals, operative notice wording, specific clause references, signatory block
-5. Draft in plain English consistent with Australian construction administration practice
-6. Start with: DRAFT — REVIEW BEFORE SENDING
+CRITICAL RULES:
+1. Use the ACTUAL party names from the contract (e.g. "${party1}" and "${party2}"), NOT "Principal"/"Contractor" — except as defined terms after introducing the actual names
+2. NEVER use [bracketed] placeholders like [Contract Date] or [Principal's Name]. ONLY use {{SMART_TOKENS}}
+3. Every {{TOKEN}} MUST have a matching entry in the placeholders metadata
+4. For data available in the contract (party names, addresses, contract date, clause numbers) → hard-code the actual value
+5. For data from the user's letterhead → hard-code the actual value (already provided above)
+6. For data unknown until the notice is actually sent → use {{SMART_TOKEN}} with metadata
+7. Include: date, sender block, addressee block, reference line, subject, factual recitals, operative notice wording with clause citations, signatory block
+8. Draft in plain English consistent with Australian construction administration practice
+9. Start with: DRAFT — REVIEW BEFORE SENDING
 
-After the template, provide a JSON block with placeholder metadata:
+After the template, provide placeholder metadata:
 ---PLACEHOLDERS---
 {
-  "DATE_OF_DELAY_EVENT": { "label": "Date the delay event occurred", "hint": "The specific date the event began", "type": "date" },
-  ...
+  "TOKEN_NAME": { "label": "Human-readable label", "hint": "What to put here", "type": "date|number|text" }
 }
 ---END_PLACEHOLDERS---
 
