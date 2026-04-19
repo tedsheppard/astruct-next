@@ -238,7 +238,7 @@ export default function TemplateEditorPage() {
               style={{
                 maxWidth: '800px',
                 minHeight: '1130px',
-                padding: '72px',
+                padding: '96px',
                 boxSizing: 'border-box',
                 boxShadow: '0 2px 12px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.12)',
                 fontFamily: 'Arial, Helvetica, sans-serif',

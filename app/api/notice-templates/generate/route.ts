@@ -45,15 +45,34 @@ export async function POST(request: NextRequest) {
 
     if (!contract) return Response.json({ error: 'Contract not found' }, { status: 404 })
 
-    // Load relevant contract text via chunks
-    const { data: chunks } = await admin
+    // Load contract front matter (first chunks — where party names, addresses, dates are)
+    const { data: frontChunks } = await admin
       .from('document_chunks')
-      .select('content')
+      .select('content, chunk_index')
       .eq('contract_id', contract_id)
-      .or(noticeType.clause_references.map((ref: string) => `content.ilike.%clause ${ref}%`).join(','))
-      .limit(15)
+      .lte('chunk_index', 3)
+      .order('chunk_index')
+      .limit(4)
 
-    const contractContext = (chunks || []).map((c: { content: string }) => c.content).join('\n\n---\n\n')
+    // Load clause-specific chunks
+    const clauseFilter = noticeType.clause_references.map((ref: string) => `content.ilike.%clause ${ref}%`).join(',')
+    const { data: clauseChunks } = await admin
+      .from('document_chunks')
+      .select('content, chunk_index')
+      .eq('contract_id', contract_id)
+      .or(clauseFilter || 'id.is.null')
+      .limit(10)
+
+    // Merge and deduplicate
+    const seenIndexes = new Set<number>()
+    const allChunks: string[] = []
+    for (const c of [...(frontChunks || []), ...(clauseChunks || [])]) {
+      if (!seenIndexes.has(c.chunk_index)) {
+        seenIndexes.add(c.chunk_index)
+        allChunks.push(c.content)
+      }
+    }
+    const contractContext = allChunks.join('\n\n---\n\n')
 
     // Load user profile for letterhead defaults
     const { data: profile } = await admin
@@ -119,30 +138,25 @@ EXAMPLES:
 
 If you catch yourself about to write a square bracket for a placeholder, stop. Emit a {{TOKEN}} instead.
 
-STEP 1 — EXTRACT ACTUAL DETAILS FROM THE CONTRACT:
-Before drafting, identify from the contract text:
-(a) The full legal name of each party (use these, NOT generic "Principal"/"Contractor")
-(b) Each party's registered address if stated
-(c) The contract date
-(d) Any named signatory or contact person
-(e) The contract reference number
-Use these actual values in the draft. If any is not clearly stated in the contract, use a smart placeholder token.
+STEP 1 — EXTRACT ACTUAL DETAILS FROM THE CONTRACT TEXT BELOW:
+You MUST read the "RELEVANT CONTRACT TEXT" section below and extract:
+(a) The full legal name of each party — look in the first page, recitals, or schedule. The contract WILL state the actual company names. DO NOT use "Principal" or "Contractor" as party names — find the real Pty Ltd / Ltd names.
+(b) Each party's registered address — usually near the party names
+(c) The date of the contract
+(d) The contract reference/number
+(e) The superintendent's or administrator's name
+
+Hard-code ALL of these into the template. Do NOT use {{PARTY_1_NAME}} or {{PARTY_2_NAME}} placeholders if the names are in the contract text. ONLY use a placeholder if the information genuinely cannot be found.
 
 STEP 2 — DRAFT THE TEMPLATE:
 
-CONTRACT PARTIES:
-- ${userRole}: ${party1 || '{{PARTY_1_NAME}}'}${contract.party1_address ? ', ' + contract.party1_address : ''}
-- ${otherRole}: ${party2 || '{{PARTY_2_NAME}}'}${contract.party2_address ? ', ' + contract.party2_address : ''}
-- ${contract.administrator_role || 'Superintendent'}: ${contract.administrator_name || '{{SUPERINTENDENT_NAME}}'}
+CONTRACT METADATA (may be incomplete — extract real details from the contract text instead):
 - Contract form: ${contract.contract_form || 'Standard form'}
-- Contract name: ${contract.name}
+- Project name: ${contract.name}
 
-SENDER (user's letterhead — hard-code these, do NOT use placeholders):
+SENDER LETTERHEAD (hard-code these into the sender block):
 ${senderBlock}
 Signatory: ${profile?.signatory_name || '{{SIGNATORY_NAME}}'}${profile?.signatory_title ? ', ' + profile.signatory_title : ''}
-
-RECIPIENT: ${otherParty || '{{RECIPIENT_NAME}}'}
-${otherAddress || '{{RECIPIENT_ADDRESS}}'}
 
 NOTICE TYPE: ${noticeType.name}
 DESCRIPTION: ${noticeType.description}
