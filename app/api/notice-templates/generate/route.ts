@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     // Load contract metadata
     const { data: contract } = await admin
       .from('contracts')
-      .select('name, contract_form, party1_name, party2_name, party1_role, party2_role, party1_address, party2_address, administrator_name, administrator_role, user_is_party, reference_number')
+      .select('name, contract_form, party1_name, party2_name, party1_role, party2_role, party1_address, party2_address, administrator_name, administrator_role, user_is_party, reference_number, template_rules')
       .eq('id', contract_id)
       .single()
 
@@ -163,6 +163,7 @@ ${(noticeType.formal_requirements || []).map((r: string) => `- ${r}`).join('\n')
 RELEVANT CONTRACT TEXT:
 ${contractContext.slice(0, 15000)}
 
+${contract.template_rules ? `USER'S DRAFTING RULES (follow these strictly):\n${contract.template_rules}\n` : ''}
 CRITICAL RULES:
 1. Use the ACTUAL party names from the contract (e.g. "${party1}" and "${party2}"), NOT "Principal"/"Contractor" — except as defined terms after introducing the actual names
 2. NEVER use [bracketed] placeholders like [Contract Date] or [Principal's Name]. ONLY use {{SMART_TOKENS}}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import {
   FileText,
@@ -35,11 +36,55 @@ export default function ContractTemplatesPage() {
   const router = useRouter()
   const contractId = params.id as string
 
+  const [activeTab, setActiveTab] = useState<'templates' | 'rules'>('templates')
   const [noticeTypes, setNoticeTypes] = useState<NoticeType[]>([])
   const [loading, setLoading] = useState(true)
   const [scanning, setScanning] = useState(false)
   const [generating, setGenerating] = useState<string | null>(null)
   const [scanned, setScanned] = useState(false)
+  const [rules, setRules] = useState('')
+  const [rulesSaving, setRulesSaving] = useState(false)
+  const [rulesSaved, setRulesSaved] = useState(true)
+
+  const DEFAULT_RULES = `# Template Drafting Rules
+
+1. Do not use "we" or "our". Refer to the sending party by its defined name under the contract (e.g. "The Subcontractor refers to..." or "The Principal hereby notifies...").
+
+2. Refer to the other party by its defined name under the contract (e.g. "the Head Contractor", "the Principal", "the Superintendent").
+
+3. Number all body paragraphs sequentially: 1. 2. 3. 4. etc.
+
+4. Use formal but plain English — avoid unnecessary legalese.
+
+5. Every notice must cite the specific clause(s) relied upon.
+
+6. Include the contract reference number in the subject line.
+
+7. Use "Yours sincerely" or "Yours faithfully" as the closing (not "Regards" or "Best").
+
+8. Date format: DD Month YYYY (e.g. 14 March 2026).
+
+9. Include a clear subject line that identifies the type of notice.
+
+10. Where the contract requires the notice to contain specific information, list each required item separately.`
+
+  // Load rules
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.from('contracts').select('template_rules').eq('id', contractId).single().then(({ data }) => {
+      if (data?.template_rules) setRules(data.template_rules)
+      else setRules(DEFAULT_RULES)
+    })
+  }, [contractId])
+
+  const handleSaveRules = async () => {
+    setRulesSaving(true)
+    const supabase = createClient()
+    const { error } = await supabase.from('contracts').update({ template_rules: rules }).eq('id', contractId)
+    if (error) toast.error('Failed to save rules')
+    else { toast.success('Rules saved'); setRulesSaved(true) }
+    setRulesSaving(false)
+  }
 
   const fetchNoticeTypes = useCallback(async () => {
     setLoading(true)
@@ -108,6 +153,47 @@ export default function ContractTemplatesPage() {
   return (
     <div className="p-6 overflow-y-auto h-[calc(100vh-3.5rem)]">
       <div className="max-w-4xl mx-auto">
+        {/* Tabs */}
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            onClick={() => setActiveTab('templates')}
+            className={`text-sm font-medium pb-2 border-b-2 transition-colors ${activeTab === 'templates' ? 'text-foreground border-foreground' : 'text-muted-foreground border-transparent hover:text-foreground'}`}
+          >
+            Templates
+          </button>
+          <button
+            onClick={() => setActiveTab('rules')}
+            className={`text-sm font-medium pb-2 border-b-2 transition-colors ${activeTab === 'rules' ? 'text-foreground border-foreground' : 'text-muted-foreground border-transparent hover:text-foreground'}`}
+          >
+            Rules
+          </button>
+        </div>
+
+        {activeTab === 'rules' ? (
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-semibold text-foreground">Template Drafting Rules</h2>
+                <p className="text-xs text-muted-foreground mt-1">These rules are applied when generating notice templates for this contract</p>
+              </div>
+              <button
+                onClick={handleSaveRules}
+                disabled={rulesSaving || rulesSaved}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-foreground text-background hover:bg-foreground/90 transition-colors disabled:opacity-30"
+              >
+                {rulesSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
+                {rulesSaved ? 'Saved' : 'Save Rules'}
+              </button>
+            </div>
+            <textarea
+              value={rules}
+              onChange={e => { setRules(e.target.value); setRulesSaved(false) }}
+              className="w-full min-h-[500px] bg-card border border-border rounded-lg p-5 text-sm text-foreground leading-relaxed resize-y outline-none focus:ring-1 focus:ring-ring"
+              placeholder="Enter drafting rules..."
+            />
+          </div>
+        ) : (
+        <div>
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-xl font-semibold text-foreground">Templates</h1>
@@ -233,6 +319,8 @@ export default function ContractTemplatesPage() {
               )
             })}
           </div>
+        )}
+        </div>
         )}
       </div>
     </div>

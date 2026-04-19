@@ -50,6 +50,8 @@ export default function TemplateEditorPage() {
   const [regenerating, setRegenerating] = useState(false)
   const [showConfirmRegen, setShowConfirmRegen] = useState(false)
 
+  const [editMode, setEditMode] = useState(false)
+
   // AI chat state
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [chatInput, setChatInput] = useState('')
@@ -202,6 +204,9 @@ export default function TemplateEditorPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <button onClick={() => setEditMode(!editMode)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs text-muted-foreground hover:text-foreground border border-border hover:border-foreground/20 transition-colors">
+              {editMode ? 'Preview' : 'Edit'}
+            </button>
             <button onClick={handleSave} disabled={saving || saved} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs text-muted-foreground hover:text-foreground border border-border hover:border-foreground/20 transition-colors disabled:opacity-30">
               {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
               Save
@@ -247,25 +252,21 @@ export default function TemplateEditorPage() {
                 color: '#1a1a1a',
               }}
             >
-              <div className="notice-template-editor">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
-              </div>
+              {editMode ? (
+                <textarea
+                  value={body}
+                  onChange={e => { setBody(e.target.value); setSaved(false) }}
+                  onBlur={() => { if (!saved) handleSave() }}
+                  className="w-full min-h-[900px] bg-transparent text-[13.3px] leading-[1.6] resize-none outline-none"
+                  style={{ fontFamily: 'Arial, Helvetica, sans-serif', color: '#1a1a1a' }}
+                  placeholder="Template body..."
+                />
+              ) : (
+                <div className="notice-template-editor">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
+                </div>
+              )}
             </div>
-          </div>
-          {/* Raw editor below for editing */}
-          <div className="py-4 px-6">
-            <details className="mx-auto" style={{ maxWidth: '800px' }}>
-              <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors py-2">
-                Edit source
-              </summary>
-              <textarea
-                value={body}
-                onChange={e => { setBody(e.target.value); setSaved(false) }}
-                onBlur={() => { if (!saved) handleSave() }}
-                className="w-full min-h-[400px] bg-white border border-border rounded-lg p-4 text-sm text-foreground font-mono leading-relaxed resize-y outline-none focus:ring-1 focus:ring-ring"
-                placeholder="Template body..."
-              />
-            </details>
           </div>
         </div>
       </div>
