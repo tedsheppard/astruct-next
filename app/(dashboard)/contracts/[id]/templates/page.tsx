@@ -12,6 +12,7 @@ import {
   ChevronRight,
   RefreshCw,
   AlertCircle,
+  Trash2,
 } from 'lucide-react'
 
 interface NoticeType {
@@ -90,6 +91,18 @@ export default function ContractTemplatesPage() {
       }
     } catch { toast.error('Generation failed') }
     finally { setGenerating(null) }
+  }
+
+  const handleDeleteTemplate = async (templateId: string) => {
+    try {
+      const res = await fetch(`/api/notice-templates/${templateId}`, { method: 'DELETE' })
+      if (res.ok) {
+        toast.success('Template deleted')
+        fetchNoticeTypes()
+      } else {
+        toast.error('Delete failed')
+      }
+    } catch { toast.error('Delete failed') }
   }
 
   return (
@@ -175,15 +188,24 @@ export default function ContractTemplatesPage() {
                         </div>
                       )}
                     </div>
-                    <div className="shrink-0">
+                    <div className="shrink-0 flex items-center gap-1.5">
                       {nt.template ? (
-                        <button
-                          onClick={() => router.push(`/contracts/${contractId}/templates/${nt.template!.id}`)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium text-foreground/70 hover:text-foreground border border-border hover:border-foreground/20 transition-colors"
-                        >
-                          <PenLine className="h-3 w-3" />
-                          Open
-                        </button>
+                        <>
+                          <button
+                            onClick={() => router.push(`/contracts/${contractId}/templates/${nt.template!.id}`)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium text-foreground/70 hover:text-foreground border border-border hover:border-foreground/20 transition-colors"
+                          >
+                            <PenLine className="h-3 w-3" />
+                            Open
+                          </button>
+                          <button
+                            onClick={() => handleDeleteTemplate(nt.template!.id)}
+                            className="p-1.5 rounded-md text-muted-foreground/30 hover:text-red-400 transition-colors"
+                            title="Delete template (keeps the notice type)"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </>
                       ) : (
                         <button
                           onClick={() => handleGenerate(nt.id)}
