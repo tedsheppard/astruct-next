@@ -62,8 +62,12 @@ export async function POST(request: NextRequest) {
       .eq('id', user.id)
       .single()
 
-    const party1 = contract.party1_name || ''
-    const party2 = contract.party2_name || ''
+    // Detect if party names are just generic role names (not actual legal names)
+    const genericNames = ['Principal', 'Contractor', 'Subcontractor', 'Superintendent', '']
+    const party1Raw = contract.party1_name || ''
+    const party2Raw = contract.party2_name || ''
+    const party1 = genericNames.includes(party1Raw) ? '' : party1Raw
+    const party2 = genericNames.includes(party2Raw) ? '' : party2Raw
     const userParty = contract.user_is_party === 'party1' ? party1 : party2
     const otherParty = contract.user_is_party === 'party1' ? party2 : party1
     const userRole = contract.user_is_party === 'party1' ? (contract.party1_role || 'Principal') : (contract.party2_role || 'Contractor')

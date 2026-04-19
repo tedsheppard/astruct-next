@@ -126,8 +126,19 @@ export default function ContractTemplatesPage() {
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-20">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          <div className="space-y-3 py-4">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="rounded-lg border border-border bg-card px-5 py-4 animate-pulse">
+                <div className="flex items-center gap-4">
+                  <div className="h-5 w-5 rounded bg-muted shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-48 rounded bg-muted" />
+                    <div className="h-3 w-72 rounded bg-muted" />
+                  </div>
+                  <div className="h-8 w-28 rounded bg-muted shrink-0" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : scanning ? (
           <div className="text-center py-20">

@@ -238,12 +238,15 @@ export default function TemplateEditorPage() {
               style={{
                 maxWidth: '800px',
                 minHeight: '1130px',
-                padding: '96px 96px 96px 96px',
+                padding: '72px 72px 72px 72px',
                 boxShadow: '0 2px 12px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.12)',
                 fontFamily: 'Arial, Helvetica, sans-serif',
                 fontSize: '13.3px',
                 lineHeight: '1.6',
                 color: '#1a1a1a',
+                wordWrap: 'break-word',
+                overflowWrap: 'break-word',
+                overflow: 'hidden',
               }}
             >
               <div className="notice-template-editor">
