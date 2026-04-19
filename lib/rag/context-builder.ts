@@ -63,6 +63,31 @@ export async function buildContext(
     `- ${o.description} (${o.clause_reference || 'no clause'}) — due ${formatDate(o.due_date)} [${o.status}]`
   ).join('\n')
 
+  // ─── Notice templates (for drafting tasks) ─────────────────────────────
+  let templateContext = ''
+  if (query.queryType === 'drafting') {
+    const { data: templates } = await admin
+      .from('notice_templates')
+      .select('body, status, notice_types(name)')
+      .eq('contract_id', config.contractId)
+      .in('status', ['finalised', 'user_edited', 'draft_generated'])
+      .order('status') // finalised first
+
+    if (templates && templates.length > 0) {
+      // Find the most relevant template by matching query terms to template names
+      const queryLower = query.rewrittenQuery.toLowerCase()
+      const matched = templates.find(t => {
+        const name = ((t.notice_types as { name: string } | null)?.name || '').toLowerCase()
+        return queryLower.includes(name) || name.split(' ').some(word => word.length > 3 && queryLower.includes(word))
+      })
+
+      if (matched) {
+        const name = (matched.notice_types as { name: string } | null)?.name || 'Notice'
+        templateContext = `\nEXISTING TEMPLATE FOR "${name.toUpperCase()}" (status: ${matched.status}):\n\n${matched.body.slice(0, 8000)}\n\nWhen drafting this type of notice, use the above template as the structural and substantive basis. Deviate only if the user's specific circumstances require additional content not covered by the template, and flag any deviation.\n`
+      }
+    }
+  }
+
   // ─── RAG context ──────────────────────────────────────────────────────
   let ragContext = ''
   if (chunks.length > 0) {
@@ -106,6 +131,7 @@ ${docMap || 'No documents uploaded yet.'}
 ${obligationsContext ? `CURRENT OBLIGATIONS:\n${obligationsContext}` : ''}
 
 ${fullContractText ? `FULL CONTRACT TEXT:\n\n${fullContractText}\n\n` : ''}${ragContext ? `RELEVANT DOCUMENT EXCERPTS:\n\n${ragContext}` : 'No document excerpts matched this query.'}
+${templateContext}
 
 INSTRUCTIONS:
 1. You have access to the contract documents in the project library. Ground all answers in these documents. Cite specific clause numbers.

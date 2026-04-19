@@ -230,6 +230,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { icon: Clock, label: 'History', subpath: 'history' },
     { icon: FolderOpen, label: 'Library', subpath: 'library' },
     { icon: Mail, label: 'Correspondence', subpath: 'correspondence' },
+    { icon: FileText, label: 'Templates', subpath: 'templates' },
     { icon: CalendarDays, label: 'Calendar', subpath: 'calendar' },
     { icon: Settings, label: 'Contract Settings', subpath: 'settings' },
   ]
@@ -251,7 +252,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (pathname === '/settings') return 'Settings'
     if (pathname === '/contracts') return 'Browse Contracts'
     if (pathname === '/contracts/new') return 'New Contract'
-    if (pathname === '/templates') return 'Templates'
+    if (pathname === '/letterheads' || pathname === '/templates') return 'Letterheads'
     return 'Astruct'
   }
 
@@ -330,7 +331,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {/* ═══ BOTTOM: Global Items ═══ */}
             <div className="border-t border-sidebar-fg/8 pt-3 space-y-0.5">
               <NavItem icon={LayoutGrid} label="Browse Contracts" href="/contracts" isActive={pathname === '/contracts'} collapsed={collapsed} />
-              <NavItem icon={FileText} label="Templates" href="/templates" isActive={pathname.startsWith('/templates')} collapsed={collapsed} />
+              <NavItem icon={FileText} label="Letterheads" href="/letterheads" isActive={pathname.startsWith('/letterheads') || pathname.startsWith('/templates')} collapsed={collapsed} />
               <NavItem icon={BookOpen} label="Knowledge Base" href="/knowledge-base" isActive={pathname.startsWith('/knowledge-base')} collapsed={collapsed} />
               <NavItem icon={Settings} label="Settings" href="/settings" isActive={pathname === '/settings'} collapsed={collapsed} />
             </div>
@@ -432,7 +433,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                           { label: 'Calendar', path: selectedContractId ? `/contracts/${selectedContractId}/calendar` : '#' },
                           { label: 'Contract Settings', path: selectedContractId ? `/contracts/${selectedContractId}/settings` : '#' },
                           { label: 'Browse Contracts', path: '/contracts' },
-                          { label: 'Templates', path: '/templates' },
+                          { label: 'Letterheads', path: '/letterheads' },
                           { label: 'Knowledge Base', path: '/knowledge-base' },
                           { label: 'Settings', path: '/settings' },
                         ].filter(i => i.label.toLowerCase().includes(searchQuery.toLowerCase())).map(item => (
