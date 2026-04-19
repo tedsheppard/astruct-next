@@ -166,14 +166,13 @@ ${contractContext.slice(0, 15000)}
 ${contract.template_rules ? `USER'S DRAFTING RULES — YOU MUST FOLLOW ALL OF THESE:
 ${contract.template_rules}
 
-FORMATTING REQUIREMENTS:
-- Number ALL body paragraphs sequentially: 1. 2. 3. etc.
-- Sub-paragraphs use (a), (b), (c) etc.
-- Sub-sub-paragraphs use (i), (ii), (iii) etc.
-- Sub-paragraph lists end each item with a semicolon (;)
-- The penultimate sub-paragraph item ends with "; and" or "; or" or "; and/or"
-- The final sub-paragraph item ends with a full stop (.)
-- Do NOT use "we", "our", "us" — use the party's defined name (e.g. "Pensar Water Pty Ltd" or "the Subcontractor")
+MANDATORY FORMATTING:
+- Number ALL body paragraphs sequentially using "1. ", "2. ", "3. " markdown numbered list syntax. Do NOT use bullet points (- or *) for body paragraphs. Use 1. 2. 3. numbering.
+- Sub-items within a numbered paragraph: use (a), (b), (c) as text prefixes
+- Sub-sub-items: use (i), (ii), (iii) as text prefixes
+- List items in sub-paragraphs end with semicolons (;). The penultimate item ends with "; and" or "; or". The final item ends with a full stop.
+- NEVER use "we", "our", "us" anywhere in the template. Always use the party's defined name (e.g. "Pensar Water Pty Ltd hereby notifies..." not "We hereby notify...")
+- Do NOT wrap the output in markdown code fences (\`\`\`). Output raw markdown only.
 ` : ''}
 CRITICAL RULES:
 1. Use the ACTUAL party names from the contract (e.g. "${party1}" and "${party2}"), NOT "Principal"/"Contractor" — except as defined terms after introducing the actual names
@@ -215,6 +214,9 @@ Write the template in markdown format.`
 
     // Extract template body (everything before PLACEHOLDERS block)
     let body = fullText.replace(/---PLACEHOLDERS---[\s\S]*---END_PLACEHOLDERS---/, '').trim()
+
+    // Strip markdown code fences if the AI wrapped the output in them
+    body = body.replace(/^```(?:markdown)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim()
 
     // Programmatic cleanup: remove any remaining bracketed placeholders
     // Pattern: [Text Like This] but NOT markdown links [text](url)
