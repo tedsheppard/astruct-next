@@ -75,7 +75,7 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   // Public paths on app domain
-  const publicPaths = ['/login', '/register', '/auth', '/api', '/landing', '/platform', '/solutions', '/pricing', '/security', '/company', '/privacy', '/terms', '/contact']
+  const publicPaths = ['/login', '/register', '/auth', '/api', '/landing', '/platform', '/solutions', '/pricing', '/security', '/company', '/privacy', '/terms', '/contact', '/verify-email', '/verify-phone']
   const isPublicPath = request.nextUrl.pathname === '/' || publicPaths.some(p => request.nextUrl.pathname.startsWith(p))
 
   if (!user && !isPublicPath) {
@@ -93,6 +93,50 @@ export async function proxy(request: NextRequest) {
     const url = request.nextUrl.clone()
     url.pathname = '/'
     return NextResponse.redirect(url)
+  }
+
+  // ─── Verification + onboarding chain for authenticated users ──────────
+  if (user && !isPublicPath) {
+    const path = request.nextUrl.pathname
+
+    // Skip checks for verify/setup pages themselves and API routes
+    if (!path.startsWith('/verify-') && !path.startsWith('/setup') && !path.startsWith('/api')) {
+      // Check email verification
+      if (!user.email_confirmed_at) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/verify-email'
+        return NextResponse.redirect(url)
+      }
+
+      // Check phone verification (query profile)
+      try {
+        const profileRes = await fetch(
+          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/profiles?select=phone_verified,onboarding_completed&id=eq.${user.id}`,
+          {
+            headers: {
+              apikey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+              Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY!}`,
+            },
+          }
+        )
+        const profiles = await profileRes.json()
+        const profile = profiles?.[0]
+
+        if (profile && !profile.phone_verified) {
+          const url = request.nextUrl.clone()
+          url.pathname = '/verify-phone'
+          return NextResponse.redirect(url)
+        }
+
+        if (profile && !profile.onboarding_completed) {
+          const url = request.nextUrl.clone()
+          url.pathname = '/setup'
+          return NextResponse.redirect(url)
+        }
+      } catch {
+        // If profile check fails, allow through (don't block on error)
+      }
+    }
   }
 
   return supabaseResponse

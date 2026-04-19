@@ -343,6 +343,36 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
+      {/* Plan & Billing */}
+      <Card className="bg-card border-border">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-foreground text-base">
+            Plan &amp; Billing
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-foreground" id="plan-display">Loading plan...</p>
+              <p className="text-xs text-muted-foreground mt-0.5" id="plan-detail"></p>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => window.location.href = '/contact'}>
+              Change Plan
+            </Button>
+          </div>
+          <Separator className="bg-border" />
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-foreground">Phone number</p>
+              <p className="text-xs text-muted-foreground mt-0.5" id="phone-display">Loading...</p>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => window.location.href = '/verify-phone'}>
+              Change
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Help */}
       <Card className="bg-card border-border">
         <CardContent className="pt-6">

@@ -38,6 +38,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { ContractContext } from '@/lib/contract-context'
+import { UsageMeter } from '@/components/usage-meter'
 
 interface Contract {
   id: string
@@ -327,6 +328,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             {/* Spacer */}
             <div className="flex-1" />
+
+            {/* Usage meter */}
+            <UsageMeter collapsed={collapsed} />
 
             {/* ═══ BOTTOM: Global Items ═══ */}
             <div className="border-t border-sidebar-fg/8 pt-3 space-y-0.5">

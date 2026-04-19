@@ -31,7 +31,7 @@ export default function RegisterPage() {
       return
     }
 
-    router.push('/setup')
+    router.push('/verify-email')
     router.refresh()
   }
 
@@ -79,7 +79,7 @@ export default function RegisterPage() {
           <div className="space-y-6">
             <div>
               <h2 className="text-xl font-semibold text-[#0f0e0d]">Create your account</h2>
-              <p className="text-sm mt-1 text-[#706d66]">Free for your first project</p>
+              <p className="text-sm mt-1 text-[#706d66]">14-day free trial. No credit card required.</p>
             </div>
 
             {error && (
