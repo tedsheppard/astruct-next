@@ -88,7 +88,7 @@ function TypewriterInput({ state }: { state: ReturnType<typeof useHeroAnimation>
           </span>
         )}
       </div>
-      <Link href="/register" className="px-4 py-2 bg-[#0f0e0d] text-[#fafaf9] text-sm font-medium rounded-md hover:bg-[#33312c] transition-colors duration-300 whitespace-nowrap">
+      <Link href="https://app.astruct.io/register" className="px-4 py-2 bg-[#0f0e0d] text-[#fafaf9] text-sm font-medium rounded-md hover:bg-[#33312c] transition-colors duration-300 whitespace-nowrap">
         Ask Astruct &uarr;
       </Link>
     </div>
@@ -485,7 +485,7 @@ function CTASection() {
           </h2>
         </FadeIn>
         <FadeIn delay={150}>
-          <Link href="/register" className="inline-block px-6 py-3 bg-[#0f0e0d] text-[#fafaf9] text-sm font-medium hover:bg-[#33312c] transition-colors duration-300 whitespace-nowrap">
+          <Link href="https://app.astruct.io/register" className="inline-block px-6 py-3 bg-[#0f0e0d] text-[#fafaf9] text-sm font-medium hover:bg-[#33312c] transition-colors duration-300 whitespace-nowrap">
             Create your free account
           </Link>
         </FadeIn>

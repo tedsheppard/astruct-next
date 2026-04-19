@@ -215,8 +215,8 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
 
           {/* Right side */}
           <div className="hidden lg:flex items-center gap-4">
-            <Link href="/login" className="text-sm text-[#a8a29e] hover:text-white transition-colors">Log in</Link>
-            <Link href="/register" className="text-sm font-medium px-5 py-2 rounded-lg bg-[#fafaf9] text-[#0f0e0d] hover:bg-[#e5e5e3] transition-colors">
+            <Link href="https://app.astruct.io/login" className="text-sm text-[#a8a29e] hover:text-white transition-colors">Log in</Link>
+            <Link href="https://app.astruct.io/register" className="text-sm font-medium px-5 py-2 rounded-lg bg-[#fafaf9] text-[#0f0e0d] hover:bg-[#e5e5e3] transition-colors">
               Start free
             </Link>
           </div>
@@ -248,8 +248,8 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               ))}
               <div className="border-t border-[#222] my-4" />
               <div className="flex gap-3 pt-2">
-                <Link href="/login" className="text-sm text-[#888]">Log in</Link>
-                <Link href="/register" className="text-sm font-medium px-5 py-2 rounded-lg bg-[#fafaf9] text-[#0f0e0d]">Start free</Link>
+                <Link href="https://app.astruct.io/login" className="text-sm text-[#888]">Log in</Link>
+                <Link href="https://app.astruct.io/register" className="text-sm font-medium px-5 py-2 rounded-lg bg-[#fafaf9] text-[#0f0e0d]">Start free</Link>
               </div>
             </div>
           </div>

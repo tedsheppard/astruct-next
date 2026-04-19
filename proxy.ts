@@ -9,6 +9,44 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
+  const hostname = request.headers.get('host') || ''
+  const isAppDomain = hostname.startsWith('app.')
+  const isMainDomain = !isAppDomain && (hostname.includes('astruct.io') || hostname.includes('astruct.com'))
+
+  // ─── Main domain (astruct.io) → marketing site only ───────────────────
+  if (isMainDomain) {
+    const path = request.nextUrl.pathname
+
+    // Marketing public paths
+    const marketingPaths = ['/', '/landing', '/platform', '/solutions', '/pricing', '/security', '/company', '/privacy', '/terms', '/contact', '/features', '/product']
+    const isMarketingPath = marketingPaths.some(p => path === p || path.startsWith(p + '/'))
+
+    // API routes are shared
+    if (path.startsWith('/api')) {
+      return NextResponse.next()
+    }
+
+    // Root on main domain → landing page
+    if (path === '/') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/landing'
+      return NextResponse.rewrite(url)
+    }
+
+    // Login/register on main domain → redirect to app subdomain
+    if (path === '/login' || path === '/register') {
+      return NextResponse.redirect(new URL(`https://app.astruct.io${path}`, request.url))
+    }
+
+    // Non-marketing paths on main domain → redirect to app subdomain
+    if (!isMarketingPath) {
+      return NextResponse.redirect(new URL(`https://app.astruct.io${path}`, request.url))
+    }
+
+    return NextResponse.next()
+  }
+
+  // ─── App domain (app.astruct.io) or localhost → app with auth ─────────
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -36,22 +74,14 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Redirect unauthenticated users to login (except auth pages and API routes)
-  // Public routes that don't require auth
-  const publicPaths = ['/login', '/register', '/auth', '/api', '/platform', '/solutions', '/pricing', '/security', '/company', '/privacy', '/terms', '/contact', '/landing']
+  // Public paths on app domain
+  const publicPaths = ['/login', '/register', '/auth', '/api', '/landing', '/platform', '/solutions', '/pricing', '/security', '/company', '/privacy', '/terms', '/contact']
   const isPublicPath = request.nextUrl.pathname === '/' || publicPaths.some(p => request.nextUrl.pathname.startsWith(p))
 
   if (!user && !isPublicPath) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
-  }
-
-  // Unauthenticated users at root → show landing page
-  if (!user && request.nextUrl.pathname === '/') {
-    const url = request.nextUrl.clone()
-    url.pathname = '/landing'
-    return NextResponse.rewrite(url)
   }
 
   // Redirect authenticated users away from auth pages
