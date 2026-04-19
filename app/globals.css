@@ -418,16 +418,16 @@
 
 /* Notice template editor — A4 document rendering */
 .notice-template-editor {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 13.3px;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 13.3px !important;
   line-height: 1.6;
   color: #1a1a1a;
   max-width: 100%;
-  white-space: pre-wrap;
   word-wrap: break-word;
   overflow-wrap: anywhere;
 }
 .notice-template-editor * {
+  font-family: Arial, Helvetica, sans-serif !important;
   max-width: 100%;
   overflow-wrap: anywhere;
   word-wrap: break-word;
