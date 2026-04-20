@@ -4,18 +4,26 @@ import { createAdminClient } from '@/lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
 
-// GET - list user's integrations
-export async function GET() {
+const VALID_PLATFORMS = ['procore', 'aconex', 'asite', 'hammertech', 'ineight'] as const
+type Platform = typeof VALID_PLATFORMS[number]
+
+// GET - list user's integrations (optionally filtered by contract_id)
+export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { data, error } = await supabase
+    const contractId = request.nextUrl.searchParams.get('contract_id')
+
+    let query = supabase
       .from('integrations')
-      .select('id, platform, status, config, last_synced_at, error_message, created_at')
+      .select('id, platform, status, config, contract_id, sync_frequency_hours, auto_create_obligations, last_synced_at, last_sync_item_count, total_items_synced, error_message, created_at')
       .eq('user_id', user.id)
 
+    if (contractId) query = query.eq('contract_id', contractId)
+
+    const { data, error } = await query.order('created_at', { ascending: false })
     if (error) throw error
     return Response.json({ integrations: data || [] })
   } catch (error) {
@@ -31,66 +39,135 @@ export async function POST(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { platform, credentials, config } = await request.json()
+    const body = await request.json()
+    const {
+      platform,
+      contract_id,
+      credentials,
+      config,
+      sync_frequency_hours,
+      auto_create_obligations,
+    }: {
+      platform: Platform
+      contract_id?: string | null
+      credentials?: Record<string, string>
+      config?: Record<string, string>
+      sync_frequency_hours?: number
+      auto_create_obligations?: boolean
+    } = body
 
     if (!platform) {
       return Response.json({ error: 'platform is required' }, { status: 400 })
     }
-
-    const validPlatforms = ['procore', 'aconex', 'asite', 'hammertech', 'ineight']
-    if (!validPlatforms.includes(platform)) {
+    if (!VALID_PLATFORMS.includes(platform)) {
       return Response.json({ error: 'Invalid platform' }, { status: 400 })
+    }
+
+    // Verify contract ownership if contract_id provided
+    if (contract_id) {
+      const { data: contract } = await supabase
+        .from('contracts')
+        .select('id')
+        .eq('id', contract_id)
+        .eq('user_id', user.id)
+        .maybeSingle()
+      if (!contract) {
+        return Response.json({ error: 'Contract not found' }, { status: 404 })
+      }
     }
 
     const admin = createAdminClient()
 
-    // Validate credentials by testing connection
-    const testResult = await testPlatformConnection(platform, credentials)
+    const testResult = await testPlatformConnection(platform, credentials || {})
 
-    const integrationData = {
+    const baseData = {
       user_id: user.id,
+      contract_id: contract_id || null,
       platform,
       status: testResult.success ? 'connected' : 'error',
       credentials: credentials || {},
       config: config || {},
+      sync_frequency_hours: typeof sync_frequency_hours === 'number' ? sync_frequency_hours : 6,
+      auto_create_obligations: typeof auto_create_obligations === 'boolean' ? auto_create_obligations : true,
       error_message: testResult.success ? null : testResult.error,
       updated_at: new Date().toISOString(),
     }
 
-    // Upsert (insert or update if exists)
-    const { data, error } = await admin
-      .from('integrations')
-      .upsert(integrationData, { onConflict: 'user_id,platform' })
-      .select('id, platform, status, config, last_synced_at, error_message')
-      .single()
+    // Manual upsert — the partial unique indexes make conflict targets awkward for .upsert()
+    let existingId: string | undefined
+    if (contract_id) {
+      const { data: existing } = await admin
+        .from('integrations')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('contract_id', contract_id)
+        .eq('platform', platform)
+        .maybeSingle()
+      existingId = existing?.id
+    } else {
+      const { data: existing } = await admin
+        .from('integrations')
+        .select('id')
+        .eq('user_id', user.id)
+        .is('contract_id', null)
+        .eq('platform', platform)
+        .maybeSingle()
+      existingId = existing?.id
+    }
 
-    if (error) throw error
+    let integration
+    if (existingId) {
+      const { data, error } = await admin
+        .from('integrations')
+        .update(baseData)
+        .eq('id', existingId)
+        .select('id, platform, status, config, contract_id, sync_frequency_hours, auto_create_obligations, last_synced_at, last_sync_item_count, total_items_synced, error_message')
+        .single()
+      if (error) throw error
+      integration = data
+    } else {
+      const { data, error } = await admin
+        .from('integrations')
+        .insert(baseData)
+        .select('id, platform, status, config, contract_id, sync_frequency_hours, auto_create_obligations, last_synced_at, last_sync_item_count, total_items_synced, error_message')
+        .single()
+      if (error) throw error
+      integration = data
+    }
 
-    return Response.json({
-      integration: data,
-      test_result: testResult,
-    })
+    return Response.json({ integration, test_result: testResult })
   } catch (error) {
     console.error('Integration save error:', error)
     return Response.json({ error: 'Failed to save integration' }, { status: 500 })
   }
 }
 
-// DELETE - remove an integration
+// DELETE - remove an integration (by id, or legacy platform+contract_id)
 export async function DELETE(request: NextRequest) {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { platform } = await request.json()
+    const body = await request.json()
+    const { id, platform, contract_id } = body as {
+      id?: string
+      platform?: Platform
+      contract_id?: string | null
+    }
 
-    const { error } = await supabase
-      .from('integrations')
-      .delete()
-      .eq('user_id', user.id)
-      .eq('platform', platform)
+    let query = supabase.from('integrations').delete().eq('user_id', user.id)
+    if (id) {
+      query = query.eq('id', id)
+    } else if (platform) {
+      query = query.eq('platform', platform)
+      if (contract_id) query = query.eq('contract_id', contract_id)
+      else query = query.is('contract_id', null)
+    } else {
+      return Response.json({ error: 'id or platform is required' }, { status: 400 })
+    }
 
+    const { error } = await query
     if (error) throw error
     return Response.json({ success: true })
   } catch (error) {
@@ -101,17 +178,15 @@ export async function DELETE(request: NextRequest) {
 
 // Test platform connection with provided credentials
 async function testPlatformConnection(
-  platform: string,
+  platform: Platform,
   credentials: Record<string, string>
 ): Promise<{ success: boolean; error?: string; info?: string }> {
   try {
     switch (platform) {
       case 'procore': {
-        // Procore uses OAuth2 - test with access token
         if (!credentials.client_id || !credentials.client_secret) {
           return { success: false, error: 'Client ID and Client Secret are required' }
         }
-        // Try to get an access token using client credentials
         const tokenRes = await fetch('https://login.procore.com/oauth/token', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -126,22 +201,17 @@ async function testPlatformConnection(
           return { success: false, error: `Procore auth failed: ${err}` }
         }
         const tokenData = await tokenRes.json()
-        // Test API access
         const testRes = await fetch('https://api.procore.com/rest/v1.0/me', {
           headers: { Authorization: `Bearer ${tokenData.access_token}` },
         })
-        if (!testRes.ok) {
-          return { success: false, error: 'Could not verify Procore API access' }
-        }
+        if (!testRes.ok) return { success: false, error: 'Could not verify Procore API access' }
         return { success: true, info: 'Connected to Procore successfully' }
       }
 
       case 'aconex': {
-        // Aconex uses OAuth2 via Oracle Lobby
         if (!credentials.client_id || !credentials.client_secret) {
           return { success: false, error: 'OAuth Client ID and Client Secret are required' }
         }
-        // Test token endpoint with client credentials
         const lobbyUrl = credentials.environment === 'ea'
           ? 'https://constructionandengineering-ea.oraclecloud.com'
           : 'https://constructionandengineering.oraclecloud.com'
@@ -156,7 +226,6 @@ async function testPlatformConnection(
         if (!aconexTokenRes.ok) {
           return { success: false, error: 'Aconex OAuth failed. Check your Client ID, Client Secret, and environment.' }
         }
-        // Test API access
         const aconexToken = await aconexTokenRes.json()
         const aconexTestRes = await fetch('https://api.aconex.com/api/projects', {
           headers: { Authorization: `Bearer ${aconexToken.access_token}` },
@@ -168,7 +237,6 @@ async function testPlatformConnection(
       }
 
       case 'asite': {
-        // Asite uses session-based auth with email/password
         if (!credentials.email || !credentials.password) {
           return { success: false, error: 'Email and Password are required' }
         }
@@ -181,7 +249,6 @@ async function testPlatformConnection(
         if (!asiteRes.ok) {
           return { success: false, error: 'Asite login failed. Check your email and password.' }
         }
-        // Check response for session ID
         const asiteBody = await asiteRes.text()
         if (!asiteBody.includes('Sessionid')) {
           return { success: false, error: 'Asite login failed — no session returned.' }
@@ -190,7 +257,6 @@ async function testPlatformConnection(
       }
 
       case 'hammertech': {
-        // Hammertech Integration API uses Bearer token auth
         if (!credentials.api_token) {
           return { success: false, error: 'API Bearer Token is required' }
         }
@@ -205,7 +271,6 @@ async function testPlatformConnection(
       }
 
       case 'ineight': {
-        // InEight uses Subscription Key + Tenant Prefix
         if (!credentials.subscription_key) {
           return { success: false, error: 'Subscription Key (Ocp-Apim-Subscription-Key) is required' }
         }

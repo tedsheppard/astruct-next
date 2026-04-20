@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { contract_id, description, clause_reference, due_date, notice_type } =
+    const { contract_id, description, clause_reference, due_date, notice_type, party_responsible } =
       body
 
     if (!contract_id || !description || !due_date) {
@@ -78,6 +78,7 @@ export async function POST(request: NextRequest) {
         clause_reference: clause_reference || null,
         due_date,
         notice_type: notice_type || null,
+        party_responsible: party_responsible || null,
         status: 'pending',
         completed: false,
         source: 'manual',
@@ -133,6 +134,10 @@ export async function PATCH(request: NextRequest) {
       allowedFields.clause_reference = updates.clause_reference
     if ('due_date' in updates) allowedFields.due_date = updates.due_date
     if ('notice_type' in updates) allowedFields.notice_type = updates.notice_type
+    if ('obligation_class' in updates)
+      allowedFields.obligation_class = updates.obligation_class
+    if ('party_responsible' in updates)
+      allowedFields.party_responsible = updates.party_responsible
 
     if (Object.keys(allowedFields).length === 0) {
       return Response.json(

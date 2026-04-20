@@ -50,6 +50,11 @@ import {
   Link2,
   ChevronUp,
 } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import FollowupSuggestions from '@/components/followup-suggestions'
+import SourceCard from '@/components/source-card'
+
+const PdfClauseViewer = dynamic(() => import('@/components/pdf-clause-viewer'), { ssr: false })
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -59,9 +64,11 @@ interface SourceItem {
   document_name: string
   section_heading: string | null
   excerpt: string
+  full_text?: string
   chunk_index: number
   similarity_score: number
   clause_references: string[]
+  page_number?: number | null
 }
 
 interface ChatMessage {
@@ -70,6 +77,7 @@ interface ChatMessage {
   content: string
   feedback?: 'positive' | 'negative' | null
   sources?: SourceItem[] | null
+  followups?: string[]
 }
 
 interface GeneratedDocument {
@@ -338,6 +346,7 @@ export default function AssistantPage() {
   const [isStreaming, setIsStreaming] = useState(false)
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [activeDocument, setActiveDocument] = useState<GeneratedDocument | null>(null)
+  const [pdfViewer, setPdfViewer] = useState<{ documentId: string; documentName: string; searchText: string } | null>(null)
   const [contractDocuments, setContractDocuments] = useState<ThinkingDocument[]>([])
 
   // Full document list with categories for source selection
@@ -563,6 +572,16 @@ export default function AssistantPage() {
                 const last = updated[updated.length - 1]
                 if (last && last.role === 'assistant') {
                   updated[updated.length - 1] = { ...last, content: last.content + data.content }
+                }
+                return updated
+              })
+            }
+            if (data.followups && Array.isArray(data.followups)) {
+              setMessages(prev => {
+                const updated = [...prev]
+                const last = updated[updated.length - 1]
+                if (last && last.role === 'assistant') {
+                  updated[updated.length - 1] = { ...last, followups: data.followups }
                 }
                 return updated
               })
@@ -1458,6 +1477,14 @@ export default function AssistantPage() {
                             </button>
                           )}
                         </div>
+                        {/* Follow-up suggestions */}
+                        {!isStreaming && msg.followups && msg.followups.length > 0 && i === messages.length - 1 && (
+                          <FollowupSuggestions
+                            suggestions={msg.followups}
+                            onSelect={(suggestion) => { setInput(suggestion); inputRef.current?.focus() }}
+                            disabled={isStreaming}
+                          />
+                        )}
                         {/* Sources panel */}
                         {expandedSources === i && msg.sources && msg.sources.length > 0 && (
                           <div className="mt-3 rounded-lg border border-border bg-card overflow-hidden">
@@ -1470,37 +1497,22 @@ export default function AssistantPage() {
                               </button>
                             </div>
                             <div className="divide-y divide-border max-h-80 overflow-y-auto">
-                              {(() => {
-                                // Group sources by document
-                                const grouped = new Map<string, typeof msg.sources>()
-                                for (const s of msg.sources!) {
-                                  const existing = grouped.get(s.document_id) || []
-                                  existing.push(s)
-                                  grouped.set(s.document_id, existing)
-                                }
-                                return [...grouped.entries()].map(([docId, sources]) => (
-                                  <div key={docId} className="px-4 py-3">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <FileText className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                                      <span className="text-xs font-medium text-foreground truncate">{sources[0].document_name}</span>
-                                      {sources.length > 1 && <span className="text-[10px] text-muted-foreground/60">({sources.length} sections)</span>}
-                                    </div>
-                                    <div className="space-y-2 ml-5">
-                                      {sources.map((s, si) => (
-                                        <div key={si}>
-                                          {s.section_heading && (
-                                            <p className="text-[10px] font-medium text-muted-foreground mb-0.5">{s.section_heading}</p>
-                                          )}
-                                          <p className="text-xs text-muted-foreground/70 leading-relaxed font-['Georgia',_serif] italic">
-                                            "{s.excerpt}"
-                                          </p>
-                                          {/* Clause refs hidden — too noisy */}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
+                              {msg.sources!
+                                .sort((a, b) => b.similarity_score - a.similarity_score)
+                                .map((s, si) => (
+                                  <SourceCard
+                                    key={si}
+                                    source={s}
+                                    onViewInContract={(source) => {
+                                      setPdfViewer({
+                                        documentId: source.document_id,
+                                        documentName: source.document_name,
+                                        searchText: source.excerpt.replace(/\.{3}$/, ''),
+                                      })
+                                    }}
+                                  />
                                 ))
-                              })()}
+                              }
                             </div>
                           </div>
                         )}
@@ -1609,6 +1621,25 @@ export default function AssistantPage() {
           </div>
           <div style={{ width: docPaneWidth }} className="flex-shrink-0 h-full overflow-hidden">
             <DocumentPreview document={activeDocument} onClose={() => setActiveDocument(null)} />
+          </div>
+        </>
+      )}
+      {/* PDF clause viewer pane */}
+      {pdfViewer && !activeDocument && (
+        <>
+          <div
+            onMouseDown={handleResizeMouseDown}
+            className="w-1.5 flex-shrink-0 cursor-col-resize group relative hover:bg-foreground/10 transition-colors"
+          >
+            <div className="absolute inset-y-0 -left-1.5 -right-1.5 z-10" />
+          </div>
+          <div style={{ width: docPaneWidth }} className="flex-shrink-0 h-full overflow-hidden">
+            <PdfClauseViewer
+              documentId={pdfViewer.documentId}
+              documentName={pdfViewer.documentName}
+              searchText={pdfViewer.searchText}
+              onClose={() => setPdfViewer(null)}
+            />
           </div>
         </>
       )}

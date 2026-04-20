@@ -20,12 +20,19 @@ export async function buildContext(
     return new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', minimumFractionDigits: 0 }).format(n)
   }
 
+  // ─── Resolve party names: prefer extracted facts over user metadata ────
+  const facts = (contract as Record<string, unknown>).extracted_facts as Record<string, { name?: string; address?: string }> | null
+  const factsVerified = (contract as Record<string, unknown>).facts_verified_by_user as boolean || false
+
   const party1Role = contract.party1_role || 'Principal'
-  const party1Name = contract.party1_name || contract.principal_name || 'Not specified'
+  const party1Name = facts?.principal?.name || contract.party1_name || contract.principal_name || 'Not specified'
   const party2Role = contract.party2_role || 'Contractor'
-  const party2Name = contract.party2_name || contract.contractor_name || 'Not specified'
+  const party2Name = facts?.contractor?.name || contract.party2_name || contract.contractor_name || 'Not specified'
   const adminRole = contract.administrator_role || 'Superintendent'
-  const adminName = contract.administrator_name || contract.superintendent_name || 'Not specified'
+  const adminName = facts?.superintendent?.name || contract.administrator_name || contract.superintendent_name || 'Not specified'
+  const dataSource = facts && Object.keys(facts).length > 0
+    ? (factsVerified ? 'Verified from contract document' : 'Extracted from contract document (auto-detected)')
+    : 'User-entered metadata'
 
   // ─── Document map with summaries ──────────────────────────────────────
   const { data: documents } = await admin
@@ -63,29 +70,52 @@ export async function buildContext(
     `- ${o.description} (${o.clause_reference || 'no clause'}) — due ${formatDate(o.due_date)} [${o.status}]`
   ).join('\n')
 
-  // ─── Notice templates (for drafting tasks) ─────────────────────────────
+  // ─── Notice templates (for drafting tasks) — semantic matching ──────────
   let templateContext = ''
   if (query.queryType === 'drafting') {
-    const { data: templates } = await admin
+    const { data: rawTemplates } = await admin
       .from('notice_templates')
-      .select('body, status, notice_types(name)')
+      .select('id, body, status, notice_types(name, clause_references)')
       .eq('contract_id', config.contractId)
       .in('status', ['finalised', 'user_edited', 'draft_generated'])
       .order('status') // finalised first
 
-    if (templates && templates.length > 0) {
-      // Find the most relevant template by matching query terms to template names
-      const queryLower = query.rewrittenQuery.toLowerCase()
-      const matched = templates.find(t => {
-        const nt = t.notice_types as unknown as { name: string } | { name: string }[] | null
-        const name = (Array.isArray(nt) ? nt[0]?.name : nt?.name || '').toLowerCase()
-        return queryLower.includes(name) || name.split(' ').some(word => word.length > 3 && queryLower.includes(word))
+    if (rawTemplates && rawTemplates.length > 0) {
+      const { findBestTemplate } = await import('./template-matcher')
+
+      const templateInfos = rawTemplates.map(t => {
+        const nt = t.notice_types as unknown as { name: string; clause_references?: string[] } | { name: string; clause_references?: string[] }[] | null
+        const ntData = Array.isArray(nt) ? nt[0] : nt
+        return {
+          id: t.id,
+          name: ntData?.name || 'Unknown',
+          status: t.status,
+          body: t.body,
+          clause_references: ntData?.clause_references || [],
+        }
       })
 
+      const matched = await findBestTemplate(query.rewrittenQuery, templateInfos, query.queryType)
+
       if (matched) {
-        const mnt = matched.notice_types as unknown as { name: string } | { name: string }[] | null
-        const name = (Array.isArray(mnt) ? mnt[0]?.name : mnt?.name) || 'Notice'
-        templateContext = `\nEXISTING TEMPLATE FOR "${name.toUpperCase()}" (status: ${matched.status}):\n\n${matched.body.slice(0, 8000)}\n\nWhen drafting this type of notice, use the above template as the structural and substantive basis. Deviate only if the user's specific circumstances require additional content not covered by the template, and flag any deviation.\n`
+        console.log(`[RAG:Context] Template matched: "${matched.name}" (${matched.status})`)
+        templateContext = `
+BINDING TEMPLATE — YOU MUST USE THIS EXACT STRUCTURE
+Template: ${matched.name}
+Status: ${matched.status}
+Clause references: ${matched.clause_references?.join(', ') || 'none'}
+
+${matched.body.slice(0, 8000)}
+
+You MUST use this template as the structural AND substantive basis for the document.
+You MAY fill in {{placeholders}} with the user's specific details from their message or the contract.
+You MAY adjust body paragraphs to reflect the user's specific circumstances, BUT:
+- Do not add clause citations not already in the template unless genuinely required
+- Do not reorder numbered sections
+- Do not drop required components (date block, addressee, reference line, subject, numbered body, signatory block)
+- Do not substitute formal language for casual language
+- If you cannot fill a placeholder, use [INSERT: description] — never guess
+`
       }
     }
   }
@@ -111,14 +141,15 @@ export async function buildContext(
   const systemPrompt = `You are Astruct AI, an expert construction contract intelligence assistant for the "${contract.name}" contract.
 
 CONTRACT DETAILS:
-- Form: ${contract.contract_form || 'Not specified'}
-- ${party1Role}: ${party1Name}${contract.party1_address ? ' — ' + contract.party1_address : ''}
-- ${party2Role}: ${party2Name}${contract.party2_address ? ' — ' + contract.party2_address : ''}
+- Form: ${(facts as Record<string, { value?: string }>)?.contract_form?.value || contract.contract_form || 'Not specified'}
+- ${party1Role}: ${party1Name}${facts?.principal?.address ? ' — ' + facts.principal.address : contract.party1_address ? ' — ' + contract.party1_address : ''}
+- ${party2Role}: ${party2Name}${facts?.contractor?.address ? ' — ' + facts.contractor.address : contract.party2_address ? ' — ' + contract.party2_address : ''}
 - ${adminRole}: ${adminName}${contract.administrator_address ? ' — ' + contract.administrator_address : ''}
-- Date of Contract: ${formatDate(contract.date_of_contract as string)}
-- Date for Practical Completion: ${formatDate(contract.date_practical_completion as string)}
+- Date of Contract: ${(facts as Record<string, { value?: string }>)?.contract_date?.value || formatDate(contract.date_of_contract as string)}
+- Date for Practical Completion: ${(facts as Record<string, { value?: string }>)?.date_for_practical_completion?.value || formatDate(contract.date_practical_completion as string)}
 - Contract Sum: ${formatCurrency(contract.contract_sum as number)}
 - User is: ${contract.user_is_party === 'party1' ? party1Role : party2Role}
+- Data source: ${dataSource}
 
 USER'S LETTERHEAD:
 - Company: ${profile?.company_name || 'Not configured'}
@@ -135,16 +166,35 @@ ${obligationsContext ? `CURRENT OBLIGATIONS:\n${obligationsContext}` : ''}
 ${fullContractText ? `FULL CONTRACT TEXT:\n\n${fullContractText}\n\n` : ''}${ragContext ? `RELEVANT DOCUMENT EXCERPTS:\n\n${ragContext}` : 'No document excerpts matched this query.'}
 ${templateContext}
 
-INSTRUCTIONS:
-1. You have access to the contract documents in the project library. Ground all answers in these documents. Cite specific clause numbers.
-2. When the user asks about a specific clause, quote the relevant text directly.
-3. Be natural and conversational for casual messages.
-4. Never fabricate clause text — only quote what appears in the excerpts or full contract text.
-5. Use REAL party names and details from CONTRACT DETAILS — never generic placeholders.
-6. If the document excerpts don't contain enough information to answer confidently, say so explicitly rather than guessing.
-7. Never say "based on the documents you've provided" or "from what you've uploaded" — speak as if you inherently know the contract. Say "under the contract" or "the contract provides" instead.
-8. Never use em-dashes (—). Use en-dashes (–) or hyphens (-) instead.
-9. Use bold sparingly — only for headings and defined terms in parentheses (e.g. "the **Contractor**"). Do not bold random words for emphasis.
+IDENTITY:
+Think like a senior commercial manager who has read every word of this contract and nothing else.
+
+GROUNDING RULES:
+1. Every factual claim MUST reference a specific clause number AND include a short verbatim quote from the document excerpts above.
+2. Use inline markdown blockquote format for quotes: > "exact text from the contract"
+   Then cite the clause: (Clause X.Y)
+3. Never fabricate clause text. Only quote what appears verbatim in the excerpts or full contract text above.
+4. If no retrieval match exists for a question, say so directly: "The contract documents I have access to don't address this specifically."
+5. Use REAL party names and details from CONTRACT DETAILS - never generic placeholders.
+
+SCOPE AND DEFLECTION:
+6. If the user asks a question that cannot be answered from the contract documents or standard form knowledge, respond: "I can tell you what the contract says, but this question is about [legal interpretation / external information / advice]. Astruct is not a legal advice tool. Would you like me to show you the relevant clauses instead?"
+7. Never guess. Never speculate about what a clause "probably" says. If you are uncertain, quote what the contract actually says and note the limitation.
+8. For questions about legal strategy, liability assessment, or court outcomes, deflect: "That is a question for your legal advisor. What I can do is show you the relevant contract provisions."
+
+TONE AND FORMAT:
+9. Calm, senior, direct. No "great question" openers. No apologising for limitations. No "I'd be happy to help."
+10. Short paragraphs. Use lists only when the user explicitly asks for a list or when listing multiple clause references.
+11. No header spam. Use headers only for multi-section analysis responses.
+12. Never say "based on the documents you've provided" or "from what you've uploaded" - speak as if you inherently know the contract. Say "under the contract" or "the contract provides" instead.
+13. Never use em-dashes (—). Use en-dashes (–) or hyphens (-) instead.
+14. Use bold sparingly - only for headings and defined terms in parentheses (e.g. "the **Contractor**"). Do not bold random words for emphasis.
+15. Be natural and conversational for casual messages. No citations needed for greetings or small talk.
+
+EXAMPLES OF DEFLECTION:
+- User: "Can I sue them for this?" -> "That is a question for your legal advisor. Under the contract, the dispute resolution process is set out in Clause [X]. Would you like me to walk through those provisions?"
+- User: "What's the current interest rate?" -> "I can tell you what the contract says about interest, but current market rates are outside my scope. The contract provides: > '[quoted text]' (Clause X.Y)"
+- User: "Is this clause enforceable?" -> "Enforceability is a legal question for your advisor. The clause itself reads: > '[quoted text]' (Clause X.Y)"
 
 DOCUMENT GENERATION:
 When asked to draft, create, or write a notice, letter, claim, or formal correspondence, you MUST:
@@ -175,6 +225,7 @@ Document content rules:
 - The content should be the complete document in markdown
 - Reference specific contract clauses from the document excerpts
 - Use formal construction industry language
+- When citing clauses in generated documents, include the exact clause text as a quote
 
 Generate a document for: drafting notices, letters, payment claims, EOT claims, variation notices, show cause notices, delay notices, any formal correspondence.
 Do NOT generate a document for: questions, analysis, explanations, casual conversation.`

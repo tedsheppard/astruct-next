@@ -42,6 +42,7 @@ export interface VerifiedCitation {
   found: boolean
   sourceDocument?: string
   confidence: number
+  hasQuote: boolean
 }
 
 export interface SourceItem {
@@ -50,9 +51,11 @@ export interface SourceItem {
   document_name: string
   section_heading: string | null
   excerpt: string
+  full_text: string
   chunk_index: number
   similarity_score: number
   clause_references: string[]
+  page_number?: number | null
 }
 
 export interface StreamCallbacks {
@@ -60,6 +63,7 @@ export interface StreamCallbacks {
   onThinkingSources: (data: { state: string; documents: string[]; chunk_count: number }) => void
   onSources: (sources: SourceItem[]) => void
   onContent: (content: string) => void
+  onFollowups: (followups: string[]) => void
   onDone: (result: { sessionId: string; noticeId?: string | null }) => void
   onError: (error: string) => void
 }

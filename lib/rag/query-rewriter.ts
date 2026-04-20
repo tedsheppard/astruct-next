@@ -41,6 +41,10 @@ export async function rewriteQuery(
 - extractedKeyTerms: domain-specific terms for keyword search (e.g. ["liquidated damages", "practical completion"])
 - complexity: "simple" | "moderate" | "complex"
 
+IMPORTANT: If the user's message references something from the conversation (e.g. "what's the time limit?" after discussing clause 34, or "and the penalties?" after discussing liquidated damages), you MUST rewrite the query to be fully standalone. Include the clause number and topic from context. For example:
+- History mentions clause 34 variations, user says "what's the time limit?" → rewrittenQuery: "What is the time limit for making a variation claim under clause 34?"
+- History discusses liquidated damages, user says "how much?" → rewrittenQuery: "What is the rate of liquidated damages under the contract?"
+
 History:
 ${recentHistory || 'No prior messages.'}
 
@@ -80,5 +84,42 @@ JSON only:`
     extractedClauseRefs: clauseRefs,
     extractedKeyTerms: [],
     complexity: message.length > 100 ? 'complex' : 'simple',
+  }
+}
+
+export async function generateSessionSummary(
+  messages: { role: string; content: string }[]
+): Promise<string> {
+  // Strip document blocks from message content
+  const cleaned = messages.map(m => ({
+    role: m.role,
+    content: m.content.replace(/---DOCUMENT_START---[\s\S]*?---DOCUMENT_END---/g, '').trim(),
+  }))
+
+  const transcript = cleaned
+    .map(m => `${m.role}: ${m.content.slice(0, 400)}`)
+    .join('\n')
+
+  try {
+    const response = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 200,
+      temperature: 0,
+      messages: [{
+        role: 'user',
+        content: `Summarize this construction contract conversation in exactly 2 sentences. Focus on the key topics, clauses, and any decisions or conclusions reached.
+
+Conversation:
+${transcript}
+
+Summary:`,
+      }],
+    })
+
+    const text = response.content[0].type === 'text' ? response.content[0].text : ''
+    return text.trim()
+  } catch (err) {
+    console.error('[RAG:SessionSummary] Failed:', err)
+    return ''
   }
 }

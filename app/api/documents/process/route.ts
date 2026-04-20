@@ -164,6 +164,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Trigger contract facts extraction for contract-type documents (background, non-blocking)
+    if (doc && category === '01_contract') {
+      import('@/lib/contract-facts/extractor').then(({ extractFacts }) => {
+        extractFacts(contract_id).catch(err => console.error('[Process] Facts extraction failed:', err))
+      })
+    }
+
     return Response.json({ document: doc })
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)

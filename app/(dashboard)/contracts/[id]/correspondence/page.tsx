@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import {
   Mail,
@@ -21,6 +20,9 @@ import {
   ChevronRight,
   Plug,
 } from 'lucide-react'
+import IntegrationConnectDialog from '@/components/integration-connect-dialog'
+import IntegrationSyncStatus from '@/components/integration-sync-status'
+import type { IntegrationCardData } from '@/components/integration-card'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -78,16 +80,64 @@ export default function CorrespondencePage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [integrations, setIntegrations] = useState<Record<string, { status: string; last_synced_at: string | null }>>({})
+  const [integrations, setIntegrations] = useState<Record<string, IntegrationCardData>>({})
+  const [connectDialogOpen, setConnectDialogOpen] = useState(false)
+  const [connectDialogPlatform, setConnectDialogPlatform] = useState<
+    'procore' | 'aconex' | 'asite' | 'hammertech' | 'ineight' | undefined
+  >(undefined)
+  const [syncingPlatform, setSyncingPlatform] = useState<string | null>(null)
+  const [expandedPlatform, setExpandedPlatform] = useState<string | null>(null)
 
-  useEffect(() => {
-    const supabase = createClient()
-    supabase.from('integrations').select('platform, status, last_synced_at').then(({ data }) => {
-      const map: Record<string, { status: string; last_synced_at: string | null }> = {}
-      for (const d of data || []) map[d.platform] = { status: d.status, last_synced_at: d.last_synced_at }
-      setIntegrations(map)
-    })
-  }, [])
+  const loadIntegrations = useCallback(async () => {
+    if (!contractId) return
+    const res = await fetch(`/api/integrations?contract_id=${contractId}`)
+    if (!res.ok) return
+    const data = await res.json()
+    const map: Record<string, IntegrationCardData> = {}
+    for (const d of data.integrations || []) {
+      map[d.platform] = {
+        id: d.id,
+        platform: d.platform,
+        contract_id: d.contract_id,
+        contract_name: null,
+        status: d.status,
+        last_synced_at: d.last_synced_at,
+        last_sync_item_count: d.last_sync_item_count,
+        total_items_synced: d.total_items_synced,
+        sync_frequency_hours: d.sync_frequency_hours || 6,
+        auto_create_obligations: d.auto_create_obligations ?? true,
+        error_message: d.error_message,
+      }
+    }
+    setIntegrations(map)
+  }, [contractId])
+
+  useEffect(() => { loadIntegrations() }, [loadIntegrations])
+
+  const handleSyncNow = async (integrationId: string, platformKey: string) => {
+    setSyncingPlatform(platformKey)
+    try {
+      const res = await fetch('/api/integrations/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ integration_id: integrationId }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        toast.error(data.error || 'Sync failed')
+      } else {
+        toast.success(
+          `${platformKey} sync complete: ${data.new ?? 0} new items, ${data.obligations_created ?? 0} obligations detected`
+        )
+        loadIntegrations()
+        fetchCorrespondence()
+      }
+    } catch {
+      toast.error('Sync failed')
+    } finally {
+      setSyncingPlatform(null)
+    }
+  }
 
   const fetchCorrespondence = useCallback(async () => {
     setLoading(true)
@@ -273,11 +323,14 @@ export default function CorrespondencePage() {
               <div className="flex items-center px-5 py-2.5 bg-muted/50 border-b border-border text-xs font-medium text-muted-foreground">
                 <div className="flex-1">Platform</div>
                 <div className="w-32 text-center">Status</div>
-                <div className="w-24 text-right">Action</div>
+                <div className="w-40 text-right">Action</div>
               </div>
               {PLATFORMS.map((platform, i) => {
                 const integration = integrations[platform.key]
                 const isConnected = integration?.status === 'connected'
+                const isErrored = integration?.status === 'error'
+                const isExpanded = expandedPlatform === platform.key
+                const isSyncing = syncingPlatform === platform.key
                 return (
                 <div key={platform.key} className={`${i < PLATFORMS.length - 1 ? 'border-b border-border' : ''}`}>
                   <div className={`flex items-center px-5 py-3.5 hover:bg-muted/20 transition-colors`}>
@@ -289,38 +342,64 @@ export default function CorrespondencePage() {
                       </div>
                     </div>
                     <div className="w-36 flex items-center justify-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-muted-foreground/30'}`} />
-                      <span className={`text-xs ${isConnected ? 'text-emerald-600 font-medium' : 'text-muted-foreground'}`}>{isConnected ? 'Connected' : 'Not set up'}</span>
+                      <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500' : isErrored ? 'bg-red-500' : 'bg-muted-foreground/30'}`} />
+                      <span className={`text-xs ${isConnected ? 'text-emerald-600 font-medium' : isErrored ? 'text-red-600 font-medium' : 'text-muted-foreground'}`}>{isConnected ? 'Connected' : isErrored ? 'Error' : 'Not set up'}</span>
                     </div>
-                    <div className="w-24 text-right">
-                      {isConnected ? (
-                        <button className="text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-md border border-border hover:border-foreground/20">
-                          Settings
-                        </button>
+                    <div className="w-40 text-right flex items-center justify-end gap-2">
+                      {isConnected && integration ? (
+                        <>
+                          <button
+                            onClick={() => handleSyncNow(integration.id, platform.key)}
+                            disabled={isSyncing}
+                            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2.5 py-1.5 rounded-md border border-border hover:border-foreground/20 disabled:opacity-50"
+                          >
+                            {isSyncing ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
+                            Sync
+                          </button>
+                          <button
+                            onClick={() => setExpandedPlatform(isExpanded ? null : platform.key)}
+                            className="text-xs text-muted-foreground hover:text-foreground transition-colors px-2.5 py-1.5 rounded-md border border-border hover:border-foreground/20"
+                          >
+                            {isExpanded ? 'Hide' : 'Details'}
+                          </button>
+                        </>
                       ) : (
-                        <button className="text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-md border border-border hover:border-foreground/20">
-                          Set up
+                        <button
+                          onClick={() => {
+                            setConnectDialogPlatform(platform.key as 'procore' | 'aconex' | 'asite' | 'hammertech' | 'ineight')
+                            setConnectDialogOpen(true)
+                          }}
+                          className="text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-md border border-border hover:border-foreground/20"
+                        >
+                          Connect
                         </button>
                       )}
                     </div>
                   </div>
-                  {isConnected && (
-                    <div className="px-5 pb-3.5 -mt-1 ml-11">
-                      <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
-                        <span>Last synced: {integration.last_synced_at ? new Date(integration.last_synced_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}</span>
-                        <span className="text-muted-foreground/40">|</span>
-                        <span>{correspondence.filter(c => c.platform === platform.key).length || 0} items synced</span>
-                      </div>
+                  {isConnected && integration && isExpanded && (
+                    <div className="px-2 pb-3">
+                      <IntegrationSyncStatus integration={integration} expanded={true} />
                     </div>
                   )}
                 </div>
                 )
               })}
             </div>
-            <p className="text-xs text-muted-foreground mt-3">Connect your project management platform to automatically sync correspondence.</p>
+            <p className="text-xs text-muted-foreground mt-3">Connect your project management platform to automatically sync correspondence. New items run through the classifier and appear on the calendar as time-bar obligations.</p>
           </div>
           </div>
         )}
+
+        <IntegrationConnectDialog
+          open={connectDialogOpen}
+          onOpenChange={setConnectDialogOpen}
+          defaultContractId={contractId}
+          defaultPlatform={connectDialogPlatform}
+          onConnected={() => {
+            loadIntegrations()
+            fetchCorrespondence()
+          }}
+        />
       </div>
 
       {/* Reading pane */}

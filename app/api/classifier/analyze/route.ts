@@ -1,6 +1,6 @@
 import { type NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { extractStaticObligations } from '@/lib/obligations/extractor'
+import { classifyAndResolve } from '@/lib/obligations/classifier'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 120
@@ -15,26 +15,32 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { contract_id } = body
+    const { contract_id, source_type, source_id, text, metadata } = body
 
-    if (!contract_id) {
+    if (!contract_id || !source_type || !source_id || !text) {
       return Response.json(
-        { error: 'contract_id is required' },
+        { error: 'contract_id, source_type, source_id, and text are required' },
         { status: 400 }
       )
     }
 
-    const result = await extractStaticObligations(contract_id, user.id)
+    const result = await classifyAndResolve(
+      {
+        contract_id,
+        source_type,
+        source_id,
+        text,
+        metadata,
+      },
+      user.id
+    )
 
     return Response.json({
-      standing: result.standing,
-      warnings: result.warnings,
-      message: result.standing > 0
-        ? `Extracted ${result.standing} standing obligations from contract.`
-        : 'No obligations found in the contract documents.',
+      trigger_events: result.trigger_events,
+      pending_obligations_created: result.pending_obligations_created,
     })
   } catch (err) {
-    console.error('POST /api/obligations/extract error:', err)
+    console.error('POST /api/classifier/analyze error:', err)
     return Response.json(
       { error: 'Internal server error' },
       { status: 500 }

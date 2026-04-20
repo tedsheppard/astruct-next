@@ -143,6 +143,9 @@ export async function POST(request: NextRequest) {
             onSources(sources) {
               controller.enqueue(encoder.encode(`data: ${JSON.stringify({ sources })}\n\n`))
             },
+            onFollowups(followups) {
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ followups })}\n\n`))
+            },
             onContent(content) {
               controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`))
             },
