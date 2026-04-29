@@ -39,6 +39,7 @@ async function extractPdfText(buffer: Buffer): Promise<string> {
 
 async function classifyDocument(text: string, filename: string): Promise<{ category: string; summary: string }> {
   const truncatedText = text.slice(0, 8000)
+  const hasText = truncatedText.trim().length > 50
   try {
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -48,10 +49,42 @@ async function classifyDocument(text: string, filename: string): Promise<{ categ
         {
           role: 'system',
           content: `You are a construction contract document classifier. Classify into exactly ONE category and provide a brief summary.
-Categories: 01_contract, 02_tender, 03_drawings, 04_specifications, 05_project_letters, 06_rfi, 07_variations, 08_nod, 09_eot, 10_payment_claims, 11_payment_schedules, 12_third_party_invoices, 13_other
-Respond JSON only: {"category": "XX_value", "summary": "max 10 word shorthand"}`,
+
+Categories (use the exact value):
+- 01_contract: Main contract, agreement, conditions of contract, subcontract
+- 02_tender: Tender documents, bid proposals, tender submissions
+- 03_drawings: Architectural, structural, or engineering drawings
+- 04_specifications: Technical specifications, standards
+- 05_project_letters: General project correspondence, letters, programs/schedules
+- 06_rfi: Requests for Information (RFI)
+- 07_variations: Variation orders, change orders, scope changes (filename hints: VAR, VO, CO, Variation)
+- 08_nod: Notices of Delay (filename hints: NOD, Notice of Delay)
+- 09_eot: Extension of Time claims (filename hints: EOT, Extension of Time)
+- 10_payment_claims: Payment claims, progress claims, contractor invoices
+- 11_payment_schedules: Payment schedules, payment certificates
+- 12_third_party_invoices: Third-party / subcontractor invoices
+- 13_other: Truly miscellaneous — only when no other category fits
+
+Filename conventions are STRONG signals — use them confidently when document text is sparse:
+- "RFI", "RFI-###" → 06_rfi
+- "VAR", "VO", "Variation" → 07_variations
+- "NOD" → 08_nod
+- "EOT" → 09_eot
+- "LETTER", "LTR" → 05_project_letters (unless filename also strongly indicates another category)
+- "Program", "Schedule" (alone) → 05_project_letters
+- "Contract", "Agreement", "Subcontract" → 01_contract
+
+If document text is missing or sparse, classify based on filename alone — DO NOT default to 13_other. Only use 13_other when neither filename nor text gives a clear signal.
+
+Respond JSON only: {"category": "XX_value", "summary": "max 10 word shorthand"}
+Summary should be concise shorthand like "Variation VAR-014 - Sheet piles" or "Letter re: dispute over rock anchors". Identify reference numbers and subject matter from the filename when text is missing.`,
         },
-        { role: 'user', content: `Filename: ${filename}\n\nDocument text:\n${truncatedText}` },
+        {
+          role: 'user',
+          content: hasText
+            ? `Filename: ${filename}\n\nDocument text:\n${truncatedText}`
+            : `Filename: ${filename}\n\n(No extractable text — PDF may be image-only/scanned. Classify from filename.)`,
+        },
       ],
       response_format: { type: 'json_object' },
     })
@@ -109,14 +142,11 @@ export async function POST(request: NextRequest) {
       extractedText = buffer.toString('utf-8')
     }
 
-    // Classify
-    let category = '13_other'
-    let summary = 'Document uploaded.'
-    if (extractedText.length > 50) {
-      const classification = await classifyDocument(extractedText, filename)
-      category = classification.category
-      summary = classification.summary
-    }
+    // Classify — always run, even when text extraction failed.
+    // Filenames carry strong category signal (VAR, RFI, NOD, EOT, etc.).
+    const classification = await classifyDocument(extractedText, filename)
+    const category = classification.category
+    const summary = classification.summary
 
     // Insert document record
     const { data: doc, error: insertError } = await admin

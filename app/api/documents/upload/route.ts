@@ -30,30 +30,43 @@ async function classifyDocument(
   filename: string
 ): Promise<{ category: string; summary: string }> {
   const truncatedText = text.slice(0, 8000)
+  const hasText = truncatedText.trim().length > 50
 
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    temperature: 0,
-    max_tokens: 200,
-    messages: [
-      {
-        role: 'system',
-        content: `You are a construction contract document classifier. Given a document's filename and text content, classify it into exactly ONE of the following categories and provide a brief summary.
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      temperature: 0,
+      max_tokens: 200,
+      messages: [
+        {
+          role: 'system',
+          content: `You are a construction contract document classifier. Given a document's filename and text content, classify it into exactly ONE of the following categories and provide a brief summary.
 
 Categories (use the exact value):
-- 01_contract: Main contract documents, agreements, conditions of contract
+- 01_contract: Main contract, agreement, conditions of contract, subcontract
 - 02_tender: Tender documents, bid proposals, tender submissions
 - 03_drawings: Architectural, structural, or engineering drawings
 - 04_specifications: Technical specifications, standards
-- 05_project_letters: General project correspondence, letters
-- 06_rfi: Requests for Information
+- 05_project_letters: General project correspondence, letters, programs/schedules
+- 06_rfi: Requests for Information (RFI)
 - 07_variations: Variation orders, change orders, scope changes
 - 08_nod: Notices of Delay, delay notifications
 - 09_eot: Extension of Time claims
-- 10_payment_claims: Payment claims, progress claims, invoices from contractor
+- 10_payment_claims: Payment claims, progress claims, contractor invoices
 - 11_payment_schedules: Payment schedules, payment certificates
-- 12_third_party_invoices: Third-party invoices, subcontractor invoices
-- 13_other: Anything that doesn't fit the above categories
+- 12_third_party_invoices: Third-party / subcontractor invoices
+- 13_other: Truly miscellaneous — only when no other category fits
+
+Filename conventions are STRONG signals — use them confidently when document text is sparse:
+- "RFI", "RFI-###" → 06_rfi
+- "VAR", "VO", "Variation" → 07_variations
+- "NOD" → 08_nod
+- "EOT" → 09_eot
+- "LETTER", "LTR" → 05_project_letters (unless filename strongly suggests another category)
+- "Program", "Schedule" (alone) → 05_project_letters
+- "Contract", "Agreement", "Subcontract" → 01_contract
+
+If document text is missing or sparse, classify based on filename alone — DO NOT default to 13_other unless neither filename nor text gives a clear signal.
 
 Respond in JSON format only: {"category": "XX_value", "summary": "short description"}
 
@@ -64,17 +77,18 @@ IMPORTANT: The summary must be a SHORT shorthand description (max 10 words). Do 
 - "Notice of Delay No.11 - Rock Anchors"
 - "Subcontract No. 7216-SUB-090 - Head Contract"
 - "Response to JH-SUBCOMM-004499 re rock anchors"
-Identify the key parties, subject matter, and reference numbers.`,
-      },
-      {
-        role: 'user',
-        content: `Filename: ${filename}\n\nDocument text:\n${truncatedText}`,
-      },
-    ],
-    response_format: { type: 'json_object' },
-  })
+Identify key parties, subject matter, and reference numbers — pull these from the filename when text is missing.`,
+        },
+        {
+          role: 'user',
+          content: hasText
+            ? `Filename: ${filename}\n\nDocument text:\n${truncatedText}`
+            : `Filename: ${filename}\n\n(No extractable text — PDF may be image-only/scanned. Classify from filename.)`,
+        },
+      ],
+      response_format: { type: 'json_object' },
+    })
 
-  try {
     const result = JSON.parse(response.choices[0].message.content || '{}')
     const category = CATEGORY_VALUES.includes(result.category)
       ? result.category
@@ -83,7 +97,8 @@ Identify the key parties, subject matter, and reference numbers.`,
       category,
       summary: result.summary || 'No summary available.',
     }
-  } catch {
+  } catch (err) {
+    console.error('Classification error:', err)
     return { category: '13_other', summary: 'Could not classify document.' }
   }
 }
@@ -91,18 +106,29 @@ Identify the key parties, subject matter, and reference numbers.`,
 // chunkText, extractClauseNumbers, detectSectionHeading, generateEmbeddings
 // imported from @/lib/chunking
 
-// Extract text from PDF using pdf-parse v2
+// Extract text from PDF — try unpdf first (serverless-friendly), pdf-parse fallback.
 async function extractPdfText(buffer: Buffer): Promise<string> {
-  const { PDFParse } = await import('pdf-parse')
-  const parser = new PDFParse({
-    data: new Uint8Array(buffer),
-    verbosity: 0,
-  })
   try {
-    const result = await parser.getText()
-    return result.text
-  } finally {
-    await parser.destroy().catch(() => {})
+    const { extractText } = await import('unpdf')
+    const result = await extractText(new Uint8Array(buffer))
+    const text = Array.isArray(result.text) ? result.text.join('\n') : result.text
+    if (text && text.length > 10) return text
+  } catch (e) {
+    console.log('[Upload] unpdf failed, trying pdf-parse:', e instanceof Error ? e.message : e)
+  }
+
+  try {
+    const { PDFParse } = await import('pdf-parse')
+    const parser = new PDFParse({ data: new Uint8Array(buffer), verbosity: 0 })
+    try {
+      const result = await parser.getText()
+      return result.text
+    } finally {
+      await parser.destroy().catch(() => {})
+    }
+  } catch (e) {
+    console.error('[Upload] pdf-parse also failed:', e instanceof Error ? e.message : e)
+    return ''
   }
 }
 
@@ -180,17 +206,16 @@ export async function POST(request: NextRequest) {
         extractedText = buffer.toString('utf-8')
       }
 
-      // Classify with AI
+      // Classify with AI — always run, even when text extraction failed.
+      // Filenames carry strong category signals (VAR, RFI, NOD, EOT, etc.).
       let category = '13_other'
       let summary = 'Document uploaded.'
-      if (extractedText.length > 50) {
-        try {
-          const classification = await classifyDocument(extractedText, filename)
-          category = classification.category
-          summary = classification.summary
-        } catch (err) {
-          console.error('Classification error:', err)
-        }
+      try {
+        const classification = await classifyDocument(extractedText, filename)
+        category = classification.category
+        summary = classification.summary
+      } catch (err) {
+        console.error('Classification error:', err)
       }
 
       // Insert into documents table

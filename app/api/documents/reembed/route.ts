@@ -2,9 +2,64 @@ import { type NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { chunkText, extractClauseNumbers, detectSectionHeading, generateEmbeddings } from '@/lib/chunking'
+import { CATEGORY_VALUES } from '@/lib/document-categories'
+import OpenAI from 'openai'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 300
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+
+async function classifyDocument(
+  text: string,
+  filename: string
+): Promise<{ category: string; summary: string }> {
+  const truncatedText = (text || '').slice(0, 8000)
+  const hasText = truncatedText.trim().length > 50
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      temperature: 0,
+      max_tokens: 200,
+      messages: [
+        {
+          role: 'system',
+          content: `You are a construction contract document classifier. Classify into exactly ONE category and provide a brief summary.
+
+Categories: 01_contract, 02_tender, 03_drawings, 04_specifications, 05_project_letters, 06_rfi, 07_variations, 08_nod, 09_eot, 10_payment_claims, 11_payment_schedules, 12_third_party_invoices, 13_other
+
+Filename hints (use confidently when text is sparse):
+- RFI / RFI-### → 06_rfi
+- VAR / VO / Variation → 07_variations
+- NOD → 08_nod
+- EOT → 09_eot
+- LETTER / LTR → 05_project_letters (unless filename strongly implies another category)
+- Program / Schedule (alone) → 05_project_letters
+- Contract / Agreement / Subcontract → 01_contract
+
+If text is missing or sparse, classify from filename — DO NOT default to 13_other unless no signal is present.
+
+JSON only: {"category": "XX_value", "summary": "max 10 word shorthand with reference numbers / parties / subject"}`,
+        },
+        {
+          role: 'user',
+          content: hasText
+            ? `Filename: ${filename}\n\nDocument text:\n${truncatedText}`
+            : `Filename: ${filename}\n\n(No extractable text — PDF may be image-only/scanned. Classify from filename.)`,
+        },
+      ],
+      response_format: { type: 'json_object' },
+    })
+    const result = JSON.parse(response.choices[0].message.content || '{}')
+    return {
+      category: CATEGORY_VALUES.includes(result.category) ? result.category : '13_other',
+      summary: result.summary || 'No summary available.',
+    }
+  } catch (err) {
+    console.error('[Reembed] Classification error:', err)
+    return { category: '13_other', summary: 'Could not classify document.' }
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,24 +85,42 @@ export async function POST(request: NextRequest) {
 
     const admin = createAdminClient()
 
-    // Load all documents with extracted text
+    // Load ALL documents (including ones with no text — they still need reclassification by filename)
     const { data: documents } = await admin
       .from('documents')
-      .select('id, filename, extracted_text')
+      .select('id, filename, extracted_text, category')
       .eq('contract_id', contract_id)
-      .not('extracted_text', 'is', null)
 
     if (!documents || documents.length === 0) {
-      return Response.json({ success: true, documents_processed: 0, total_chunks: 0 })
+      return Response.json({ success: true, documents_processed: 0, total_chunks: 0, reclassified: 0 })
     }
 
     let totalChunks = 0
+    let reclassified = 0
 
     for (let i = 0; i < documents.length; i++) {
       const doc = documents[i]
-      if (!doc.extracted_text || doc.extracted_text.length < 50) continue
-
       console.log(`[Reembed] Processing document ${i + 1}/${documents.length}: ${doc.filename}`)
+
+      // Reclassify every document — filename + text → category & summary.
+      try {
+        const { category, summary } = await classifyDocument(doc.extracted_text || '', doc.filename)
+        if (category !== doc.category) {
+          await admin
+            .from('documents')
+            .update({ category, ai_summary: summary })
+            .eq('id', doc.id)
+          reclassified++
+        } else {
+          // Refresh the summary even if category unchanged
+          await admin.from('documents').update({ ai_summary: summary }).eq('id', doc.id)
+        }
+      } catch (err) {
+        console.error(`[Reembed] Reclassify failed for ${doc.filename}:`, err)
+      }
+
+      // Skip embedding for empty / too-short text
+      if (!doc.extracted_text || doc.extracted_text.length < 50) continue
 
       try {
         // Delete existing chunks for this document
@@ -100,6 +173,7 @@ export async function POST(request: NextRequest) {
       success: true,
       documents_processed: documents.length,
       total_chunks: totalChunks,
+      reclassified,
     })
   } catch (error) {
     console.error('[Reembed] Error:', error)

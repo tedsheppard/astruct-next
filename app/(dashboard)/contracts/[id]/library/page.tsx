@@ -214,7 +214,13 @@ export default function LibraryPage() {
                     })
                     if (res.ok) {
                       const data = await res.json()
-                      toast.success(`Re-indexed ${data.documents_processed} documents (${data.total_chunks} chunks)`)
+                      const recat = data.reclassified
+                        ? `, ${data.reclassified} re-categorized`
+                        : ''
+                      toast.success(
+                        `Re-indexed ${data.documents_processed} documents (${data.total_chunks} chunks${recat})`
+                      )
+                      fetchData()
                     } else {
                       toast.error('Re-indexing failed')
                     }
