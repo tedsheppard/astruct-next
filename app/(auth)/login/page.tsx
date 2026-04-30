@@ -41,7 +41,7 @@ export default function LoginPage() {
 
         <div className="max-w-md">
           <h2 className="text-4xl text-white font-normal leading-[1.15]" style={{ fontFamily: "var(--font-serif-display), 'DM Serif Display', Georgia, serif", letterSpacing: '-0.02em' }}>
-            For building in the modern era
+            For Australian building projects in the AI era
           </h2>
           <p className="mt-6 text-[#a8a29e] leading-relaxed">
             Pick up where you left off. Your documents, conversations, and deadlines are all here.

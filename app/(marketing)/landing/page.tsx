@@ -450,7 +450,7 @@ function HeroSection() {
         <div>
           <FadeIn>
             <h1 className="text-[clamp(2.5rem,5vw,4.25rem)] text-[#0f0e0d] font-normal leading-[1.1] max-w-[500px]" style={{ letterSpacing: '-0.02em', fontFamily: "var(--font-serif-display), 'DM Serif Display', Georgia, serif" }}>
-              For building in the modern era
+              For Australian building projects in the AI era
             </h1>
           </FadeIn>
           <FadeIn delay={150}>
