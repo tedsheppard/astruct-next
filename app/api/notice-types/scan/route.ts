@@ -33,13 +33,38 @@ export async function POST(request: NextRequest) {
       .eq('contract_id', contract_id)
       .not('extracted_text', 'is', null)
 
-    if (!docs || docs.length === 0) {
-      return Response.json({ error: 'No documents with extracted text found. Upload and process contract documents first.' }, { status: 400 })
+    // Only docs with substantive text (>500 chars) — guards against image-only PDFs
+    // that returned an empty string and would otherwise let the AI hallucinate
+    // notice types and clause numbers from no real source material.
+    const MIN_TEXT_CHARS = 500
+    const usableDocs = (docs || []).filter(
+      (d) => d.extracted_text && d.extracted_text.trim().length >= MIN_TEXT_CHARS
+    )
+
+    if (usableDocs.length === 0) {
+      return Response.json(
+        {
+          error:
+            'No contract text available to scan. Upload a contract document (PDF or DOCX) to the Library — image-only / scanned PDFs cannot be analysed without OCR.',
+        },
+        { status: 400 }
+      )
     }
 
-    // Build contract text, prioritising contract docs
-    const contractDocs = docs.filter(d => d.category === '01_contract')
-    const otherDocs = docs.filter(d => d.category !== '01_contract')
+    // Require at least one document classified as 01_contract with substantive text.
+    // Otherwise the scan has nothing authoritative to derive notice clauses from.
+    const contractDocs = usableDocs.filter((d) => d.category === '01_contract')
+    if (contractDocs.length === 0) {
+      return Response.json(
+        {
+          error:
+            'No contract document found. Upload your main contract (Conditions of Contract / Agreement) to the Library and ensure it is categorised as "01. Contract" before scanning for notice types.',
+        },
+        { status: 400 }
+      )
+    }
+
+    const otherDocs = usableDocs.filter((d) => d.category !== '01_contract')
 
     let contractText = contractDocs.map(d => `--- ${d.filename} ---\n${d.extracted_text}`).join('\n\n')
     // Add other docs if space allows
