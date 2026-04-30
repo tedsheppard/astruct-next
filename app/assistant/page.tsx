@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { ANON_FIRST_ENABLED } from '@/lib/anon-flag'
 import AnonAssistantBootstrap from './bootstrap'
 
@@ -15,13 +16,15 @@ export const metadata: Metadata = {
 /**
  * /assistant — public entry point.
  *
- * Behavior depends on session + flag:
- *  - Flag off → 302 to /login (preserves prior UX).
- *  - Authenticated user with contracts → 302 into their first contract assistant.
- *  - Authenticated user with no contracts → 302 to /contracts/new.
- *  - Anonymous user (already had a session) with contracts → 302 into it.
- *  - No session → render bootstrap UI which calls /api/auth/anon-start client-side
- *    and then redirects into the seeded/blank assistant.
+ * - Authenticated user with contracts → 302 into their first contract assistant.
+ * - Authenticated user with no contracts → 302 to /contracts/new (existing flow).
+ * - Anonymous user with contracts → 302 into the latest contract assistant.
+ * - Anonymous user with no contracts → admin-create a blank contract and 302
+ *   straight into its assistant with ?intro=1 so the upload modal opens.
+ * - No session → render bootstrap.tsx, which auto-fires anon-start and
+ *   redirects on response.
+ *
+ * Flag off → 302 to /login (preserves prior UX).
  */
 export default async function AssistantEntry() {
   if (!ANON_FIRST_ENABLED) {
@@ -44,14 +47,27 @@ export default async function AssistantEntry() {
     }
 
     if (user.is_anonymous) {
-      // Anon with no contracts — show bootstrap so they can pick sample vs upload.
-      return <AnonAssistantBootstrap hasSession={true} />
+      const admin = createAdminClient()
+      const { data: contract } = await admin
+        .from('contracts')
+        .insert({
+          user_id: user.id,
+          name: 'Untitled project',
+          contract_form: 'bespoke',
+          party1_role: 'Principal',
+          party2_role: 'Contractor',
+          user_is_party: 'party2',
+          status: 'active',
+        })
+        .select('id')
+        .single()
+      if (contract?.id) {
+        redirect(`/contracts/${contract.id}/assistant?intro=1`)
+      }
     }
 
-    // Authenticated user with no contracts — preserve existing flow.
     redirect('/contracts/new')
   }
 
-  // No session — let the client-side bootstrap call /api/auth/anon-start.
-  return <AnonAssistantBootstrap hasSession={false} />
+  return <AnonAssistantBootstrap />
 }

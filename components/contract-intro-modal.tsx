@@ -1,0 +1,587 @@
+'use client'
+
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { toast } from 'sonner'
+import { createClient } from '@/lib/supabase/client'
+import {
+  Loader2,
+  Upload,
+  FileText,
+  Sparkles,
+  ArrowRight,
+  CheckCircle2,
+  Pencil,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+
+type Phase = 'upload' | 'processing' | 'review' | 'saving'
+
+interface ExtractedFacts {
+  principal?: { name?: string; address?: string }
+  contractor?: { name?: string; address?: string }
+  superintendent?: { name?: string; address?: string }
+  contract_date?: { value?: string }
+  contract_sum?: { value?: number; currency?: string }
+  contract_form?: { value?: string }
+  reference_number?: { value?: string }
+}
+
+const CONTRACT_FORMS = [
+  'AS4000-1997',
+  'AS4902-2000',
+  'AS2124-1992',
+  'AS4901-1998',
+  'NEC4',
+  'FIDIC',
+  'bespoke',
+]
+
+function pickName(obj?: { name?: string }) {
+  return (obj?.name || '').trim()
+}
+
+/**
+ * Contract intro modal.
+ *
+ * Mounts inside the contract assistant page. Decides itself whether to show
+ * by checking:
+ *  - ?intro=1 in the URL, OR
+ *  - the contract has zero documents (fresh blank guest contract)
+ *
+ * Flow: drop PDF → /api/contracts/quick-init → review pre-filled fields with
+ * party radio → Continue PATCHes /api/contracts/[id] and dismisses.
+ */
+export function ContractIntroModal({
+  contractId,
+  onDone,
+}: {
+  contractId: string
+  onDone?: () => void
+}) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [show, setShow] = useState(false)
+  const [phase, setPhase] = useState<Phase>('upload')
+  const [error, setError] = useState<string | null>(null)
+  const [dragOver, setDragOver] = useState(false)
+  const [progress, setProgress] = useState('Reading your contract…')
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Form state — starts empty, fills after extraction.
+  const [name, setName] = useState('')
+  const [contractForm, setContractForm] = useState('bespoke')
+  const [referenceNumber, setReferenceNumber] = useState('')
+  const [party1Name, setParty1Name] = useState('')
+  const [party1Role, setParty1Role] = useState('Principal')
+  const [party2Name, setParty2Name] = useState('')
+  const [party2Role, setParty2Role] = useState('Contractor')
+  const [administratorName, setAdministratorName] = useState('')
+  const [userIsParty, setUserIsParty] = useState<'party1' | 'party2'>('party2')
+
+  // Decide on mount whether to show.
+  useEffect(() => {
+    const intro = searchParams.get('intro') === '1'
+    const supabase = createClient()
+    let cancelled = false
+
+    ;(async () => {
+      const { count } = await supabase
+        .from('documents')
+        .select('id', { count: 'exact', head: true })
+        .eq('contract_id', contractId)
+      if (cancelled) return
+      const empty = (count || 0) === 0
+      if (intro || empty) setShow(true)
+
+      // If the contract was already populated (e.g. sample clone) but ?intro=1
+      // is present, jump straight to review.
+      if (intro && !empty) {
+        const { data: contract } = await supabase
+          .from('contracts')
+          .select('name, contract_form, party1_name, party1_role, party2_name, party2_role, administrator_name, user_is_party, extracted_facts')
+          .eq('id', contractId)
+          .maybeSingle()
+        if (contract) {
+          if (contract.name) setName(contract.name)
+          if (contract.contract_form) setContractForm(contract.contract_form)
+          if (contract.party1_name) setParty1Name(contract.party1_name)
+          if (contract.party1_role) setParty1Role(contract.party1_role)
+          if (contract.party2_name) setParty2Name(contract.party2_name)
+          if (contract.party2_role) setParty2Role(contract.party2_role)
+          if (contract.administrator_name) setAdministratorName(contract.administrator_name)
+          if (contract.user_is_party === 'party1' || contract.user_is_party === 'party2') {
+            setUserIsParty(contract.user_is_party)
+          }
+          setPhase('review')
+        }
+      }
+    })()
+
+    return () => { cancelled = true }
+  }, [contractId, searchParams])
+
+  // Lock background scroll while modal is open.
+  useEffect(() => {
+    if (!show) return
+    const original = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = original }
+  }, [show])
+
+  const close = useCallback(() => {
+    setShow(false)
+    // Strip the ?intro=1 if present.
+    if (searchParams.get('intro')) {
+      const url = new URL(window.location.href)
+      url.searchParams.delete('intro')
+      window.history.replaceState({}, '', url.toString())
+    }
+    onDone?.()
+  }, [onDone, searchParams])
+
+  const handleFile = async (file: File) => {
+    if (!file) return
+    if (file.size > 50 * 1024 * 1024) {
+      toast.error('File too large — 50MB max for guest accounts.')
+      return
+    }
+    setError(null)
+    setPhase('processing')
+    setProgress('Uploading your contract…')
+
+    const fd = new FormData()
+    fd.append('contract_id', contractId)
+    fd.append('file', file)
+
+    try {
+      // Show staged progress messages for perceived speed.
+      const tick1 = setTimeout(() => setProgress('Extracting clauses and parties…'), 1500)
+      const tick2 = setTimeout(() => setProgress('Identifying contract form and time bars…'), 6000)
+
+      const res = await fetch('/api/contracts/quick-init', { method: 'POST', body: fd })
+      clearTimeout(tick1)
+      clearTimeout(tick2)
+
+      const data = await res.json()
+      if (!res.ok || !data.ok) {
+        setError(data.error || 'Could not process your contract.')
+        setPhase('upload')
+        return
+      }
+
+      const facts = (data.facts || {}) as ExtractedFacts
+      // Best-effort population. The user always sees + edits before saving.
+      const principalName = pickName(facts.principal)
+      const contractorName = pickName(facts.contractor)
+      const superName = pickName(facts.superintendent)
+      const formGuess = facts.contract_form?.value || ''
+      const refGuess = facts.reference_number?.value || ''
+
+      setName(name || file.name.replace(/\.[^/.]+$/, ''))
+      if (principalName) setParty1Name(principalName)
+      if (contractorName) setParty2Name(contractorName)
+      if (superName) setAdministratorName(superName)
+      if (refGuess) setReferenceNumber(refGuess)
+      if (formGuess) {
+        const matched = CONTRACT_FORMS.find((f) =>
+          formGuess.toLowerCase().includes(f.toLowerCase().split('-')[0]),
+        )
+        setContractForm(matched || 'bespoke')
+      }
+      setPhase('review')
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Network error.')
+      setPhase('upload')
+    }
+  }
+
+  const handleSave = async () => {
+    if (!name.trim()) {
+      setError('Give your project a name.')
+      return
+    }
+    if (!party1Name.trim() || !party2Name.trim()) {
+      setError('Enter both party names.')
+      return
+    }
+    setPhase('saving')
+    setError(null)
+    try {
+      const res = await fetch(`/api/contracts/${contractId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.trim(),
+          contract_form: contractForm,
+          reference_number: referenceNumber.trim() || null,
+          party1_name: party1Name.trim(),
+          party1_role: party1Role,
+          party2_name: party2Name.trim(),
+          party2_role: party2Role,
+          administrator_name: administratorName.trim() || null,
+          administrator_role: administratorName.trim() ? 'Superintendent' : null,
+          user_is_party: userIsParty,
+          facts_verified_by_user: true,
+        }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setError(data.error || 'Could not save.')
+        setPhase('review')
+        return
+      }
+      toast.success("You're set — ask Astruct anything about this contract.")
+      close()
+      router.refresh()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Network error.')
+      setPhase('review')
+    }
+  }
+
+  if (!show) return null
+
+  return (
+    <div
+      className="fixed inset-0 z-[120] flex items-center justify-center p-0 sm:p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="intro-title"
+    >
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className="relative w-full sm:max-w-2xl max-h-screen sm:max-h-[90vh] overflow-y-auto bg-card sm:rounded-2xl shadow-2xl border border-border">
+        {phase === 'upload' && (
+          <UploadStep
+            dragOver={dragOver}
+            setDragOver={setDragOver}
+            fileInputRef={fileInputRef}
+            handleFile={handleFile}
+            error={error}
+          />
+        )}
+
+        {phase === 'processing' && (
+          <div className="p-10 sm:p-14 text-center">
+            <Loader2 className="h-8 w-8 mx-auto mb-4 text-foreground/70 animate-spin" />
+            <p className="text-base font-medium text-foreground">{progress}</p>
+            <p className="text-xs text-muted-foreground mt-2">
+              This usually takes 5–15 seconds.
+            </p>
+          </div>
+        )}
+
+        {(phase === 'review' || phase === 'saving') && (
+          <ReviewStep
+            name={name}
+            setName={setName}
+            contractForm={contractForm}
+            setContractForm={setContractForm}
+            referenceNumber={referenceNumber}
+            setReferenceNumber={setReferenceNumber}
+            party1Name={party1Name}
+            setParty1Name={setParty1Name}
+            party1Role={party1Role}
+            setParty1Role={setParty1Role}
+            party2Name={party2Name}
+            setParty2Name={setParty2Name}
+            party2Role={party2Role}
+            setParty2Role={setParty2Role}
+            administratorName={administratorName}
+            setAdministratorName={setAdministratorName}
+            userIsParty={userIsParty}
+            setUserIsParty={setUserIsParty}
+            saving={phase === 'saving'}
+            onSave={handleSave}
+            error={error}
+          />
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── Upload step ──────────────────────────────────────────────────────────
+function UploadStep({
+  dragOver,
+  setDragOver,
+  fileInputRef,
+  handleFile,
+  error,
+}: {
+  dragOver: boolean
+  setDragOver: (b: boolean) => void
+  fileInputRef: React.RefObject<HTMLInputElement | null>
+  handleFile: (f: File) => void
+  error: string | null
+}) {
+  return (
+    <div className="p-6 sm:p-10">
+      <div className="flex items-center gap-2 mb-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        <Sparkles className="h-3.5 w-3.5" />
+        Set up your project
+      </div>
+      <h2
+        id="intro-title"
+        className="text-2xl sm:text-3xl text-foreground font-normal leading-tight mb-3"
+        style={{
+          fontFamily: "var(--font-serif-display), 'DM Serif Display', Georgia, serif",
+          letterSpacing: '-0.02em',
+        }}
+      >
+        Upload your contract to start.
+      </h2>
+      <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+        Drop in your head contract or subcontract — Astruct reads it and pre-fills the project
+        details so you can start asking questions in seconds.
+      </p>
+
+      <div
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(e) => {
+          e.preventDefault()
+          setDragOver(false)
+          const file = e.dataTransfer.files[0]
+          if (file) handleFile(file)
+        }}
+        onClick={() => fileInputRef.current?.click()}
+        className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-colors ${
+          dragOver
+            ? 'border-foreground/40 bg-foreground/[0.04]'
+            : 'border-border hover:border-foreground/25 hover:bg-muted/30'
+        }`}
+      >
+        <input
+          ref={fileInputRef}
+          type="file"
+          className="hidden"
+          accept=".pdf,.doc,.docx,.txt"
+          onChange={(e) => {
+            const file = e.target.files?.[0]
+            if (file) handleFile(file)
+          }}
+        />
+        <Upload className="h-7 w-7 mx-auto mb-3 text-muted-foreground/60" strokeWidth={1.5} />
+        <p className="text-sm font-medium text-foreground">Drop your contract here</p>
+        <p className="text-xs text-muted-foreground mt-1">
+          or click to browse — PDF, DOCX or TXT, up to 50MB
+        </p>
+      </div>
+
+      {error && (
+        <div className="mt-4 rounded-md border border-red-500/30 bg-red-500/5 px-3 py-2 text-xs text-red-600">
+          {error}
+        </div>
+      )}
+
+      <p className="text-xs text-muted-foreground/70 mt-6 text-center">
+        No signup, no credit card. Free forever for your first project.
+      </p>
+    </div>
+  )
+}
+
+// ─── Review step ─────────────────────────────────────────────────────────
+function ReviewStep(props: {
+  name: string
+  setName: (v: string) => void
+  contractForm: string
+  setContractForm: (v: string) => void
+  referenceNumber: string
+  setReferenceNumber: (v: string) => void
+  party1Name: string
+  setParty1Name: (v: string) => void
+  party1Role: string
+  setParty1Role: (v: string) => void
+  party2Name: string
+  setParty2Name: (v: string) => void
+  party2Role: string
+  setParty2Role: (v: string) => void
+  administratorName: string
+  setAdministratorName: (v: string) => void
+  userIsParty: 'party1' | 'party2'
+  setUserIsParty: (v: 'party1' | 'party2') => void
+  saving: boolean
+  onSave: () => void
+  error: string | null
+}) {
+  const {
+    name, setName, contractForm, setContractForm, referenceNumber, setReferenceNumber,
+    party1Name, setParty1Name, party1Role, setParty1Role,
+    party2Name, setParty2Name, party2Role, setParty2Role,
+    administratorName, setAdministratorName,
+    userIsParty, setUserIsParty,
+    saving, onSave, error,
+  } = props
+
+  return (
+    <div className="p-6 sm:p-10">
+      <div className="flex items-center gap-2 mb-3 text-xs font-medium text-emerald-600 uppercase tracking-wider">
+        <CheckCircle2 className="h-3.5 w-3.5" />
+        Auto-filled from your contract
+      </div>
+      <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-1">
+        Confirm the project details
+      </h2>
+      <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+        Astruct read your contract and pulled out the key facts. Tweak anything that&apos;s wrong,
+        then tell us which party you are.
+      </p>
+
+      <div className="space-y-5">
+        {/* Project name + form */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Project name</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Riverside Warehouse 12" />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Contract form</Label>
+            <select
+              value={contractForm}
+              onChange={(e) => setContractForm(e.target.value)}
+              className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
+            >
+              {CONTRACT_FORMS.map((f) => (
+                <option key={f} value={f}>{f}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Reference number (optional)</Label>
+          <Input value={referenceNumber} onChange={(e) => setReferenceNumber(e.target.value)} placeholder="e.g. CON-2026-001" />
+        </div>
+
+        {/* Party 1 */}
+        <div className="rounded-lg border border-border p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Party 1 — {party1Role}
+            </span>
+            <Pencil className="h-3 w-3 text-muted-foreground/60" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Name</Label>
+              <Input value={party1Name} onChange={(e) => setParty1Name(e.target.value)} placeholder="e.g. Riverside Industrial Pty Ltd" />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Role</Label>
+              <select
+                value={party1Role}
+                onChange={(e) => setParty1Role(e.target.value)}
+                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
+              >
+                <option value="Principal">Principal</option>
+                <option value="Head Contractor">Head Contractor</option>
+                <option value="Contractor">Contractor</option>
+                <option value="Subcontractor">Subcontractor</option>
+                <option value="Developer">Developer</option>
+                <option value="Owner">Owner</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Party 2 */}
+        <div className="rounded-lg border border-border p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Party 2 — {party2Role}
+            </span>
+            <Pencil className="h-3 w-3 text-muted-foreground/60" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Name</Label>
+              <Input value={party2Name} onChange={(e) => setParty2Name(e.target.value)} placeholder="e.g. Murchison Construction Pty Ltd" />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Role</Label>
+              <select
+                value={party2Role}
+                onChange={(e) => setParty2Role(e.target.value)}
+                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
+              >
+                <option value="Contractor">Contractor</option>
+                <option value="Head Contractor">Head Contractor</option>
+                <option value="Subcontractor">Subcontractor</option>
+                <option value="Principal">Principal</option>
+                <option value="Consultant">Consultant</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {administratorName && (
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Superintendent / Contract Administrator</Label>
+            <Input value={administratorName} onChange={(e) => setAdministratorName(e.target.value)} />
+          </div>
+        )}
+
+        {/* Which party is the user */}
+        <div className="rounded-lg border-2 border-foreground/15 bg-foreground/[0.02] p-4 space-y-3">
+          <p className="text-sm font-medium text-foreground">Which party are you?</p>
+          <p className="text-xs text-muted-foreground -mt-1">
+            We use this to frame answers from your perspective and draft notices from your side.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <label
+              className={`cursor-pointer rounded-md border p-3 text-sm transition-colors ${
+                userIsParty === 'party1'
+                  ? 'border-foreground bg-foreground/[0.04]'
+                  : 'border-border hover:border-foreground/30'
+              }`}
+            >
+              <input
+                type="radio"
+                checked={userIsParty === 'party1'}
+                onChange={() => setUserIsParty('party1')}
+                className="sr-only"
+              />
+              <div className="font-medium text-foreground">{party1Name || 'Party 1'}</div>
+              <div className="text-xs text-muted-foreground mt-0.5">{party1Role}</div>
+            </label>
+            <label
+              className={`cursor-pointer rounded-md border p-3 text-sm transition-colors ${
+                userIsParty === 'party2'
+                  ? 'border-foreground bg-foreground/[0.04]'
+                  : 'border-border hover:border-foreground/30'
+              }`}
+            >
+              <input
+                type="radio"
+                checked={userIsParty === 'party2'}
+                onChange={() => setUserIsParty('party2')}
+                className="sr-only"
+              />
+              <div className="font-medium text-foreground">{party2Name || 'Party 2'}</div>
+              <div className="text-xs text-muted-foreground mt-0.5">{party2Role}</div>
+            </label>
+          </div>
+        </div>
+
+        {error && (
+          <div className="rounded-md border border-red-500/30 bg-red-500/5 px-3 py-2 text-xs text-red-600">
+            {error}
+          </div>
+        )}
+
+        <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
+          <Button onClick={onSave} disabled={saving}>
+            {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <ArrowRight className="h-3.5 w-3.5 mr-1.5" />}
+            Continue to assistant
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default ContractIntroModal

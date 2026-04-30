@@ -95,28 +95,14 @@ export function AnonWelcomeTour({ onComplete }: { onComplete?: () => void }) {
   useEffect(() => {
     if (!ANON_FIRST_ENABLED) return
 
+    // The intro modal handles first-visit onboarding now. The tour is opt-in:
+    // it only fires when the user clicks "Replay tour" in the header menu,
+    // which adds ?tour=1 to the URL.
     const params = new URLSearchParams(window.location.search)
     if (params.get('tour') === '1') {
       setShow(true)
       window.history.replaceState({}, '', window.location.pathname)
-      return
     }
-
-    if (localStorage.getItem(STORAGE_KEY) === '1') return
-
-    const landed = localStorage.getItem('astruct_anon_landed') === '1'
-    if (!landed) return
-
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return
-      // For anon users we trust localStorage + the landed flag.
-      if (user.is_anonymous) {
-        setShow(true)
-        return
-      }
-      // Authenticated users use the existing onboarding-walkthrough — skip here.
-    })
   }, [])
 
   // Keyboard handlers — Esc closes, ←/→ step, Enter advances.

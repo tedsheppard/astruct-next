@@ -56,7 +56,10 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json().catch(() => ({}))
-    const { seed_sample } = body as { seed_sample?: boolean }
+    const { seed_sample, create_blank } = body as {
+      seed_sample?: boolean
+      create_blank?: boolean
+    }
 
     const admin = createAdminClient()
     const ipHash = hashIdentifier(getClientIp(request))
@@ -97,7 +100,9 @@ export async function POST(request: NextRequest) {
       user_agent_hash: hashIdentifier(request.headers.get('user-agent') || ''),
     })
 
-    // Optionally seed the sample contract.
+    // Provision a contract for the new guest. Two paths:
+    //  - seed_sample → clone the curated AS4000 sample (text + chunks + embeds)
+    //  - create_blank (default) → empty contract, intro modal will populate it
     let contractId: string | null = null
     if (seed_sample) {
       try {
@@ -105,7 +110,25 @@ export async function POST(request: NextRequest) {
         contractId = await cloneSampleForUser(admin, userId)
       } catch (e) {
         console.error('[anon-start] sample seed failed', e)
-        // Non-fatal — the session still exists, the user can upload their own.
+      }
+    } else if (create_blank !== false) {
+      try {
+        const { data: contract } = await admin
+          .from('contracts')
+          .insert({
+            user_id: userId,
+            name: 'Untitled project',
+            contract_form: 'bespoke',
+            party1_role: 'Principal',
+            party2_role: 'Contractor',
+            user_is_party: 'party2',
+            status: 'active',
+          })
+          .select('id')
+          .single()
+        contractId = contract?.id || null
+      } catch (e) {
+        console.error('[anon-start] blank contract create failed', e)
       }
     }
 

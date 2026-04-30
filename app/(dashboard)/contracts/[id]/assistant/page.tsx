@@ -54,6 +54,7 @@ import dynamic from 'next/dynamic'
 import FollowupSuggestions from '@/components/followup-suggestions'
 import SourceCard from '@/components/source-card'
 import { AnonSoftPromptHost } from '@/components/anon-soft-prompt-host'
+import { ContractIntroModal } from '@/components/contract-intro-modal'
 
 const PdfClauseViewer = dynamic(() => import('@/components/pdf-clause-viewer'), { ssr: false })
 
@@ -748,6 +749,9 @@ export default function AssistantPage() {
 
   return (
     <>
+    {/* Contract intro modal — fires for fresh blank contracts and ?intro=1 */}
+    <ContractIntroModal contractId={contractId} />
+
     {/* Template selector modal */}
     {showTemplateSelector && pendingDraftMessage && (
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => { setShowTemplateSelector(false); setPendingDraftMessage(null) }}>
