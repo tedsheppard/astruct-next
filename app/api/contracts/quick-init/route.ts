@@ -76,15 +76,17 @@ async function classifyDocument(
 /**
  * POST /api/contracts/quick-init
  *
- * The "intro modal" pipeline. Given the current user's contract_id and an
- * uploaded PDF, this:
- *  1. Uploads to storage
- *  2. Extracts text
+ * The "intro modal" pipeline. The client has already uploaded the PDF to
+ * Supabase Storage (bypassing Vercel's 4.5MB function payload limit).
+ * This endpoint:
+ *  1. Downloads from storage
+ *  2. Extracts text (unpdf → pdf-parse fallback)
  *  3. Inserts a documents row
  *  4. Chunks + embeds (so RAG works immediately)
  *  5. Calls extractFacts() to populate contracts.extracted_facts
  *
- * Returns the extracted facts so the modal can render the review step.
+ * Body: { contract_id, file_path, filename, file_type, file_size }
+ * Returns: { ok, document_id, facts }
  */
 export async function POST(request: NextRequest) {
   try {
@@ -92,12 +94,13 @@ export async function POST(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const formData = await request.formData()
-    const contractId = formData.get('contract_id') as string
-    const file = formData.get('file') as File | null
+    const { contract_id, file_path, filename, file_type, file_size } = await request.json()
 
-    if (!contractId || !file) {
-      return Response.json({ error: 'contract_id and file are required' }, { status: 400 })
+    if (!contract_id || !file_path || !filename) {
+      return Response.json(
+        { error: 'contract_id, file_path and filename are required' },
+        { status: 400 },
+      )
     }
 
     const admin = createAdminClient()
@@ -106,13 +109,13 @@ export async function POST(request: NextRequest) {
     const { data: contract } = await admin
       .from('contracts')
       .select('id, user_id')
-      .eq('id', contractId)
+      .eq('id', contract_id)
       .single()
     if (!contract || contract.user_id !== user.id) {
       return Response.json({ error: 'Contract not found' }, { status: 404 })
     }
 
-    // Anon 50MB cap
+    // Anon 50MB cap (server-side enforcement; client also enforces)
     if (user.is_anonymous) {
       const ANON_TOTAL_BYTES = 50 * 1024 * 1024
       const { data: profile } = await admin
@@ -121,10 +124,11 @@ export async function POST(request: NextRequest) {
         .eq('id', user.id)
         .maybeSingle()
       const already = profile?.bytes_uploaded || 0
-      if (already + (file.size || 0) > ANON_TOTAL_BYTES) {
+      if (already + (file_size || 0) > ANON_TOTAL_BYTES) {
         return Response.json(
           {
-            error: 'Guest accounts can upload up to 50MB total. Sign up free to remove the limit.',
+            error:
+              'Guest accounts can upload up to 50MB total. Sign up free to remove the limit.',
             code: 'ANON_UPLOAD_LIMIT',
           },
           { status: 413 },
@@ -132,42 +136,34 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer())
-    const fileType = file.type || 'application/pdf'
-    const storagePath = `${contractId}/${Date.now()}_${file.name}`
-
-    // Ensure bucket exists (mirrors logic in upload route)
-    const { data: buckets } = await admin.storage.listBuckets()
-    if (!buckets?.some((b) => b.name === 'documents')) {
-      await admin.storage.createBucket('documents', { public: false, fileSizeLimit: 52428800 })
-    }
-
-    const { error: uploadErr } = await admin.storage
+    // Download the file from storage (uploaded client-side)
+    const { data: fileData, error: downloadErr } = await admin.storage
       .from('documents')
-      .upload(storagePath, buffer, { contentType: fileType, upsert: false })
-    if (uploadErr) {
-      console.error('[quick-init] storage upload failed', uploadErr)
-      return Response.json({ error: 'Could not upload file' }, { status: 500 })
+      .download(file_path)
+    if (downloadErr || !fileData) {
+      console.error('[quick-init] download failed', downloadErr)
+      return Response.json({ error: 'Could not read uploaded file' }, { status: 500 })
     }
+    const buffer = Buffer.from(await fileData.arrayBuffer())
 
     let extractedText = ''
-    if (fileType === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+    if (file_type === 'application/pdf' || filename.toLowerCase().endsWith('.pdf')) {
       extractedText = await extractPdfText(buffer)
-    } else if (fileType.startsWith('text/')) {
+    } else if (file_type?.startsWith('text/')) {
       extractedText = buffer.toString('utf-8')
     }
 
-    const { category, summary } = await classifyDocument(extractedText, file.name)
+    const { category, summary } = await classifyDocument(extractedText, filename)
 
     const { data: doc, error: docErr } = await admin
       .from('documents')
       .insert({
-        contract_id: contractId,
+        contract_id,
         user_id: user.id,
-        filename: file.name,
-        file_path: storagePath,
-        file_type: fileType,
-        file_size: file.size,
+        filename,
+        file_path,
+        file_type: file_type || 'application/octet-stream',
+        file_size: file_size || buffer.length,
         category,
         ai_summary: summary,
         extracted_text: extractedText,
@@ -187,14 +183,14 @@ export async function POST(request: NextRequest) {
           const embeddings = await generateEmbeddings(chunks)
           const rows = chunks.map((content, i) => ({
             document_id: doc.id,
-            contract_id: contractId,
+            contract_id,
             chunk_index: i,
             content,
             embedding: JSON.stringify(embeddings[i]),
             section_heading: detectSectionHeading(content),
             clause_numbers: extractClauseNumbers(content),
             metadata: {
-              filename: file.name,
+              filename,
               chunk_of: chunks.length,
               clause_numbers: extractClauseNumbers(content),
             },
@@ -207,7 +203,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Track upload bytes for anon hard-wall.
-    {
+    if (file_size) {
       const { data: profile } = await admin
         .from('profiles')
         .select('bytes_uploaded')
@@ -216,14 +212,14 @@ export async function POST(request: NextRequest) {
       await admin
         .from('profiles')
         .update({
-          bytes_uploaded: (profile?.bytes_uploaded || 0) + (file.size || 0),
+          bytes_uploaded: (profile?.bytes_uploaded || 0) + file_size,
           last_active_at: new Date().toISOString(),
         })
         .eq('id', user.id)
     }
 
     // Run the existing fact-extractor against the new chunks.
-    const facts = await extractFacts(contractId)
+    const facts = await extractFacts(contract_id)
 
     return Response.json({ ok: true, document_id: doc.id, facts })
   } catch (err) {

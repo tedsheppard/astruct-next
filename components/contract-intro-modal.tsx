@@ -152,22 +152,51 @@ export function ContractIntroModal({
     setPhase('processing')
     setProgress('Uploading your contract…')
 
-    const fd = new FormData()
-    fd.append('contract_id', contractId)
-    fd.append('file', file)
-
     try {
-      // Show staged progress messages for perceived speed.
+      // 1. Direct-to-Storage upload from the browser. Bypasses Vercel's 4.5MB
+      //    function payload limit; the function only sees JSON metadata.
+      const supabase = createClient()
+      const filePath = `${contractId}/${Date.now()}_${file.name}`
+      const { error: uploadErr } = await supabase.storage
+        .from('documents')
+        .upload(filePath, file, {
+          contentType: file.type || 'application/pdf',
+          upsert: false,
+        })
+      if (uploadErr) {
+        setError(uploadErr.message || 'Upload failed.')
+        setPhase('upload')
+        return
+      }
+
+      // 2. Tell the function to process the file already in storage.
       const tick1 = setTimeout(() => setProgress('Extracting clauses and parties…'), 1500)
       const tick2 = setTimeout(() => setProgress('Identifying contract form and time bars…'), 6000)
 
-      const res = await fetch('/api/contracts/quick-init', { method: 'POST', body: fd })
+      const res = await fetch('/api/contracts/quick-init', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contract_id: contractId,
+          file_path: filePath,
+          filename: file.name,
+          file_type: file.type || 'application/pdf',
+          file_size: file.size,
+        }),
+      })
       clearTimeout(tick1)
       clearTimeout(tick2)
 
-      const data = await res.json()
+      let data: Record<string, unknown> = {}
+      const ct = res.headers.get('content-type') || ''
+      if (ct.includes('application/json')) {
+        data = await res.json()
+      } else {
+        const text = await res.text()
+        data = { error: text.slice(0, 200) || `HTTP ${res.status}` }
+      }
       if (!res.ok || !data.ok) {
-        setError(data.error || 'Could not process your contract.')
+        setError((data.error as string) || 'Could not process your contract.')
         setPhase('upload')
         return
       }
