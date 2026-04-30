@@ -319,6 +319,14 @@ export default function CorrespondencePage() {
           /* Integrations tab */
           <div className="flex-1 overflow-y-auto p-6">
             <div className={`${selectedItem ? '' : 'max-w-4xl mx-auto'}`}>
+            <div className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-3">
+              <div className="flex items-start gap-2.5">
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border border-amber-500/40 bg-amber-500/10 text-amber-600 shrink-0 mt-0.5">BETA</span>
+                <p className="text-xs leading-relaxed text-foreground/80">
+                  Integrations are in beta testing. We&apos;d love to work with contractors who use any of the platforms below to build out the integration on a bespoke basis — reach out and we&apos;ll tailor the connector to your project setup.
+                </p>
+              </div>
+            </div>
             <div className="border border-border rounded-xl overflow-hidden">
               <div className="flex items-center px-5 py-2.5 bg-muted/50 border-b border-border text-xs font-medium text-muted-foreground">
                 <div className="flex-1">Platform</div>

@@ -91,6 +91,15 @@ export default function IntegrationsPage() {
         </Button>
       </div>
 
+      <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-3">
+        <div className="flex items-start gap-2.5">
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border border-amber-500/40 bg-amber-500/10 text-amber-600 shrink-0 mt-0.5">BETA</span>
+          <p className="text-xs leading-relaxed text-foreground/80">
+            Integrations are in beta testing. We&apos;d love to work with contractors who use any of these platforms to build out the integration on a bespoke basis — reach out and we&apos;ll tailor the connector to your project setup.
+          </p>
+        </div>
+      </div>
+
       {loading ? (
         <div className="flex justify-center py-20">
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
