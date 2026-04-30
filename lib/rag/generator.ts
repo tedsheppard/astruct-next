@@ -68,6 +68,14 @@ export async function generate(
   let fullResponse = ''
 
   if (isClaudeModel(model)) {
+    // Web search tool - available for all Claude models
+    const tools: Anthropic.Messages.Tool[] = [
+      {
+        type: 'web_search_20250305' as unknown as 'custom',
+        name: 'web_search',
+      } as unknown as Anthropic.Messages.Tool,
+    ]
+
     if (useThinking) {
       // Extended thinking mode
       const stream = await anthropic.messages.create({
@@ -76,6 +84,7 @@ export async function generate(
         temperature: 1, // Required for extended thinking
         thinking: { type: 'enabled', budget_tokens: query.queryType === 'drafting' ? 12000 : 8000 },
         system: systemPrompt,
+        tools,
         stream: true,
         messages: trimmedHistory.map(m => ({
           role: m.role as 'user' | 'assistant',
@@ -89,6 +98,10 @@ export async function generate(
           if ('type' in event.content_block && event.content_block.type === 'thinking') {
             inThinking = true
             callbacks.onThinkingState('Reasoning through the problem...')
+          } else if ('type' in event.content_block && event.content_block.type === 'server_tool_use') {
+            // Web search initiated
+            callbacks.onThinkingState('Searching the web...')
+            inThinking = false
           } else {
             inThinking = false
           }
@@ -97,16 +110,17 @@ export async function generate(
             fullResponse += event.delta.text
             callbacks.onContent(event.delta.text)
           }
-          // Skip thinking deltas — don't stream internal reasoning
+          // Skip thinking deltas - don't stream internal reasoning
         }
       }
     } else {
-      // Standard streaming
+      // Standard streaming with web search tool
       const stream = await anthropic.messages.create({
         model,
         max_tokens: 30000,
         temperature: 0.4,
         system: systemPrompt,
+        tools,
         stream: true,
         messages: trimmedHistory.map(m => ({
           role: m.role as 'user' | 'assistant',
@@ -115,14 +129,19 @@ export async function generate(
       })
 
       for await (const event of stream) {
-        if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+        if (event.type === 'content_block_start') {
+          if ('type' in event.content_block && event.content_block.type === 'server_tool_use') {
+            callbacks.onThinkingState('Searching the web...')
+          }
+        } else if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
           fullResponse += event.delta.text
           callbacks.onContent(event.delta.text)
         }
       }
     }
   } else {
-    // OpenAI
+    // OpenAI - no web search wired yet
+    // TODO: OpenAI web search not yet wired - Claude models get web search, GPT models do not
     const openaiStream = await openai.chat.completions.create({
       model,
       messages: [
