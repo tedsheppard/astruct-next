@@ -2,6 +2,9 @@
 
 import Link from 'next/link'
 import { FadeIn } from '../layout'
+import { getCtaTarget } from '@/lib/anon-flag'
+
+const CTA = getCtaTarget()
 
 const headlineFont = "var(--font-serif-display), 'DM Serif Display', Georgia, serif"
 
@@ -135,7 +138,7 @@ export default function PlatformPage() {
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                href="/register"
+                href={CTA}
                 className="px-7 py-3 rounded-lg bg-[#0f0e0d] text-[#fafaf9] text-sm font-medium hover:bg-[#33312c] transition-colors"
               >
                 Start free

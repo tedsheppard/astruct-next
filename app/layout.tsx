@@ -26,9 +26,9 @@ const dmSerifDisplay = DM_Serif_Display({
 })
 
 export const metadata: Metadata = {
-  title: 'Astruct — Contract Intelligence',
+  title: 'Astruct — AI contract intelligence. Try free, no signup.',
   description:
-    'The operating system for construction contract administration. Convert information into required contractual actions.',
+    'AI contract intelligence for Australian construction. Upload a contract, ask anything, draft notices in seconds — free for your first project, no credit card required.',
 }
 
 export default function RootLayout({

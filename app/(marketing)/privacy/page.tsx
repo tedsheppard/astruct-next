@@ -93,6 +93,26 @@ export default function PrivacyPage() {
                 </ul>
               </div>
 
+              {/* Anonymous / guest sessions */}
+              <div>
+                <h2 className="text-[#1C1917] text-xl font-semibold mb-3" style={{ fontFamily: headlineFont }}>
+                  Guest sessions and 30-day retention
+                </h2>
+                <p className="text-[#57534E] leading-relaxed mb-3">
+                  You can use Astruct without creating an account. When you do, we create a temporary
+                  &quot;guest&quot; session linked to a randomly generated identifier. Documents you upload
+                  and questions you ask are processed the same way as for signed-in users (see above —
+                  zero retention with AI providers, encrypted in transit) and stored against that guest
+                  identifier so you can keep working across the session.
+                </p>
+                <p className="text-[#57534E] leading-relaxed mb-3">
+                  If you sign up before leaving, your guest data is upgraded in place into your new
+                  account. If you do not sign up, guest data — including uploaded documents,
+                  conversations, and any extracted information — is automatically deleted 30 days after
+                  your last activity. Once deleted it cannot be recovered.
+                </p>
+              </div>
+
               {/* 4 */}
               <div>
                 <h2 className="text-[#1C1917] text-xl font-semibold mb-3" style={{ fontFamily: headlineFont }}>

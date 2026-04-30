@@ -2,6 +2,9 @@
 
 import Link from 'next/link'
 import { FadeIn } from '../../layout'
+import { getCtaTarget } from '@/lib/anon-flag'
+
+const CTA = getCtaTarget()
 
 const headlineFont = "var(--font-serif-display), 'DM Serif Display', Georgia, serif"
 
@@ -67,10 +70,10 @@ export default function ContractorsPage() {
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <Link
-                href="/register"
+                href={CTA}
                 className="inline-flex items-center px-6 py-3 rounded-lg bg-[#0f0e0d] text-[#fafaf9] font-medium hover:bg-[#2a2927] transition-colors"
               >
-                Start free trial
+                Try free, no signup
               </Link>
               <Link
                 href="/contact"
@@ -155,10 +158,10 @@ export default function ContractorsPage() {
               Join the head contractors using Astruct to manage their contract obligations with confidence.
             </p>
             <Link
-              href="/register"
+              href={CTA}
               className="inline-flex items-center px-8 py-3.5 rounded-lg bg-[#0f0e0d] text-[#fafaf9] font-medium hover:bg-[#2a2927] transition-colors"
             >
-              Start your free trial
+              Try free, no signup
             </Link>
           </FadeIn>
         </div>

@@ -53,6 +53,7 @@ import {
 import dynamic from 'next/dynamic'
 import FollowupSuggestions from '@/components/followup-suggestions'
 import SourceCard from '@/components/source-card'
+import { AnonSoftPromptHost } from '@/components/anon-soft-prompt-host'
 
 const PdfClauseViewer = dynamic(() => import('@/components/pdf-clause-viewer'), { ssr: false })
 
@@ -1537,6 +1538,8 @@ export default function AssistantPage() {
             {/* Input bar — only shown during conversation */}
             <div className="border-t border-border p-4 bg-main-panel">
               <div className="max-w-3xl mx-auto">
+                <AnonSoftPromptHost messageCount={messages.length} />
+
                 {/* Pending uploads pills */}
                 {pendingUploads.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mb-2">

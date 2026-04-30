@@ -171,7 +171,31 @@ export async function POST(request: NextRequest) {
     }
 
     const admin = createAdminClient()
+
+    // Anon-first: enforce a 50MB total cap on guest accounts.
+    if (user.is_anonymous) {
+      const ANON_TOTAL_BYTES = 50 * 1024 * 1024
+      const incomingBytes = files.reduce((acc, f) => acc + (f.size || 0), 0)
+      const { data: profile } = await admin
+        .from('profiles')
+        .select('bytes_uploaded')
+        .eq('id', user.id)
+        .maybeSingle()
+      const alreadyUploaded = profile?.bytes_uploaded || 0
+      if (alreadyUploaded + incomingBytes > ANON_TOTAL_BYTES) {
+        return Response.json(
+          {
+            error:
+              'Guest accounts can upload up to 50MB total. Sign up free to remove the limit on your first project.',
+            code: 'ANON_UPLOAD_LIMIT',
+          },
+          { status: 413 }
+        )
+      }
+    }
+
     const uploadedDocuments = []
+    let totalBytesAdded = 0
 
     for (const file of files) {
       const buffer = Buffer.from(await file.arrayBuffer())
@@ -273,6 +297,7 @@ export async function POST(request: NextRequest) {
       }
 
       uploadedDocuments.push(doc)
+      totalBytesAdded += fileSize || 0
 
       // Trigger deadline scan in background (don't await — let it run async)
       if (doc && extractedText.length > 100) {
@@ -285,6 +310,20 @@ export async function POST(request: NextRequest) {
           body: JSON.stringify({ contract_id: contractId, document_id: doc.id, trigger: 'upload' }),
         }).catch(err => console.error('[Upload] Deadline scan trigger failed:', err))
       }
+    }
+
+    // Track upload bytes for the anon-first hard-wall trigger.
+    if (totalBytesAdded > 0) {
+      const { data: profile } = await admin
+        .from('profiles')
+        .select('bytes_uploaded')
+        .eq('id', user.id)
+        .maybeSingle()
+      const newTotal = (profile?.bytes_uploaded || 0) + totalBytesAdded
+      await admin
+        .from('profiles')
+        .update({ bytes_uploaded: newTotal, last_active_at: new Date().toISOString() })
+        .eq('id', user.id)
     }
 
     return Response.json({ documents: uploadedDocuments })

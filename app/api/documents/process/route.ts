@@ -120,6 +120,28 @@ export async function POST(request: NextRequest) {
 
     const admin = createAdminClient()
 
+    // Anon-first: enforce 50MB total cap on guests + track bytes_uploaded.
+    if (user.is_anonymous) {
+      const ANON_TOTAL_BYTES = 50 * 1024 * 1024
+      const incoming = file_size || 0
+      const { data: profile } = await admin
+        .from('profiles')
+        .select('bytes_uploaded')
+        .eq('id', user.id)
+        .maybeSingle()
+      const alreadyUploaded = profile?.bytes_uploaded || 0
+      if (alreadyUploaded + incoming > ANON_TOTAL_BYTES) {
+        return Response.json(
+          {
+            error:
+              'Guest accounts can upload up to 50MB total. Sign up free to remove the limit on your first project.',
+            code: 'ANON_UPLOAD_LIMIT',
+          },
+          { status: 413 }
+        )
+      }
+    }
+
     // Download the file from Supabase Storage
     const { data: fileData, error: downloadError } = await admin.storage
       .from('documents')
@@ -169,6 +191,20 @@ export async function POST(request: NextRequest) {
     if (insertError) {
       console.error('Document insert error:', insertError)
       return Response.json({ error: 'Failed to save document' }, { status: 500 })
+    }
+
+    // Track upload bytes for the anon-first hard-wall trigger.
+    if (file_size) {
+      const { data: profile } = await admin
+        .from('profiles')
+        .select('bytes_uploaded')
+        .eq('id', user.id)
+        .maybeSingle()
+      const newTotal = (profile?.bytes_uploaded || 0) + file_size
+      await admin
+        .from('profiles')
+        .update({ bytes_uploaded: newTotal, last_active_at: new Date().toISOString() })
+        .eq('id', user.id)
     }
 
     // Chunk and embed

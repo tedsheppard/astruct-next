@@ -1,6 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+const ANON_FIRST_ENABLED = process.env.NEXT_PUBLIC_ANON_FIRST_ENABLED === 'true'
+
 export async function proxy(request: NextRequest) {
   // Skip proxy for file upload routes — the body must not be consumed by middleware
   if (request.nextUrl.pathname.startsWith('/api/documents/upload') ||
@@ -76,17 +78,26 @@ export async function proxy(request: NextRequest) {
 
   // Public paths on app domain
   const publicPaths = ['/login', '/register', '/auth', '/api', '/landing', '/platform', '/solutions', '/pricing', '/security', '/company', '/privacy', '/terms', '/contact', '/verify-email', '/verify-phone']
-  const isPublicPath = request.nextUrl.pathname === '/' || publicPaths.some(p => request.nextUrl.pathname.startsWith(p))
+  // Anon-first mode opens up the assistant entry shim and contract pages so
+  // anonymous Supabase sessions (created lazily inside /assistant) reach the UI.
+  const anonPublicPaths = ANON_FIRST_ENABLED
+    ? ['/assistant', '/contracts']
+    : []
+  const allPublic = [...publicPaths, ...anonPublicPaths]
+  const isPublicPath = request.nextUrl.pathname === '/' || allPublic.some(p => request.nextUrl.pathname.startsWith(p))
 
   if (!user && !isPublicPath) {
     const url = request.nextUrl.clone()
-    url.pathname = '/login'
+    url.pathname = ANON_FIRST_ENABLED ? '/assistant' : '/login'
     return NextResponse.redirect(url)
   }
 
-  // Redirect authenticated users away from auth pages
+  // Redirect authenticated users away from auth pages — except anonymous
+  // Supabase users, who must be allowed to land on /register so they can
+  // upgrade in place via linkIdentity.
   if (
     user &&
+    !user.is_anonymous &&
     (request.nextUrl.pathname.startsWith('/login') ||
       request.nextUrl.pathname.startsWith('/register'))
   ) {
@@ -96,7 +107,8 @@ export async function proxy(request: NextRequest) {
   }
 
   // ─── Verification + onboarding chain for authenticated users ──────────
-  if (user && !isPublicPath) {
+  // Anonymous users skip the chain entirely — they have no email/phone yet.
+  if (user && !user.is_anonymous && !isPublicPath) {
     const path = request.nextUrl.pathname
 
     // Skip checks for verify/setup pages themselves and API routes
@@ -108,10 +120,11 @@ export async function proxy(request: NextRequest) {
         return NextResponse.redirect(url)
       }
 
-      // Check phone verification (query profile)
+      // Check phone verification (query profile). When anon-first is enabled
+      // we skip phone gating for free-tier users — only paid accounts need it.
       try {
         const profileRes = await fetch(
-          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/profiles?select=phone_verified,onboarding_completed&id=eq.${user.id}`,
+          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/profiles?select=phone_verified,onboarding_completed,subscription_tier&id=eq.${user.id}`,
           {
             headers: {
               apikey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -122,7 +135,8 @@ export async function proxy(request: NextRequest) {
         const profiles = await profileRes.json()
         const profile = profiles?.[0]
 
-        if (profile && !profile.phone_verified) {
+        const requiresPhone = !ANON_FIRST_ENABLED || profile?.subscription_tier === 'paid'
+        if (profile && !profile.phone_verified && requiresPhone) {
           const url = request.nextUrl.clone()
           url.pathname = '/verify-phone'
           return NextResponse.redirect(url)

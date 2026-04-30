@@ -19,6 +19,43 @@ export default function RegisterPage() {
     setError(null)
 
     const supabase = createClient()
+
+    // If the visitor is currently in an anonymous Supabase session, upgrade
+    // it in place via updateUser — preserves auth.uid() so all guest work
+    // (contracts, documents, chat history) stays attached.
+    const { data: existing } = await supabase.auth.getUser()
+    const isAnonUpgrade = existing.user?.is_anonymous === true
+
+    if (isAnonUpgrade) {
+      const { error: updErr } = await supabase.auth.updateUser({ email, password })
+      if (updErr) {
+        if (updErr.message?.toLowerCase().includes('registered')) {
+          setError(
+            "That email is already registered. Log in instead — we'll merge your guest work after sign in.",
+          )
+        } else {
+          setError(updErr.message)
+        }
+        setLoading(false)
+        return
+      }
+
+      await supabase
+        .from('profiles')
+        .update({
+          name: name || null,
+          email,
+          is_anonymous: false,
+          anon_linked_at: new Date().toISOString(),
+        })
+        .eq('id', existing.user!.id)
+
+      // Land them back inside the assistant — their contract is already there.
+      router.push('/?upgraded=1')
+      router.refresh()
+      return
+    }
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -79,7 +116,7 @@ export default function RegisterPage() {
           <div className="space-y-6">
             <div>
               <h2 className="text-xl font-semibold text-[#0f0e0d]">Create your account</h2>
-              <p className="text-sm mt-1 text-[#706d66]">14-day free trial. No credit card required.</p>
+              <p className="text-sm mt-1 text-[#706d66]">Free forever for your first project. No credit card required.</p>
             </div>
 
             {error && (

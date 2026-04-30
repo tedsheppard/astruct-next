@@ -1,5 +1,8 @@
 import Link from 'next/link'
 import { FadeIn } from '../layout'
+import { getCtaTarget } from '@/lib/anon-flag'
+
+const CTA = getCtaTarget()
 
 const headlineFont = "var(--font-serif-display), 'DM Serif Display', Georgia, serif"
 
@@ -8,16 +11,16 @@ const PLANS = [
     name: 'Free',
     price: '$0',
     period: '/month',
-    description: 'Get started with one project. No credit card required.',
+    description: 'One project, full features, forever. No credit card required.',
     features: [
       '1 project',
-      '50 documents',
-      'AI assistant (50 queries/month)',
-      '5 correspondence items',
-      'Basic calendar',
+      'Unlimited documents on that project',
+      'Full AI assistant',
+      'Correspondence + time-bar calendar',
+      'Notice templates',
     ],
-    cta: 'Get started free',
-    href: '/register',
+    cta: 'Try free',
+    href: CTA,
     highlighted: false,
   },
   {
@@ -35,8 +38,8 @@ const PLANS = [
       'Templates',
       'Priority support',
     ],
-    cta: 'Start free trial',
-    href: '/register',
+    cta: 'Try free, then upgrade',
+    href: CTA,
     highlighted: true,
   },
   {
@@ -52,8 +55,8 @@ const PLANS = [
       'Dedicated onboarding',
       'Priority support',
     ],
-    cta: 'Start free trial',
-    href: '/register',
+    cta: 'Try free, then upgrade',
+    href: CTA,
     highlighted: false,
   },
   {
@@ -210,10 +213,10 @@ export default function PricingPage() {
               Start for free today. Upgrade when you need to.
             </p>
             <Link
-              href="/register"
+              href={CTA}
               className="inline-flex items-center px-8 py-3.5 rounded-lg bg-[#fafaf9] text-[#0f0e0d] font-medium hover:bg-[#eae6e0] transition-colors"
             >
-              Get started free
+              Try free, no signup
             </Link>
           </FadeIn>
         </div>

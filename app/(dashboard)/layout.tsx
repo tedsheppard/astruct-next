@@ -39,6 +39,10 @@ import {
 } from '@/components/ui/popover'
 import { ContractContext } from '@/lib/contract-context'
 import { UsageMeter } from '@/components/usage-meter'
+import { AnonWelcomeTour } from '@/components/anon-welcome-tour'
+import { AnonProvider } from '@/lib/anon-context'
+import { AnonGuestPill } from '@/components/anon-guest-pill'
+import { AnonLockedNavItem } from '@/components/anon-locked-nav-item'
 
 interface Contract {
   id: string
@@ -64,6 +68,8 @@ function NavItem({
   collapsed,
   disabled,
   indent,
+  locked,
+  onLockedClick,
 }: {
   icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
   label: string
@@ -72,11 +78,22 @@ function NavItem({
   collapsed: boolean
   disabled?: boolean
   indent?: boolean
+  locked?: boolean
+  onLockedClick?: () => void
 }) {
   const content = (
     <Link
-      href={disabled ? '#' : href}
-      onClick={(e) => disabled && e.preventDefault()}
+      href={disabled || locked ? '#' : href}
+      onClick={(e) => {
+        if (disabled) {
+          e.preventDefault()
+          return
+        }
+        if (locked) {
+          e.preventDefault()
+          onLockedClick?.()
+        }
+      }}
       className={`
         flex items-center rounded-lg text-sm transition-all duration-200 relative
         ${disabled ? 'opacity-35 cursor-not-allowed' : ''}
@@ -100,6 +117,11 @@ function NavItem({
       }`}>
         {label}
       </span>
+      {locked && !collapsed && (
+        <span className="ml-auto text-[9px] uppercase tracking-wider text-amber-600 bg-amber-500/10 border border-amber-500/30 rounded px-1.5 py-0.5">
+          Sign up
+        </span>
+      )}
     </Link>
   )
 
@@ -139,6 +161,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [])
+
+  // Welcome toast when an anon user has just upgraded via /register.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('upgraded') === '1') {
+      // Defer to next tick so sonner has mounted on the new route.
+      Promise.resolve().then(async () => {
+        const { toast } = await import('sonner')
+        toast.success("Welcome to Astruct — your work is saved.")
+      })
+      const url = new URL(window.location.href)
+      url.searchParams.delete('upgraded')
+      window.history.replaceState({}, '', url.toString())
+    }
+  }, [])
   const [loaded, setLoaded] = useState(false)
 
   const setSelectedContractId = useCallback((id: string) => {
@@ -162,14 +200,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     async function loadData() {
       const { data: { user: authUser } } = await supabase.auth.getUser()
       if (!authUser) return
+      const isAnon = authUser.is_anonymous === true
       const { data: profile } = await supabase.from('profiles').select('name, email, company_name, onboarding_completed').eq('id', authUser.id).single()
       if (profile) {
-        // Redirect to setup if onboarding not completed (skip if already on setup page)
-        if (!profile.onboarding_completed && !window.location.pathname.startsWith('/setup')) {
+        // Redirect to setup if onboarding not completed — but skip the gate
+        // entirely for anonymous users (they have no email/company yet).
+        if (!isAnon && !profile.onboarding_completed && !window.location.pathname.startsWith('/setup')) {
           router.push('/setup')
           return
         }
-        setUser(profile)
+        setUser({
+          ...profile,
+          name: profile.name || (isAnon ? 'Guest' : ''),
+          email: profile.email || (isAnon ? 'guest@astruct' : ''),
+        })
+      } else if (isAnon) {
+        setUser({ name: 'Guest', email: 'guest@astruct' })
       }
       const { data: contractData } = await supabase.from('contracts').select('id, name, reference_number, contract_form, status').order('created_at', { ascending: false })
       if (contractData) {
@@ -259,6 +305,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <ContractContext.Provider value={{ selectedContractId, setSelectedContractId, selectContractAndNavigate }}>
+    <AnonProvider>
     <TooltipProvider>
       <div className="min-h-screen flex bg-sidebar">
         {/* ─── Sidebar ─── */}
@@ -314,6 +361,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   {contractNavItems.map(({ icon, label, subpath }) => {
                     const href = `/contracts/${selectedContractId}/${subpath}`
                     const isActive = pathname === href || pathname.startsWith(href + '/')
+                    const lockedForAnon = subpath === 'calendar' || subpath === 'templates'
+                    if (lockedForAnon) {
+                      return (
+                        <AnonLockedNavItem
+                          key={subpath}
+                          icon={icon}
+                          label={label}
+                          href={href}
+                          isActive={isActive}
+                          collapsed={collapsed}
+                        />
+                      )
+                    }
                     return (
                       <NavItem key={subpath} icon={icon} label={label} href={href} isActive={isActive} collapsed={collapsed} />
                     )
@@ -335,8 +395,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {/* ═══ BOTTOM: Global Items ═══ */}
             <div className="border-t border-sidebar-fg/8 pt-3 space-y-0.5">
               <NavItem icon={LayoutGrid} label="Browse Contracts" href="/contracts" isActive={pathname === '/contracts'} collapsed={collapsed} />
-              <NavItem icon={FileText} label="Letterheads" href="/letterheads" isActive={pathname.startsWith('/letterheads') || pathname.startsWith('/templates')} collapsed={collapsed} />
-              <NavItem icon={BookOpen} label="Knowledge Base" href="/knowledge-base" isActive={pathname.startsWith('/knowledge-base')} collapsed={collapsed} />
+              <AnonLockedNavItem icon={FileText} label="Letterheads" href="/letterheads" isActive={pathname.startsWith('/letterheads') || pathname.startsWith('/templates')} collapsed={collapsed} />
+              <AnonLockedNavItem icon={BookOpen} label="Knowledge Base" href="/knowledge-base" isActive={pathname.startsWith('/knowledge-base')} collapsed={collapsed} />
               <NavItem icon={Settings} label="Settings" href="/settings" isActive={pathname === '/settings'} collapsed={collapsed} />
             </div>
           </nav>
@@ -369,6 +429,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </div>
                   <div className="border-t pt-2">
                     <Button variant="ghost" size="sm" onClick={() => router.push('/settings')} className="w-full justify-start"><Settings className="h-4 w-4 mr-2" />Settings</Button>
+                    <Button variant="ghost" size="sm" onClick={() => router.push(`${pathname}?tour=1`)} className="w-full justify-start"><HelpCircle className="h-4 w-4 mr-2" />Replay tour</Button>
                     <Button variant="ghost" size="sm" className="w-full justify-start"><HelpCircle className="h-4 w-4 mr-2" />Help & Support</Button>
                     <Button variant="ghost" size="sm" onClick={handleLogout} className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-500/10"><LogOut className="h-4 w-4 mr-2" />Log out</Button>
                   </div>
@@ -398,6 +459,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <h2 className="text-sm font-medium text-main-fg">{getPageTitle()}</h2>
               )}
             </div>
+            <div className="flex items-center gap-3">
+              <AnonGuestPill />
             <button
               onClick={() => setSearchOpen(true)}
               className="flex items-center gap-2 h-9 w-72 px-3 rounded-lg border text-sm transition-colors bg-main-panel border-main-border text-main-fg/35 hover:border-main-fg/20"
@@ -463,11 +526,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </div>
               </div>
             )}
+            </div>
           </header>
           <main className="flex-1">{children}</main>
         </div>
+        <AnonWelcomeTour />
       </div>
     </TooltipProvider>
+    </AnonProvider>
     </ContractContext.Provider>
   )
 }

@@ -106,6 +106,25 @@ export async function POST(request: NextRequest) {
         await supabase.from('chat_messages').insert({ session_id: currentSessionId, role: 'user', content: message })
         sendLog(controller, 'User message saved')
 
+        // Increment usage counter for anon-first soft prompt + hard wall.
+        // Best-effort — failure here must not block chat.
+        try {
+          const { data: prof } = await supabase
+            .from('profiles')
+            .select('messages_sent')
+            .eq('id', user.id)
+            .maybeSingle()
+          await supabase
+            .from('profiles')
+            .update({
+              messages_sent: (prof?.messages_sent || 0) + 1,
+              last_active_at: new Date().toISOString(),
+            })
+            .eq('id', user.id)
+        } catch {
+          // Counter columns may not exist yet — migration 021 lands them.
+        }
+
         // Load history
         const { data: history } = await supabase
           .from('chat_messages')
