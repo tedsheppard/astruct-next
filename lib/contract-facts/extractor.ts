@@ -5,53 +5,193 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 const admin = () => createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 )
 
+/**
+ * Contract-facts extractor.
+ *
+ * The previous version hardcoded "principal" / "contractor" keys, which forced
+ * every uploaded document into a head-contract frame. For subcontracts and
+ * consultancies the model then dutifully picked the *head contract*'s parties
+ * out of the recitals — wrong parties, wrong roles. The schema below lets the
+ * model name the actual parties and their actual roles for THIS document, and
+ * to identify the contract type first so the rest of the extraction follows
+ * the correct frame.
+ */
+
+export type ContractType =
+  | 'head_contract'
+  | 'subcontract'
+  | 'consultancy_agreement'
+  | 'supply_agreement'
+  | 'design_and_construct'
+  | 'deed_of_variation'
+  | 'other'
+
+export interface PartyFact {
+  name?: string
+  role?: string // free-text role as it appears in this contract
+  address?: string
+  abn?: string
+  source_text?: string
+}
+
 export interface ExtractedFacts {
-  principal?: { name: string; address?: string; abn?: string; source_text?: string }
-  contractor?: { name: string; address?: string; abn?: string; source_text?: string }
-  superintendent?: { name: string; address?: string; source_text?: string }
+  contract_type?: { value: ContractType; confidence?: number; source_text?: string }
+  contract_title?: { value: string; source_text?: string }
+  project_name?: { value: string; source_text?: string }
+  contract_form?: { value: string; confidence?: number; source_text?: string }
+  party_a?: PartyFact
+  party_b?: PartyFact
+  contract_administrator?: PartyFact & { from_party?: 'a' | 'b' }
   contract_date?: { value: string; source_text?: string }
   contract_sum?: { value: number; currency: string; source_text?: string }
   date_for_practical_completion?: { value: string; source_text?: string }
   defects_liability_period?: { value: string; source_text?: string }
   reference_number?: { value: string; source_text?: string }
   site_address?: { value: string; source_text?: string }
-  contract_form?: { value: string; confidence: number }
+  scope_summary?: { value: string }
+  // Backwards-compatibility shims — legacy callers still read these fields.
+  principal?: PartyFact
+  contractor?: PartyFact
+  superintendent?: PartyFact
+}
+
+const SYSTEM_PROMPT = `You are a senior Australian construction contracts analyst. Read the provided document text and extract the key facts as JSON.
+
+The document may be ANY type of construction contract — head contract, subcontract, consultancy agreement, supply agreement, deed of variation, etc. Identify the type FIRST, then extract the facts in the correct frame.
+
+CRITICAL RULES — read carefully:
+
+1. The two parties you return must be the parties to THIS document. If the document is a subcontract, the parties are the head contractor and the subcontractor — NOT the original Principal and Contractor of the head contract that may be mentioned in the recitals as background.
+
+2. Use the actual entity names, not generic role labels. "John Holland Pty Ltd" — not "Principal" or "Contractor". If you cannot find an entity name with confidence, omit the party rather than guess.
+
+3. The role you give each party is the role they play IN THIS DOCUMENT. For a subcontract that's typically "Head Contractor" and "Subcontractor". For a consultancy it might be "Client" and "Consultant" or "Principal" and "Consultant". Use whatever language the contract itself uses.
+
+4. project_name is the construction PROJECT (e.g. "Cross River Rail — Albert Street Station", "Riverside Industrial Estate Stage 2"). It is NOT the contract title, NOT the document filename, NOT the contract reference number. If the project name is not stated explicitly, omit project_name entirely — do not guess.
+
+5. contract_title is the title of this specific document (e.g. "Subcontract Agreement", "Consultancy Services Agreement", "Head Contract — Conditions of Contract").
+
+6. contract_form is the published standard form on which the contract is based, if any. Use one of: "AS4000-1997", "AS4902-2000", "AS2124-1992", "AS4901-1998", "AS4300-1995", "AS4905-2002", "GC21", "MW21", "ABIC", "NEC4", "FIDIC Red Book", "FIDIC Yellow Book", "FIDIC Silver Book", "JCT", or "bespoke". Only return one of these. If you cannot identify with reasonable confidence, return "bespoke".
+
+7. contract_administrator is the named person/entity who administers the contract under it (Superintendent, Principal's Representative, Contract Administrator, Engineer, Project Manager, Architect, etc.). Include who they represent (party "a" or party "b") if the contract says.
+
+8. Provide a source_text quote (verbatim, short — under 30 words) for every non-trivial fact so a reviewer can verify.
+
+9. If a fact cannot be found in the text, OMIT IT from the JSON. Do NOT include null/empty values. Do NOT guess.
+
+Output JSON only, no markdown fences. Schema:
+{
+  "contract_type": { "value": "head_contract|subcontract|consultancy_agreement|supply_agreement|design_and_construct|deed_of_variation|other", "confidence": 0.0-1.0, "source_text": "quote" },
+  "contract_title": { "value": "...", "source_text": "quote" },
+  "project_name": { "value": "...", "source_text": "quote" },
+  "contract_form": { "value": "AS4000-1997|...|bespoke", "confidence": 0.0-1.0, "source_text": "quote" },
+  "party_a": { "name": "...", "role": "...", "address": "...", "abn": "...", "source_text": "quote" },
+  "party_b": { "name": "...", "role": "...", "address": "...", "abn": "...", "source_text": "quote" },
+  "contract_administrator": { "name": "...", "role": "Superintendent|...", "from_party": "a|b", "source_text": "quote" },
+  "contract_date": { "value": "YYYY-MM-DD", "source_text": "quote" },
+  "contract_sum": { "value": 12345678, "currency": "AUD", "source_text": "quote" },
+  "date_for_practical_completion": { "value": "YYYY-MM-DD", "source_text": "quote" },
+  "defects_liability_period": { "value": "12 months", "source_text": "quote" },
+  "reference_number": { "value": "...", "source_text": "quote" },
+  "site_address": { "value": "...", "source_text": "quote" },
+  "scope_summary": { "value": "one short sentence describing the works under this contract" }
+}`
+
+function deriveLegacyShims(facts: ExtractedFacts): ExtractedFacts {
+  // Some older callers still read facts.principal / facts.contractor / facts.superintendent.
+  // Surface the new structure under those keys when the role string makes it obvious.
+  const a = facts.party_a
+  const b = facts.party_b
+
+  const isPrincipalRole = (r?: string) => !!r && /(principal|owner|developer|client|head contractor)/i.test(r) && !/(subcontractor|consultant)/i.test(r)
+  const isContractorRole = (r?: string) => !!r && /(contractor|subcontractor|consultant|supplier)/i.test(r)
+
+  let principal: PartyFact | undefined
+  let contractor: PartyFact | undefined
+  if (isPrincipalRole(a?.role)) principal = a
+  if (isPrincipalRole(b?.role)) principal = b
+  if (isContractorRole(a?.role)) contractor = a
+  if (isContractorRole(b?.role)) contractor = b
+  // Fall back: if we couldn't infer roles, just map a→principal, b→contractor.
+  if (!principal && !contractor) {
+    principal = a
+    contractor = b
+  }
+
+  return {
+    ...facts,
+    principal,
+    contractor,
+    superintendent: facts.contract_administrator,
+  }
 }
 
 export async function extractFacts(contractId: string): Promise<ExtractedFacts> {
   const sb = admin()
 
-  // Get front-matter chunks (first pages where parties/dates usually are)
+  // Pull a wider slice than before. Front-matter for parties + recitals; the
+  // back of the document for execution pages where signed party names appear;
+  // and any chunks containing the canonical "between … and …" phrasing.
   const { data: frontChunks } = await sb
     .from('document_chunks')
-    .select('content, section_heading, chunk_index')
+    .select('content, chunk_index')
     .eq('contract_id', contractId)
-    .lte('chunk_index', 5)
+    .lte('chunk_index', 8)
     .order('chunk_index')
 
-  // Also get annexure/schedule chunks (AS forms put key facts there)
-  const { data: annexureChunks } = await sb
+  const { data: keywordChunks } = await sb
     .from('document_chunks')
-    .select('content, section_heading, chunk_index')
+    .select('content, chunk_index')
     .eq('contract_id', contractId)
-    .or('content.ilike.%annexure%,content.ilike.%schedule%,content.ilike.%Part A%,content.ilike.%instrument of agreement%,content.ilike.%parties%')
-    .limit(10)
+    .or(
+      [
+        'content.ilike.%between%and%',
+        'content.ilike.%this agreement%',
+        'content.ilike.%this subcontract%',
+        'content.ilike.%this contract%',
+        'content.ilike.%annexure%',
+        'content.ilike.%schedule 1%',
+        'content.ilike.%instrument of agreement%',
+        'content.ilike.%executed by%',
+        'content.ilike.%signed by%',
+        'content.ilike.%project%',
+        'content.ilike.%superintendent%',
+        'content.ilike.%principal\'s representative%',
+      ].join(','),
+    )
+    .limit(20)
 
-  const allChunks = [...(frontChunks || []), ...(annexureChunks || [])]
-  // Deduplicate by chunk_index
+  // Last few chunks (signature / execution pages often live at the end)
+  const { count: total } = await sb
+    .from('document_chunks')
+    .select('id', { count: 'exact', head: true })
+    .eq('contract_id', contractId)
+  const tailFrom = Math.max(0, (total || 0) - 4)
+  const { data: tailChunks } = await sb
+    .from('document_chunks')
+    .select('content, chunk_index')
+    .eq('contract_id', contractId)
+    .gte('chunk_index', tailFrom)
+    .order('chunk_index')
+
+  const all = [...(frontChunks || []), ...(keywordChunks || []), ...(tailChunks || [])]
   const seen = new Set<number>()
-  const uniqueChunks = allChunks.filter(c => {
+  const unique = all.filter((c) => {
     if (seen.has(c.chunk_index)) return false
     seen.add(c.chunk_index)
     return true
   })
+  unique.sort((a, b) => a.chunk_index - b.chunk_index)
 
-  const contractText = uniqueChunks.map(c => c.content).join('\n\n---\n\n')
+  const text = unique
+    .map((c) => `[chunk ${c.chunk_index}]\n${c.content}`)
+    .join('\n\n---\n\n')
+    .slice(0, 60000)
 
-  if (contractText.length < 100) {
+  if (text.length < 100) {
     return {}
   }
 
@@ -59,49 +199,29 @@ export async function extractFacts(contractId: string): Promise<ExtractedFacts> 
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
       temperature: 0,
-      max_tokens: 2000,
+      max_tokens: 2500,
       messages: [
-        {
-          role: 'system',
-          content: `Extract key contract facts from the provided construction contract text. For each fact, provide the value and the exact source text (a short quote from the document where you found it).
-
-Return JSON only, no markdown fences:
-{
-  "principal": { "name": "...", "address": "...", "abn": "...", "source_text": "exact quote" },
-  "contractor": { "name": "...", "address": "...", "abn": "...", "source_text": "exact quote" },
-  "superintendent": { "name": "...", "address": "...", "source_text": "exact quote" },
-  "contract_date": { "value": "YYYY-MM-DD", "source_text": "exact quote" },
-  "contract_sum": { "value": 12345678, "currency": "AUD", "source_text": "exact quote" },
-  "date_for_practical_completion": { "value": "YYYY-MM-DD", "source_text": "exact quote" },
-  "defects_liability_period": { "value": "12 months", "source_text": "exact quote" },
-  "reference_number": { "value": "...", "source_text": "exact quote" },
-  "site_address": { "value": "...", "source_text": "exact quote" },
-  "contract_form": { "value": "AS4000-1997 or similar", "confidence": 0.95 }
-}
-
-If a fact cannot be found in the text, omit it from the JSON (don't return null values).
-The "name" fields should be the full legal entity name (e.g. "John Holland Pty Ltd"), not generic terms like "Principal" or "Contractor".`
-        },
-        {
-          role: 'user',
-          content: `Extract facts from this contract:\n\n${contractText.slice(0, 20000)}`
-        }
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: `Extract the facts from this contract:\n\n${text}` },
       ],
       response_format: { type: 'json_object' },
     })
 
-    const text = response.choices[0]?.message?.content || '{}'
-    const facts = JSON.parse(text) as ExtractedFacts
+    const raw = response.choices[0]?.message?.content || '{}'
+    const facts = JSON.parse(raw) as ExtractedFacts
+    const enriched = deriveLegacyShims(facts)
 
-    // Save to contract
     await sb.from('contracts').update({
-      extracted_facts: facts,
+      extracted_facts: enriched,
       facts_extracted_at: new Date().toISOString(),
     }).eq('id', contractId)
 
-    console.log(`[ContractFacts] Extracted facts for contract ${contractId}:`, Object.keys(facts))
+    console.log(
+      `[ContractFacts] Extracted facts for contract ${contractId}:`,
+      Object.keys(enriched),
+    )
 
-    return facts
+    return enriched
   } catch (err) {
     console.error('[ContractFacts] Extraction failed:', err)
     return {}

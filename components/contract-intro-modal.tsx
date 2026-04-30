@@ -19,14 +19,35 @@ import { Label } from '@/components/ui/label'
 
 type Phase = 'upload' | 'processing' | 'review' | 'saving'
 
+type ContractType =
+  | 'head_contract'
+  | 'subcontract'
+  | 'consultancy_agreement'
+  | 'supply_agreement'
+  | 'design_and_construct'
+  | 'deed_of_variation'
+  | 'other'
+
+interface PartyFact {
+  name?: string
+  role?: string
+  address?: string
+  abn?: string
+}
+
 interface ExtractedFacts {
-  principal?: { name?: string; address?: string }
-  contractor?: { name?: string; address?: string }
-  superintendent?: { name?: string; address?: string }
-  contract_date?: { value?: string }
-  contract_sum?: { value?: number; currency?: string }
+  contract_type?: { value?: ContractType; confidence?: number }
+  contract_title?: { value?: string }
+  project_name?: { value?: string }
   contract_form?: { value?: string }
+  party_a?: PartyFact
+  party_b?: PartyFact
+  contract_administrator?: PartyFact
   reference_number?: { value?: string }
+  // Legacy fallback shims surfaced by the extractor for older callers.
+  principal?: PartyFact
+  contractor?: PartyFact
+  superintendent?: PartyFact
 }
 
 const CONTRACT_FORMS = [
@@ -34,13 +55,79 @@ const CONTRACT_FORMS = [
   'AS4902-2000',
   'AS2124-1992',
   'AS4901-1998',
+  'AS4300-1995',
+  'AS4905-2002',
+  'GC21',
+  'MW21',
+  'ABIC',
   'NEC4',
-  'FIDIC',
+  'FIDIC Red Book',
+  'FIDIC Yellow Book',
+  'FIDIC Silver Book',
+  'JCT',
   'bespoke',
 ]
 
+const CONTRACT_TYPE_LABELS: Record<ContractType, string> = {
+  head_contract: 'Head contract',
+  subcontract: 'Subcontract',
+  consultancy_agreement: 'Consultancy agreement',
+  supply_agreement: 'Supply agreement',
+  design_and_construct: 'Design & construct',
+  deed_of_variation: 'Deed of variation',
+  other: 'Other',
+}
+
+const ROLE_OPTIONS = [
+  'Principal',
+  'Owner',
+  'Developer',
+  'Head Contractor',
+  'Contractor',
+  'Subcontractor',
+  'Consultant',
+  'Client',
+  'Supplier',
+  'Superintendent',
+  'Other',
+]
+
+function normaliseRole(raw?: string): string {
+  if (!raw) return ''
+  const r = raw.trim()
+  // Match against the dropdown options case-insensitively.
+  for (const opt of ROLE_OPTIONS) {
+    if (r.toLowerCase() === opt.toLowerCase()) return opt
+  }
+  if (/head\s*contractor|main\s*contractor/i.test(r)) return 'Head Contractor'
+  if (/subcontractor/i.test(r)) return 'Subcontractor'
+  if (/principal/i.test(r)) return 'Principal'
+  if (/owner/i.test(r)) return 'Owner'
+  if (/developer/i.test(r)) return 'Developer'
+  if (/consultant/i.test(r)) return 'Consultant'
+  if (/client/i.test(r)) return 'Client'
+  if (/supplier/i.test(r)) return 'Supplier'
+  if (/contractor/i.test(r)) return 'Contractor'
+  return r // free-text fallback — rendered but won't match dropdown
+}
+
 function pickName(obj?: { name?: string }) {
   return (obj?.name || '').trim()
+}
+
+function matchContractForm(raw?: string): string {
+  if (!raw) return 'bespoke'
+  const r = raw.trim()
+  for (const f of CONTRACT_FORMS) {
+    if (r.toLowerCase() === f.toLowerCase()) return f
+  }
+  // Loose match on the standard prefix (AS4000, AS4902, ...)
+  const prefix = r.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 7)
+  for (const f of CONTRACT_FORMS) {
+    const fp = f.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 7)
+    if (fp && prefix.includes(fp.slice(0, 5))) return f
+  }
+  return 'bespoke'
 }
 
 /**
@@ -71,7 +158,8 @@ export function ContractIntroModal({
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Form state — starts empty, fills after extraction.
-  const [name, setName] = useState('')
+  const [projectName, setProjectName] = useState('')
+  const [contractType, setContractType] = useState<ContractType>('other')
   const [contractForm, setContractForm] = useState('bespoke')
   const [referenceNumber, setReferenceNumber] = useState('')
   const [party1Name, setParty1Name] = useState('')
@@ -79,6 +167,7 @@ export function ContractIntroModal({
   const [party2Name, setParty2Name] = useState('')
   const [party2Role, setParty2Role] = useState('Contractor')
   const [administratorName, setAdministratorName] = useState('')
+  const [administratorRole, setAdministratorRole] = useState('Superintendent')
   const [userIsParty, setUserIsParty] = useState<'party1' | 'party2'>('party2')
 
   // Decide on mount whether to show.
@@ -101,20 +190,23 @@ export function ContractIntroModal({
       if (intro && !empty) {
         const { data: contract } = await supabase
           .from('contracts')
-          .select('name, contract_form, party1_name, party1_role, party2_name, party2_role, administrator_name, user_is_party, extracted_facts')
+          .select('name, contract_form, party1_name, party1_role, party2_name, party2_role, administrator_name, administrator_role, user_is_party, extracted_facts')
           .eq('id', contractId)
           .maybeSingle()
         if (contract) {
-          if (contract.name) setName(contract.name)
+          if (contract.name) setProjectName(contract.name)
           if (contract.contract_form) setContractForm(contract.contract_form)
           if (contract.party1_name) setParty1Name(contract.party1_name)
-          if (contract.party1_role) setParty1Role(contract.party1_role)
+          if (contract.party1_role) setParty1Role(normaliseRole(contract.party1_role))
           if (contract.party2_name) setParty2Name(contract.party2_name)
-          if (contract.party2_role) setParty2Role(contract.party2_role)
+          if (contract.party2_role) setParty2Role(normaliseRole(contract.party2_role))
           if (contract.administrator_name) setAdministratorName(contract.administrator_name)
+          if (contract.administrator_role) setAdministratorRole(contract.administrator_role)
           if (contract.user_is_party === 'party1' || contract.user_is_party === 'party2') {
             setUserIsParty(contract.user_is_party)
           }
+          const facts = contract.extracted_facts as ExtractedFacts | null
+          if (facts?.contract_type?.value) setContractType(facts.contract_type.value)
           setPhase('review')
         }
       }
@@ -202,24 +294,30 @@ export function ContractIntroModal({
       }
 
       const facts = (data.facts || {}) as ExtractedFacts
-      // Best-effort population. The user always sees + edits before saving.
-      const principalName = pickName(facts.principal)
-      const contractorName = pickName(facts.contractor)
-      const superName = pickName(facts.superintendent)
-      const formGuess = facts.contract_form?.value || ''
-      const refGuess = facts.reference_number?.value || ''
 
-      setName(name || file.name.replace(/\.[^/.]+$/, ''))
-      if (principalName) setParty1Name(principalName)
-      if (contractorName) setParty2Name(contractorName)
-      if (superName) setAdministratorName(superName)
-      if (refGuess) setReferenceNumber(refGuess)
-      if (formGuess) {
-        const matched = CONTRACT_FORMS.find((f) =>
-          formGuess.toLowerCase().includes(f.toLowerCase().split('-')[0]),
-        )
-        setContractForm(matched || 'bespoke')
-      }
+      // Project name comes from extracted_facts.project_name. We do NOT fall
+      // back to the filename — leaving the field empty signals to the user
+      // that the model couldn't find a project name and they should enter one.
+      if (facts.project_name?.value) setProjectName(facts.project_name.value)
+
+      if (facts.contract_type?.value) setContractType(facts.contract_type.value)
+      if (facts.contract_form?.value) setContractForm(matchContractForm(facts.contract_form.value))
+      if (facts.reference_number?.value) setReferenceNumber(facts.reference_number.value)
+
+      // Use party_a / party_b directly — the model identifies their actual
+      // roles for THIS document (Head Contractor + Subcontractor for a
+      // subcontract; Principal + Contractor for a head contract; etc).
+      const a = facts.party_a
+      const b = facts.party_b
+      if (a?.name) setParty1Name(pickName(a))
+      if (a?.role) setParty1Role(normaliseRole(a.role))
+      if (b?.name) setParty2Name(pickName(b))
+      if (b?.role) setParty2Role(normaliseRole(b.role))
+
+      const admin = facts.contract_administrator
+      if (admin?.name) setAdministratorName(admin.name)
+      if (admin?.role) setAdministratorRole(normaliseRole(admin.role) || 'Superintendent')
+
       setPhase('review')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Network error.')
@@ -228,7 +326,7 @@ export function ContractIntroModal({
   }
 
   const handleSave = async () => {
-    if (!name.trim()) {
+    if (!projectName.trim()) {
       setError('Give your project a name.')
       return
     }
@@ -243,7 +341,7 @@ export function ContractIntroModal({
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: name.trim(),
+          name: projectName.trim(),
           contract_form: contractForm,
           reference_number: referenceNumber.trim() || null,
           party1_name: party1Name.trim(),
@@ -251,7 +349,7 @@ export function ContractIntroModal({
           party2_name: party2Name.trim(),
           party2_role: party2Role,
           administrator_name: administratorName.trim() || null,
-          administrator_role: administratorName.trim() ? 'Superintendent' : null,
+          administrator_role: administratorName.trim() ? administratorRole : null,
           user_is_party: userIsParty,
           facts_verified_by_user: true,
         }),
@@ -304,8 +402,10 @@ export function ContractIntroModal({
 
         {(phase === 'review' || phase === 'saving') && (
           <ReviewStep
-            name={name}
-            setName={setName}
+            projectName={projectName}
+            setProjectName={setProjectName}
+            contractType={contractType}
+            setContractType={setContractType}
             contractForm={contractForm}
             setContractForm={setContractForm}
             referenceNumber={referenceNumber}
@@ -320,6 +420,8 @@ export function ContractIntroModal({
             setParty2Role={setParty2Role}
             administratorName={administratorName}
             setAdministratorName={setAdministratorName}
+            administratorRole={administratorRole}
+            setAdministratorRole={setAdministratorRole}
             userIsParty={userIsParty}
             setUserIsParty={setUserIsParty}
             saving={phase === 'saving'}
@@ -415,8 +517,10 @@ function UploadStep({
 
 // ─── Review step ─────────────────────────────────────────────────────────
 function ReviewStep(props: {
-  name: string
-  setName: (v: string) => void
+  projectName: string
+  setProjectName: (v: string) => void
+  contractType: ContractType
+  setContractType: (v: ContractType) => void
   contractForm: string
   setContractForm: (v: string) => void
   referenceNumber: string
@@ -431,6 +535,8 @@ function ReviewStep(props: {
   setParty2Role: (v: string) => void
   administratorName: string
   setAdministratorName: (v: string) => void
+  administratorRole: string
+  setAdministratorRole: (v: string) => void
   userIsParty: 'party1' | 'party2'
   setUserIsParty: (v: 'party1' | 'party2') => void
   saving: boolean
@@ -438,10 +544,11 @@ function ReviewStep(props: {
   error: string | null
 }) {
   const {
-    name, setName, contractForm, setContractForm, referenceNumber, setReferenceNumber,
+    projectName, setProjectName, contractType, setContractType,
+    contractForm, setContractForm, referenceNumber, setReferenceNumber,
     party1Name, setParty1Name, party1Role, setParty1Role,
     party2Name, setParty2Name, party2Role, setParty2Role,
-    administratorName, setAdministratorName,
+    administratorName, setAdministratorName, administratorRole, setAdministratorRole,
     userIsParty, setUserIsParty,
     saving, onSave, error,
   } = props
@@ -461,11 +568,19 @@ function ReviewStep(props: {
       </p>
 
       <div className="space-y-5">
-        {/* Project name + form */}
+        {/* Contract type + form */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Project name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Riverside Warehouse 12" />
+            <Label className="text-xs text-muted-foreground">Contract type</Label>
+            <select
+              value={contractType}
+              onChange={(e) => setContractType(e.target.value as ContractType)}
+              className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
+            >
+              {(Object.keys(CONTRACT_TYPE_LABELS) as ContractType[]).map((k) => (
+                <option key={k} value={k}>{CONTRACT_TYPE_LABELS[k]}</option>
+              ))}
+            </select>
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Contract form</Label>
@@ -481,6 +596,21 @@ function ReviewStep(props: {
           </div>
         </div>
 
+        {/* Project name */}
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Project name</Label>
+          <Input
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+            placeholder="e.g. Cross River Rail — Albert Street Station"
+          />
+          {!projectName && (
+            <p className="text-[11px] text-amber-600">
+              We couldn&apos;t find the project name in your contract — please enter it.
+            </p>
+          )}
+        </div>
+
         <div className="space-y-1.5">
           <Label className="text-xs text-muted-foreground">Reference number (optional)</Label>
           <Input value={referenceNumber} onChange={(e) => setReferenceNumber(e.target.value)} placeholder="e.g. CON-2026-001" />
@@ -490,28 +620,25 @@ function ReviewStep(props: {
         <div className="rounded-lg border border-border p-4 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Party 1 — {party1Role}
+              Party 1 {party1Role && `— ${party1Role}`}
             </span>
             <Pencil className="h-3 w-3 text-muted-foreground/60" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Name</Label>
-              <Input value={party1Name} onChange={(e) => setParty1Name(e.target.value)} placeholder="e.g. Riverside Industrial Pty Ltd" />
+              <Input value={party1Name} onChange={(e) => setParty1Name(e.target.value)} placeholder="Entity name" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Role</Label>
               <select
-                value={party1Role}
+                value={ROLE_OPTIONS.includes(party1Role) ? party1Role : 'Other'}
                 onChange={(e) => setParty1Role(e.target.value)}
                 className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
               >
-                <option value="Principal">Principal</option>
-                <option value="Head Contractor">Head Contractor</option>
-                <option value="Contractor">Contractor</option>
-                <option value="Subcontractor">Subcontractor</option>
-                <option value="Developer">Developer</option>
-                <option value="Owner">Owner</option>
+                {ROLE_OPTIONS.map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
               </select>
             </div>
           </div>
@@ -521,36 +648,57 @@ function ReviewStep(props: {
         <div className="rounded-lg border border-border p-4 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Party 2 — {party2Role}
+              Party 2 {party2Role && `— ${party2Role}`}
             </span>
             <Pencil className="h-3 w-3 text-muted-foreground/60" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Name</Label>
-              <Input value={party2Name} onChange={(e) => setParty2Name(e.target.value)} placeholder="e.g. Murchison Construction Pty Ltd" />
+              <Input value={party2Name} onChange={(e) => setParty2Name(e.target.value)} placeholder="Entity name" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Role</Label>
               <select
-                value={party2Role}
+                value={ROLE_OPTIONS.includes(party2Role) ? party2Role : 'Other'}
                 onChange={(e) => setParty2Role(e.target.value)}
                 className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
               >
-                <option value="Contractor">Contractor</option>
-                <option value="Head Contractor">Head Contractor</option>
-                <option value="Subcontractor">Subcontractor</option>
-                <option value="Principal">Principal</option>
-                <option value="Consultant">Consultant</option>
+                {ROLE_OPTIONS.map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
               </select>
             </div>
           </div>
         </div>
 
         {administratorName && (
-          <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Superintendent / Contract Administrator</Label>
-            <Input value={administratorName} onChange={(e) => setAdministratorName(e.target.value)} />
+          <div className="rounded-lg border border-border p-4 space-y-3">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Contract administrator
+            </span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Name</Label>
+                <Input value={administratorName} onChange={(e) => setAdministratorName(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Role</Label>
+                <select
+                  value={administratorRole}
+                  onChange={(e) => setAdministratorRole(e.target.value)}
+                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                >
+                  <option value="Superintendent">Superintendent</option>
+                  <option value="Principal's Representative">Principal&apos;s Representative</option>
+                  <option value="Contract Administrator">Contract Administrator</option>
+                  <option value="Engineer">Engineer</option>
+                  <option value="Project Manager">Project Manager</option>
+                  <option value="Architect">Architect</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
           </div>
         )}
 
