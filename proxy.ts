@@ -77,7 +77,7 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   // Public paths on app domain
-  const publicPaths = ['/login', '/register', '/auth', '/api', '/landing', '/platform', '/solutions', '/pricing', '/security', '/company', '/privacy', '/terms', '/contact', '/verify-email', '/verify-phone']
+  const publicPaths = ['/login', '/register', '/forgot-password', '/auth', '/api', '/landing', '/platform', '/solutions', '/pricing', '/security', '/company', '/privacy', '/terms', '/contact', '/verify-email', '/verify-phone']
   // Anon-first mode opens up the assistant entry shim and contract pages so
   // anonymous Supabase sessions (created lazily inside /assistant) reach the UI.
   const anonPublicPaths = ANON_FIRST_ENABLED
@@ -86,7 +86,13 @@ export async function proxy(request: NextRequest) {
   const allPublic = [...publicPaths, ...anonPublicPaths]
   const isPublicPath = request.nextUrl.pathname === '/' || allPublic.some(p => request.nextUrl.pathname.startsWith(p))
 
-  if (!user && !isPublicPath) {
+  // Known protected route prefixes — only THESE redirect to login when no user.
+  // Anything else (including unknown / 404 paths) falls through so Next can
+  // render its app/not-found.tsx instead of bouncing to /assistant.
+  const protectedPrefixes = ['/settings', '/letterheads', '/knowledge-base', '/setup', '/composer', '/notices']
+  const isKnownProtected = protectedPrefixes.some(p => request.nextUrl.pathname.startsWith(p))
+
+  if (!user && isKnownProtected) {
     const url = request.nextUrl.clone()
     url.pathname = ANON_FIRST_ENABLED ? '/assistant' : '/login'
     return NextResponse.redirect(url)
@@ -106,52 +112,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // ─── Verification + onboarding chain for authenticated users ──────────
-  // Anonymous users skip the chain entirely — they have no email/phone yet.
-  if (user && !user.is_anonymous && !isPublicPath) {
-    const path = request.nextUrl.pathname
-
-    // Skip checks for verify/setup pages themselves and API routes
-    if (!path.startsWith('/verify-') && !path.startsWith('/setup') && !path.startsWith('/api')) {
-      // Check email verification
-      if (!user.email_confirmed_at) {
-        const url = request.nextUrl.clone()
-        url.pathname = '/verify-email'
-        return NextResponse.redirect(url)
-      }
-
-      // Check phone verification (query profile). When anon-first is enabled
-      // we skip phone gating for free-tier users — only paid accounts need it.
-      try {
-        const profileRes = await fetch(
-          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/profiles?select=phone_verified,onboarding_completed,subscription_tier&id=eq.${user.id}`,
-          {
-            headers: {
-              apikey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-              Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY!}`,
-            },
-          }
-        )
-        const profiles = await profileRes.json()
-        const profile = profiles?.[0]
-
-        const requiresPhone = !ANON_FIRST_ENABLED || profile?.subscription_tier === 'paid'
-        if (profile && !profile.phone_verified && requiresPhone) {
-          const url = request.nextUrl.clone()
-          url.pathname = '/verify-phone'
-          return NextResponse.redirect(url)
-        }
-
-        if (profile && !profile.onboarding_completed) {
-          const url = request.nextUrl.clone()
-          url.pathname = '/setup'
-          return NextResponse.redirect(url)
-        }
-      } catch {
-        // If profile check fails, allow through (don't block on error)
-      }
-    }
-  }
+  // ─── Verification + onboarding chain ──────────────────────────────────
+  // v1: friction-removed. Email + phone verification are fully off (Supabase
+  // mailer_autoconfirm = true). Onboarding (/setup) is voluntary — accessible
+  // by user choice from a banner, not forced by middleware. Removing the
+  // forced redirect was the fix for "Critical C5: /setup blocks billing".
 
   return supabaseResponse
 }

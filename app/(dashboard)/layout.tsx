@@ -286,12 +286,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       const isAnon = authUser.is_anonymous === true
       const { data: profile } = await supabase.from('profiles').select('name, email, company_name, onboarding_completed').eq('id', authUser.id).single()
       if (profile) {
-        // Redirect to setup if onboarding not completed — but skip the gate
-        // entirely for anonymous users (they have no email/company yet).
-        if (!isAnon && !profile.onboarding_completed && !window.location.pathname.startsWith('/setup')) {
-          router.push('/setup')
-          return
-        }
+        // v1: onboarding (/setup) is voluntary, not forced. Friction-removed
+        // per the launch spec. The /setup page is still reachable; users opt
+        // in via a banner if/when we add one.
         setUser({
           ...profile,
           name: profile.name || '',

@@ -4,6 +4,30 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+
+const ROLES = [
+  'Contract Administrator',
+  'Project Manager',
+  'Commercial Manager',
+  "Superintendent's Rep",
+  'Director / Owner',
+  'Lawyer',
+  'Other',
+]
+const REFERRAL_SOURCES = [
+  'LinkedIn',
+  'Google',
+  'Word of mouth',
+  'Industry event',
+  'Other',
+]
 
 export default function SetupPage() {
   const router = useRouter()
@@ -114,17 +138,19 @@ export default function SetupPage() {
 
           <div>
             <label className="block text-xs text-[#8f8b85] mb-1.5">Your role *</label>
-            <select required value={form.company_role} onChange={e => setForm(p => ({ ...p, company_role: e.target.value }))}
-              className="w-full h-11 px-3.5 rounded-md border border-[#e5e5e3] bg-[#fafaf9] text-sm text-[#0f0e0d] focus:outline-none focus:border-[#0f0e0d] transition-colors">
-              <option value="">Select your role</option>
-              <option value="Contract Administrator">Contract Administrator</option>
-              <option value="Project Manager">Project Manager</option>
-              <option value="Commercial Manager">Commercial Manager</option>
-              <option value="Superintendent's Rep">Superintendent&apos;s Rep</option>
-              <option value="Director/Owner">Director / Owner</option>
-              <option value="Lawyer">Lawyer</option>
-              <option value="Other">Other</option>
-            </select>
+            <Select
+              value={form.company_role}
+              onValueChange={(v) => v && setForm(p => ({ ...p, company_role: v }))}
+            >
+              <SelectTrigger className="w-full h-11 bg-[#fafaf9] border-[#e5e5e3] text-sm text-[#0f0e0d]">
+                <SelectValue placeholder="Select your role" />
+              </SelectTrigger>
+              <SelectContent>
+                {ROLES.map(r => (
+                  <SelectItem key={r} value={r}>{r}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
@@ -143,15 +169,19 @@ export default function SetupPage() {
 
           <div>
             <label className="block text-xs text-[#8f8b85] mb-1.5">How did you hear about Astruct? (optional)</label>
-            <select value={form.referral_source} onChange={e => setForm(p => ({ ...p, referral_source: e.target.value }))}
-              className="w-full h-11 px-3.5 rounded-md border border-[#e5e5e3] bg-[#fafaf9] text-sm text-[#0f0e0d] focus:outline-none focus:border-[#0f0e0d] transition-colors">
-              <option value="">Select</option>
-              <option value="LinkedIn">LinkedIn</option>
-              <option value="Google">Google</option>
-              <option value="Word of mouth">Word of mouth</option>
-              <option value="Industry event">Industry event</option>
-              <option value="Other">Other</option>
-            </select>
+            <Select
+              value={form.referral_source}
+              onValueChange={(v) => v && setForm(p => ({ ...p, referral_source: v }))}
+            >
+              <SelectTrigger className="w-full h-11 bg-[#fafaf9] border-[#e5e5e3] text-sm text-[#0f0e0d]">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                {REFERRAL_SOURCES.map(s => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <button type="submit" disabled={saving}
