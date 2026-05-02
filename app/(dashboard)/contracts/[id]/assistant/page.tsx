@@ -80,6 +80,24 @@ interface ChatMessage {
   feedback?: 'positive' | 'negative' | null
   sources?: SourceItem[] | null
   followups?: string[]
+  /**
+   * Real-time thinking state captured from the server SSE stream — ordered
+   * list of states the pipeline emitted as it ran. The UI renders this
+   * sequence verbatim instead of cycling through hardcoded placeholders.
+   * For trivial / casual messages the pipeline emits nothing, so this
+   * stays empty and the indicator falls back to a neutral "Thinking…".
+   */
+  thinkingStates?: Array<{
+    label: string
+    documents?: string[]
+    chunkCount?: number
+  }>
+  /**
+   * Once the pipeline starts streaming `content`, set true so the indicator
+   * switches from "thinking" to "drafting" mode and eventually disappears
+   * once content is non-empty.
+   */
+  generationStarted?: boolean
 }
 
 interface GeneratedDocument {
@@ -159,67 +177,80 @@ function ShimmerText({ children }: { children: React.ReactNode }) {
   )
 }
 
-const THINKING_PHRASES = [
-  'Checking clause references...',
-  'Cross-referencing special conditions...',
-  'Analysing time bar requirements...',
-  'Reviewing payment provisions...',
-  'Identifying relevant obligations...',
-  'Verifying contractual entitlements...',
-  'Examining variation provisions...',
-  'Assessing delay notification rules...',
-  'Reviewing dispute resolution steps...',
-  'Checking extension of time criteria...',
-]
+/**
+ * Real-time thinking display.
+ *
+ * Reads the actual thinking states emitted by the RAG pipeline (search,
+ * read, retrieved-chunk count) instead of cycling through hardcoded
+ * placeholder phrases. For trivial / casual queries the pipeline emits
+ * nothing — we then show a single neutral "Thinking…" so the user knows
+ * something is happening, without ever inventing retrieval activity that
+ * didn't happen.
+ */
+function ThinkingIndicator({
+  states = [],
+  generationStarted = false,
+}: {
+  states?: ChatMessage['thinkingStates']
+  generationStarted?: boolean
+}) {
+  const safeStates = states || []
 
-function ThinkingIndicator() {
-  const [step, setStep] = useState(0)
-  const [thinkingIdx, setThinkingIdx] = useState(0)
+  // Generation has started AND we already have a state showing — keep
+  // the prior states marked as done and surface "Drafting response…".
+  if (generationStarted) {
+    return (
+      <div className="animate-slide-up space-y-1.5">
+        {safeStates.map((s, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <Check className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />
+            <span className="text-sm text-muted-foreground">{s.label}</span>
+            {s.chunkCount != null && (
+              <span className="text-[11px] text-muted-foreground/70">
+                · {s.chunkCount} chunk{s.chunkCount !== 1 ? 's' : ''}
+              </span>
+            )}
+          </div>
+        ))}
+        <div className="flex items-center gap-2">
+          <ShimmerText>Drafting response…</ShimmerText>
+        </div>
+      </div>
+    )
+  }
 
-  useEffect(() => {
-    const timers = [
-      setTimeout(() => setStep(1), 1500),
-      setTimeout(() => setStep(2), 3000),
-    ]
-    return () => timers.forEach(clearTimeout)
-  }, [])
+  // No pipeline states yet — most likely a casual/trivial message that
+  // the classifier flagged as not requiring retrieval.
+  if (safeStates.length === 0) {
+    return (
+      <div className="animate-slide-up">
+        <ShimmerText>Thinking…</ShimmerText>
+      </div>
+    )
+  }
 
-  useEffect(() => {
-    if (step < 2) return
-    const startIdx = Math.floor(Math.random() * THINKING_PHRASES.length)
-    setThinkingIdx(startIdx)
-    const interval = setInterval(() => {
-      setThinkingIdx(prev => (prev + 1) % THINKING_PHRASES.length)
-    }, 2200)
-    return () => clearInterval(interval)
-  }, [step])
-
-  const steps = [
-    'Searching documents...',
-    'Reading relevant sections...',
-  ]
-
+  // One or more pipeline states received but generation hasn't started.
+  // Mark all but the last as done; show the last as live (shimmer).
   return (
     <div className="animate-slide-up space-y-1.5">
-      {steps.map((label, i) => {
-        if (i > step) return null
-        const done = i < step
+      {safeStates.map((s, i) => {
+        const isLast = i === safeStates.length - 1
         return (
           <div key={i} className="flex items-center gap-2">
-            {done && <Check className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />}
-            {done ? (
-              <span className="text-sm text-muted-foreground">{label}</span>
+            {!isLast && <Check className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />}
+            {isLast ? (
+              <ShimmerText>{s.label}</ShimmerText>
             ) : (
-              <ShimmerText>{label}</ShimmerText>
+              <span className="text-sm text-muted-foreground">{s.label}</span>
+            )}
+            {s.chunkCount != null && (
+              <span className="text-[11px] text-muted-foreground/70">
+                · {s.chunkCount} chunk{s.chunkCount !== 1 ? 's' : ''}
+              </span>
             )}
           </div>
         )
       })}
-      {step >= 2 && (
-        <div className="flex items-center gap-2">
-          <ShimmerText>{THINKING_PHRASES[thinkingIdx]}</ShimmerText>
-        </div>
-      )}
     </div>
   )
 }
@@ -553,8 +584,42 @@ export default function AssistantPage() {
                 return updated
               })
             }
-            if (data.thinking || data.thinking_sources) {
-              // ThinkingIndicator handles display while isStreaming
+            if (data.thinking) {
+              // Plain string thinking state — append to the assistant message's thinkingStates.
+              setMessages(prev => {
+                const updated = [...prev]
+                const last = updated[updated.length - 1]
+                if (last && last.role === 'assistant') {
+                  const cur = last.thinkingStates || []
+                  updated[updated.length - 1] = {
+                    ...last,
+                    thinkingStates: [...cur, { label: String(data.thinking) }],
+                  }
+                }
+                return updated
+              })
+            }
+            if (data.thinking_sources) {
+              // Structured thinking state — { state, documents, chunk_count }
+              setMessages(prev => {
+                const updated = [...prev]
+                const last = updated[updated.length - 1]
+                if (last && last.role === 'assistant') {
+                  const cur = last.thinkingStates || []
+                  updated[updated.length - 1] = {
+                    ...last,
+                    thinkingStates: [
+                      ...cur,
+                      {
+                        label: String(data.thinking_sources.state || 'Reading sources…'),
+                        documents: data.thinking_sources.documents,
+                        chunkCount: data.thinking_sources.chunk_count,
+                      },
+                    ],
+                  }
+                }
+                return updated
+              })
             }
             if (data.sources) {
               // Attach sources to the last assistant message
@@ -573,7 +638,11 @@ export default function AssistantPage() {
                 const updated = [...prev]
                 const last = updated[updated.length - 1]
                 if (last && last.role === 'assistant') {
-                  updated[updated.length - 1] = { ...last, content: last.content + data.content }
+                  updated[updated.length - 1] = {
+                    ...last,
+                    content: last.content + data.content,
+                    generationStarted: true,
+                  }
                 }
                 return updated
               })
@@ -592,6 +661,18 @@ export default function AssistantPage() {
               setSessionId(data.session_id)
               const { document } = parseAIResponse(fullContent)
               if (document) setActiveDocument(document)
+              // Attach the persisted assistant message id so feedback toggle
+              // and any future per-message API calls have something to address.
+              if (data.message_id) {
+                setMessages(prev => {
+                  const updated = [...prev]
+                  const last = updated[updated.length - 1]
+                  if (last && last.role === 'assistant') {
+                    updated[updated.length - 1] = { ...last, id: data.message_id }
+                  }
+                  return updated
+                })
+              }
             }
           } catch {
             // Skip malformed JSON
@@ -1434,15 +1515,18 @@ export default function AssistantPage() {
                             <Copy className="h-3.5 w-3.5" />
                           </button>
                           <button
+                            aria-pressed={msg.feedback === 'positive'}
                             onClick={async () => {
-                              if (!msg.id) return
                               const newFeedback = msg.feedback === 'positive' ? null : 'positive'
+                              // Optimistic local update first — user always sees the toggle,
+                              // even before the message id has come back from the SSE stream.
                               setMessages(prev => prev.map((m, j) => j === i ? { ...m, feedback: newFeedback } : m))
+                              if (!msg.id) return
                               await fetch(`/api/chat/messages/${msg.id}/feedback`, {
                                 method: 'PATCH',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ feedback: newFeedback }),
-                              })
+                              }).catch(() => {/* persistence is best-effort; UI is the source of truth */})
                             }}
                             className={`p-1.5 rounded-md transition-colors ${msg.feedback === 'positive' ? 'text-foreground bg-muted' : 'text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted'}`}
                             title="Good response"
@@ -1450,25 +1534,37 @@ export default function AssistantPage() {
                             <ThumbsUp className={`h-3.5 w-3.5 ${msg.feedback === 'positive' ? 'fill-current' : ''}`} />
                           </button>
                           <button
+                            aria-pressed={msg.feedback === 'negative'}
                             onClick={async () => {
-                              if (!msg.id) return
                               const newFeedback = msg.feedback === 'negative' ? null : 'negative'
                               setMessages(prev => prev.map((m, j) => j === i ? { ...m, feedback: newFeedback } : m))
+                              if (!msg.id) return
                               await fetch(`/api/chat/messages/${msg.id}/feedback`, {
                                 method: 'PATCH',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ feedback: newFeedback }),
-                              })
+                              }).catch(() => {/* persistence is best-effort; UI is the source of truth */})
                             }}
                             className={`p-1.5 rounded-md transition-colors ${msg.feedback === 'negative' ? 'text-foreground bg-muted' : 'text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted'}`}
                             title="Bad response"
                           >
                             <ThumbsDown className={`h-3.5 w-3.5 ${msg.feedback === 'negative' ? 'fill-current' : ''}`} />
                           </button>
-                          <button onClick={() => {
-                            const lastUserMsg = messages.slice(0, i).reverse().find(m => m.role === 'user')
-                            if (lastUserMsg) { setInput(lastUserMsg.content); inputRef.current?.focus() }
-                          }} className="p-1.5 rounded-md text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted transition-colors" title="Retry">
+                          <button
+                            onClick={() => {
+                              if (isStreaming) return
+                              const lastUserMsg = messages.slice(0, i).reverse().find(m => m.role === 'user')
+                              if (!lastUserMsg) return
+                              // Drop the existing assistant message and re-fire generation
+                              // against the same prompt — replace in place rather than just
+                              // refilling the input box.
+                              setMessages(prev => prev.filter((_, j) => j !== i))
+                              sendMessageWithTemplate(lastUserMsg.content)
+                            }}
+                            disabled={isStreaming}
+                            className="p-1.5 rounded-md text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                            title="Regenerate response"
+                          >
                             <RotateCcw className="h-3.5 w-3.5" />
                           </button>
                           {msg.sources && msg.sources.length > 0 && (
@@ -1523,15 +1619,12 @@ export default function AssistantPage() {
                         )}
                       </div>
                     ) : isStreaming ? (
-                      (() => {
-                        const lastUser = messages.filter(m => m.role === 'user').pop()?.content?.trim() || ''
-                        const isCasual = lastUser.length < 25 && /^(hi|hello|hey|test|thanks|thank you|ok|okay|yes|no|sure|yo|sup|who are (u|you)|what('s| is) (up|your name)|how are (u|you)|dtest|can u|do u|what do u do|who made (this|u|you))\s*[!?.]*$/i.test(lastUser)
-                        return isCasual ? (
-                          <ShimmerText>Thinking...</ShimmerText>
-                        ) : (
-                          <ThinkingIndicator />
-                        )
-                      })()
+                      // Drive the indicator off the actual message state we
+                      // captured from the SSE stream — never from a timer.
+                      <ThinkingIndicator
+                        states={msg.thinkingStates}
+                        generationStarted={msg.generationStarted}
+                      />
                     ) : null}
                   </div>
                 ))}

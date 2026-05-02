@@ -64,6 +64,6 @@ export interface StreamCallbacks {
   onSources: (sources: SourceItem[]) => void
   onContent: (content: string) => void
   onFollowups: (followups: string[]) => void
-  onDone: (result: { sessionId: string; noticeId?: string | null }) => void
+  onDone: (result: { sessionId: string; noticeId?: string | null; messageId?: string | null }) => void
   onError: (error: string) => void
 }

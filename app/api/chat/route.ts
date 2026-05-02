@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
             onDone(result) {
               sendLog(controller, 'Pipeline complete')
               controller.enqueue(
-                encoder.encode(`data: ${JSON.stringify({ done: true, session_id: result.sessionId, notice_id: result.noticeId })}\n\n`)
+                encoder.encode(`data: ${JSON.stringify({ done: true, session_id: result.sessionId, notice_id: result.noticeId, message_id: result.messageId })}\n\n`)
               )
               controller.close()
             },

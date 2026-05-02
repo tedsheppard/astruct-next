@@ -206,12 +206,13 @@ export async function runRAGPipeline(
     }
 
     // ─── Step 11: Save & Complete ─────────────────────────────────────────
-    await admin.from('chat_messages').insert({
+    const { data: savedAssistantMsg } = await admin.from('chat_messages').insert({
       session_id: config.sessionId,
       role: 'assistant',
       content: finalResponse,
       sources: sources.length > 0 ? sources : null,
-    })
+    }).select('id').single()
+    const savedMessageId = savedAssistantMsg?.id || null
 
     // Auto-save generated document as a notice
     const docMatch = finalResponse.match(/---DOCUMENT_START---([\s\S]*?)---DOCUMENT_END---/)
@@ -233,7 +234,7 @@ export async function runRAGPipeline(
       }
     }
 
-    callbacks.onDone({ sessionId: config.sessionId!, noticeId: savedNoticeId })
+    callbacks.onDone({ sessionId: config.sessionId!, noticeId: savedNoticeId, messageId: savedMessageId })
 
   } catch (err) {
     console.error('[RAG:Pipeline] Error:', err)
