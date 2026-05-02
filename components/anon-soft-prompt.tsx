@@ -69,7 +69,7 @@ export function AnonSoftPrompt({
   return (
     <div className="mb-3 rounded-xl border border-foreground/15 bg-foreground/5 px-4 py-3 flex items-center gap-3">
       <div className="flex-1 text-sm text-foreground/85 leading-snug">
-        <span className="font-medium">Sign up to save your work,</span>{' '}
+        <span className="font-medium">Sign up to add multiple contracts, save your work,</span>{' '}
         draft notices, track deadlines, and unlock the rest of Astruct.
       </div>
       <div className="flex items-center gap-2 shrink-0">

@@ -80,11 +80,19 @@ export function AnonHardWall({ open, reason, onClose, onConverted }: Props) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!email.trim() || !password.trim()) {
+    const cleanEmail = email.trim().toLowerCase()
+    const cleanPassword = password
+    if (!cleanEmail || !cleanPassword) {
       setError('Email and password are required.')
       return
     }
-    if (password.length < 6) {
+    // Same permissive regex as /register — covers the cases real users
+    // actually have, including plus-addressing.
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      setError("That doesn't look like a valid email address.")
+      return
+    }
+    if (cleanPassword.length < 6) {
       setError('Password must be at least 6 characters.')
       return
     }
@@ -99,12 +107,19 @@ export function AnonHardWall({ open, reason, onClose, onConverted }: Props) {
       const isAnon = userResult.user?.is_anonymous === true
 
       if (isAnon) {
-        const { error: updateErr } = await supabase.auth.updateUser({ email, password })
+        const { error: updateErr } = await supabase.auth.updateUser({ email: cleanEmail, password: cleanPassword })
         if (updateErr) {
-          if (updateErr.message?.toLowerCase().includes('registered')) {
-            setError(
-              'That email is already registered. Log in instead to merge your guest work.',
-            )
+          const msg = updateErr.message?.toLowerCase() || ''
+          if (msg.includes('registered')) {
+            setError('That email is already registered. Log in instead to merge your guest work.')
+          } else if (msg.includes('rate limit')) {
+            setError("We're sending too many confirmation emails right now — please try again in a minute.")
+          } else if (msg.includes('invalid') && msg.includes('email')) {
+            // Supabase sometimes returns the email back blank inside its error
+            // string (e.g. `Email address "" is invalid`) when its server-side
+            // validator rejects the format. Show the value we actually sent so
+            // the user knows which email is being rejected.
+            setError(`The email "${cleanEmail}" was rejected. Try a different address.`)
           } else {
             setError(updateErr.message || 'Could not upgrade your account.')
           }
@@ -116,7 +131,7 @@ export function AnonHardWall({ open, reason, onClose, onConverted }: Props) {
           .from('profiles')
           .update({
             name: name || null,
-            email,
+            email: cleanEmail,
             is_anonymous: false,
             anon_linked_at: new Date().toISOString(),
           })
@@ -124,8 +139,8 @@ export function AnonHardWall({ open, reason, onClose, onConverted }: Props) {
       } else {
         // Fallback to a pure new-user signup — should be rare in practice.
         const { error: signUpErr } = await supabase.auth.signUp({
-          email,
-          password,
+          email: cleanEmail,
+          password: cleanPassword,
           options: { data: { name } },
         })
         if (signUpErr) {
@@ -192,7 +207,10 @@ export function AnonHardWall({ open, reason, onClose, onConverted }: Props) {
               </Label>
               <Input
                 id="hw-email"
-                type="email"
+                type="text"
+                inputMode="email"
+                autoComplete="email"
+                spellCheck={false}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"

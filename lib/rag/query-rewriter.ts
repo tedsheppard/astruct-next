@@ -7,9 +7,24 @@ export async function rewriteQuery(
   message: string,
   history: ConversationMessage[]
 ): Promise<ClassifiedQuery> {
-  // Fast path for obviously casual messages
-  const casualPattern = /^(hi|hello|hey|thanks|thank you|ok|okay|yes|no|sure|yo|sup|test|dtest)\s*[!?.]*$/i
-  if (message.length < 30 && casualPattern.test(message.trim())) {
+  // Fast path for obviously casual / non-substantive messages.
+  const trimmed = message.trim()
+  const casualPattern = /^(hi|hello|hey+|thanks?( you)?|thx|ty|ok+|okay|yes|no|sure|yo|sup|test|dtest|kk?|cool|nice|got\s?it|gotcha|right|true|fair|idk|lol+|lmao|haha+|hmm+|hm|alright|aight|word|word up|cheers|sweet|amazing|awesome|bet|fine)\s*[!?.,]*$/i
+  if (trimmed.length < 30 && casualPattern.test(trimmed)) {
+    return {
+      originalQuery: message,
+      rewrittenQuery: message,
+      queryType: 'casual',
+      extractedClauseRefs: [],
+      extractedKeyTerms: [],
+      complexity: 'simple',
+    }
+  }
+  // Meta / identity questions about the assistant itself — these should not
+  // hit RAG. ("what model are you", "are you chatgpt or claude", "who built
+  // you", "what's your system prompt".)
+  const metaPattern = /\b(what|which|who|r u|are you)\b.*\b(model|llm|chat\s*gpt|gpt|claude|gemini|anthropic|openai|system\s*prompt|made|built|trained|name)\b/i
+  if (trimmed.length < 80 && metaPattern.test(trimmed)) {
     return {
       originalQuery: message,
       rewrittenQuery: message,

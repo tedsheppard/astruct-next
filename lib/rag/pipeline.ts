@@ -68,17 +68,22 @@ export async function runRAGPipeline(
       callbacks.onThinkingState(thinkingStates.search)
     }
 
-    const chunks = await hybridRetrieve(
-      classifiedQuery,
-      config.contractId,
-      config.selectedDocumentIds,
-      docNameMap
-    )
-    console.log('[RAG:Pipeline] Retrieved', chunks.length, 'chunks')
+    // Casual / meta messages skip retrieval entirely — no point searching
+    // documents to answer "kk" or "what model are you".
+    const isCasual = classifiedQuery.queryType === 'casual'
+    const chunks = isCasual
+      ? []
+      : await hybridRetrieve(
+          classifiedQuery,
+          config.contractId,
+          config.selectedDocumentIds,
+          docNameMap
+        )
+    console.log('[RAG:Pipeline] Retrieved', chunks.length, 'chunks (casual=' + isCasual + ')')
 
     // ─── Step 3: Report actual retrieved sources ──────────────────────────
     const retrievedDocNames = [...new Set(chunks.map(c => c.documentName))]
-    if (thinkingStates.read) {
+    if (thinkingStates.read && !isCasual) {
       callbacks.onThinkingSources({
         state: thinkingStates.read,
         documents: retrievedDocNames,
