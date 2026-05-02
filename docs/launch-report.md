@@ -66,7 +66,7 @@ Updated 2026-05-02. Most of the original §2 work has been done end-to-end by th
 
 ### Remaining (one founder action each)
 1. **Enable Stripe Tax + register for AU GST** in the Stripe dashboard (`https://dashboard.stripe.com/tax/registrations`). Without this, the GST-inclusive math on $29.95 won't actually collect GST. **Required before charging real customers.**
-2. **Resend transactional emails** — `RESEND_API_KEY` + `RESEND_FROM` are not yet set in Vercel (orchestrator can't sign up for a Resend account on the founder's behalf). The email module is wired but currently no-ops gracefully without the key. Welcome / payment-failed / cancellation emails won't fire until you add the key + verify the sending domain in Resend's DNS panel. **Stripe sends its own receipts**, so this is not strictly launch-blocking — pure UX nicety.
+2. **Resend transactional emails — DEFERRED post-launch.** Stripe sends its own receipts and payment confirmations, so the customer experience is intact without our own emails. Full pickup-where-we-left-off doc at `docs/resend-setup-deferred.md` — covers signup, DNS, env vars, the two remaining trigger sites (`sendWelcome`, `sendUsageThreshold`), and a verification checklist. ~30 minutes of work when you decide to do it.
 3. **Optional**: rotate the Stripe live key. The orchestrator strongly recommends this because the original key was in chat history. The live env still uses the original key — rotate it from the Stripe dashboard, then `printf "<new>" | npx vercel env add STRIPE_SECRET_KEY production` and redeploy.
 
 ---
