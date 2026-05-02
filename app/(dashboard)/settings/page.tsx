@@ -177,6 +177,15 @@ export default function SettingsPage() {
         </p>
       </div>
 
+      <div className="flex items-center gap-1 border-b border-border -mt-4">
+        <a href="/settings" className="px-3 py-2 text-sm font-medium border-b-2 border-foreground -mb-px">
+          Profile
+        </a>
+        <a href="/settings/billing" className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          Billing
+        </a>
+      </div>
+
       {/* Profile Section */}
       <Card className="bg-card border-border">
         <CardHeader className="pb-4">

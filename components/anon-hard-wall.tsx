@@ -151,6 +151,12 @@ export function AnonHardWall({ open, reason, onClose, onConverted }: Props) {
       }
 
       onConverted?.()
+      // For the second-project reason, send the new account straight into
+      // the billing flow so they can buy a contract slot immediately.
+      if (reason === 'second_project') {
+        router.push('/settings/billing?checkout=intent')
+        return
+      }
       router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not upgrade your account.')

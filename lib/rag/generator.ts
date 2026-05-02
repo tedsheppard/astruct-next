@@ -1,9 +1,16 @@
 import Anthropic from '@anthropic-ai/sdk'
 import OpenAI from 'openai'
 import type { ClassifiedQuery, ConversationMessage, StreamCallbacks } from './types'
+import { recordTokenEvent } from '@/lib/tokens'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY || '' })
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+
+/** Approximate tokens from a string. ~4 chars/token holds for Claude + GPT-4-class models. */
+function estimateTokens(text: string): number {
+  if (!text) return 0
+  return Math.ceil(text.length / 4)
+}
 
 function isClaudeModel(model: string): boolean {
   return model.startsWith('claude-')
@@ -39,12 +46,19 @@ function shouldUseExtendedThinking(query: ClassifiedQuery): boolean {
   return query.queryType === 'analysis' || query.queryType === 'drafting' || query.complexity === 'complex'
 }
 
+export interface GenerateTracking {
+  userId: string
+  contractId: string | null
+  feature?: string
+}
+
 export async function generate(
   systemPrompt: string,
   conversationHistory: ConversationMessage[],
   query: ClassifiedQuery,
   requestedModel: string,
-  callbacks: StreamCallbacks
+  callbacks: StreamCallbacks,
+  tracking?: GenerateTracking,
 ): Promise<string> {
   const { model, wasUpgraded } = selectModel(query, requestedModel)
   const useThinking = shouldUseExtendedThinking(query) && isClaudeModel(model) && model !== 'claude-haiku-4-5-20251001'
@@ -159,6 +173,22 @@ export async function generate(
         callbacks.onContent(content)
       }
     }
+  }
+
+  // ─── Token accounting ───────────────────────────────────────────────────
+  // Estimate tokens from string lengths (input = system + history; output = response).
+  // Real usage from API responses is the next iteration; estimation gets us
+  // billing-grade tracking today without refactoring the streaming path.
+  if (tracking?.userId) {
+    const inputText = systemPrompt + conversationHistory.map(m => m.content).join('\n')
+    recordTokenEvent({
+      userId: tracking.userId,
+      contractId: tracking.contractId,
+      inputTokens: estimateTokens(inputText),
+      outputTokens: estimateTokens(fullResponse),
+      model,
+      feature: tracking.feature || 'assistant',
+    })
   }
 
   return fullResponse

@@ -10,53 +10,52 @@ const PLANS = [
   {
     name: 'Free',
     price: '$0',
-    period: '/month',
-    description: 'One project, full features, forever. No credit card required.',
+    period: '/forever',
+    description: 'One project, the full assistant, no credit card. Use it as long as you like.',
     features: [
       '1 project',
-      'Unlimited documents on that project',
-      'Full AI assistant',
+      'Full AI assistant on your contract',
       'Correspondence + time-bar calendar',
       'Notice templates',
+      '50 messages/cycle',
     ],
     cta: 'Try free',
     href: CTA,
     highlighted: false,
   },
   {
-    name: 'Professional',
-    price: '$695',
-    period: '/month',
-    description: 'For contract administrators and project managers running multiple active projects.',
+    name: 'Pro Contract',
+    price: '$29.95',
+    period: '/contract/month',
+    description:
+      'Pay per project, scale as you grow. Generous AI usage included; predictable overage if you need more.',
     features: [
-      'Up to 20 projects',
-      'Unlimited documents',
-      'Unlimited AI queries',
-      'Full correspondence management',
-      'Time-bar calendar',
-      'Knowledge base',
-      'Templates',
-      'Priority support',
+      'Add as many contracts as you need',
+      'Each contract: 2,000,000 input + 500,000 output tokens included per cycle',
+      'Overage at $0.10 AUD per 10,000 tokens',
+      'Set a monthly cap so a busy month never surprises you',
+      'GST included · cancel anytime',
+      'Stripe-secured · prorated when you add or remove contracts',
     ],
     cta: 'Try free, then upgrade',
     href: CTA,
     highlighted: true,
   },
   {
-    name: 'Professional Max',
-    price: '$1,395',
+    name: 'Team',
+    price: 'From $149',
     period: '/month',
-    description: 'For larger teams managing high-volume project portfolios.',
+    description:
+      'Shared workspace for project teams. Same per-contract usage, with collaboration and centralised billing.',
     features: [
-      'Up to 50 projects',
-      'Everything in Professional',
-      'Advanced analytics',
-      'Team collaboration',
-      'Dedicated onboarding',
+      'Everything in Pro Contract',
+      'Shared library + contracts across teammates',
+      'Per-seat permissions',
+      'Centralised billing for the whole team',
       'Priority support',
     ],
-    cta: 'Try free, then upgrade',
-    href: CTA,
+    cta: 'Contact us',
+    href: '/contact',
     highlighted: false,
   },
   {
@@ -65,8 +64,7 @@ const PLANS = [
     period: '',
     description: 'For tier-1 contractors and large construction firms with bespoke requirements.',
     features: [
-      'Unlimited projects',
-      'Everything in Professional Max',
+      'Volume discounts',
       'SSO / SAML authentication',
       'Custom integrations (Procore, Aconex, Asite)',
       'Dedicated account support',
@@ -81,9 +79,29 @@ const PLANS = [
 
 const FAQ_ITEMS = [
   {
+    question: 'What counts as a contract?',
+    answer:
+      'One contract is one active project — typically a single head contract or subcontract with its associated documents (drawings, specifications, RFIs, payment claims, correspondence). Each contract gets its own AI allowance per billing cycle.',
+  },
+  {
+    question: 'What happens if I exceed my included AI usage?',
+    answer:
+      'Nothing dramatic — Astruct keeps working. Once you pass the included 2M input + 500k output tokens for a contract, overage is billed at $0.10 AUD per 10,000 additional tokens, capped at the monthly limit you set in Settings → Billing (default $200). You can change the cap any time, including to "unlimited".',
+  },
+  {
+    question: 'Can I cancel anytime?',
+    answer:
+      'Yes. Cancel from the Stripe customer portal in Settings → Billing. You keep access until the end of your current cycle, and one project remains accessible on the free tier afterwards. No phone calls, no win-back gauntlet.',
+  },
+  {
+    question: 'How is GST handled?',
+    answer:
+      'All prices on this page are GST-inclusive — the $29.95/contract/month is what you actually pay. Stripe collects GST automatically on Australian invoices and remits it as required.',
+  },
+  {
     question: 'What contract forms do you support?',
     answer:
-      'Astruct supports AS4000, AS4902, AS2124, AS4901, NEC, and FIDIC contract forms out of the box, plus 15+ additional standard forms. Our AI is trained to understand the specific clauses, notice requirements, and time bars across all of these.',
+      'Astruct supports AS4000, AS4902, AS2124, AS4901, AS4903, NEC, and FIDIC contract forms out of the box, plus 15+ additional standard forms. Our AI is trained to understand the specific clauses, notice requirements, and time bars across all of these.',
   },
   {
     question: 'What document types can I upload?',
@@ -195,6 +213,13 @@ export default function PricingPage() {
                 </div>
               </FadeIn>
             ))}
+          </div>
+          {/* Trust strip */}
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[13px] text-[#706d66]">
+            <span className="inline-flex items-center gap-1.5"><span className="text-[#0f0e0d]">●</span> GST included</span>
+            <span className="inline-flex items-center gap-1.5"><span className="text-[#0f0e0d]">●</span> Australian-supported</span>
+            <span className="inline-flex items-center gap-1.5"><span className="text-[#0f0e0d]">●</span> Cancel anytime</span>
+            <span className="inline-flex items-center gap-1.5"><span className="text-[#0f0e0d]">●</span> Stripe-secured</span>
           </div>
         </div>
       </section>

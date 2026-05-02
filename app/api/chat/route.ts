@@ -2,6 +2,7 @@ import { type NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { runRAGPipeline } from '@/lib/rag/pipeline'
+import { checkOverageCap } from '@/lib/tokens'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -52,6 +53,27 @@ export async function POST(request: NextRequest) {
           return
         }
         sendLog(controller, `User: ${user.email}`)
+
+        // ─── Overage cap gate ────────────────────────────────────────────
+        // For paying customers, refuse the request upfront if it would breach
+        // their overage cap. Anon + free users are governed by the message
+        // counter, not the token cap.
+        if (!user.is_anonymous) {
+          const cap = await checkOverageCap(user.id, Math.ceil((message?.length || 0) / 4))
+          if (cap.blocked) {
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({
+                  error: 'overage_cap_reached',
+                  capCents: cap.capCents,
+                  usedCents: cap.usedCents,
+                })}\n\n`,
+              ),
+            )
+            controller.close()
+            return
+          }
+        }
 
         const model = (requestedModel as string) || 'gpt-5.4-mini'
         sendLog(controller, `Model: ${model}`)

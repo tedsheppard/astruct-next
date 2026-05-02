@@ -100,7 +100,8 @@ export async function runRAGPipeline(
       config.conversationHistory,
       classifiedQuery,
       config.model,
-      callbacks
+      callbacks,
+      { userId: config.userId, contractId: config.contractId, feature: 'assistant' },
     )
 
     // ─── Step 6: Citation Verification with Retry ─────────────────────────
@@ -128,7 +129,8 @@ export async function runRAGPipeline(
               // We need to clear the old response and stream the new one
               callbacks.onContent(content)
             },
-          }
+          },
+          { userId: config.userId, contractId: config.contractId, feature: 'assistant_retry' },
         )
         // Replace final response with retry
         finalResponse = retryResponse
