@@ -276,6 +276,18 @@ export async function POST(request: NextRequest) {
       .update({ name: finalTitle })
       .eq('id', contract_id)
 
+    // Fire the deadline scanner async after extraction so the calendar is
+    // populated by the time the user navigates to it. Best-effort — do
+    // not block the upload response.
+    const baseOrigin = process.env.NEXT_PUBLIC_APP_ORIGIN
+      || (request.nextUrl.protocol + '//' + request.nextUrl.host)
+    const cookie = request.headers.get('cookie') || ''
+    fetch(`${baseOrigin}/api/deadlines/scan`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', cookie },
+      body: JSON.stringify({ contract_id, trigger: 'auto-on-upload' }),
+    }).catch(e => console.error('[quick-init] auto-deadline-scan failed', e))
+
     return Response.json({ ok: true, document_id: doc.id, facts, project_title: finalTitle })
   } catch (err) {
     console.error('[quick-init] error', err)

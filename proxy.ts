@@ -20,7 +20,7 @@ export async function proxy(request: NextRequest) {
     const path = request.nextUrl.pathname
 
     // Marketing public paths
-    const marketingPaths = ['/', '/landing', '/platform', '/solutions', '/pricing', '/security', '/company', '/privacy', '/terms', '/contact', '/features', '/product']
+    const marketingPaths = ['/', '/landing', '/platform', '/solutions', '/pricing', '/security', '/company', '/privacy', '/terms', '/contact', '/features', '/product', '/about']
     const isMarketingPath = marketingPaths.some(p => path === p || path.startsWith(p + '/'))
 
     // API routes are shared

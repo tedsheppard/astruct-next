@@ -10,24 +10,25 @@ const APP_CTA = getAppCtaTarget()
 // ─── Shared animation component ─────────────────────────────────────────────
 
 export function FadeIn({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
-  const [visible, setVisible] = useState(false)
-  const [ref, setRef] = useState<HTMLDivElement | null>(null)
-
+  // Default to visible. The original implementation hid content with opacity:0
+  // until an IntersectionObserver fired, which left sections invisible on
+  // long pages, fullPage screenshot tools, and any environment where IO is
+  // delayed or doesn't trigger (reduced-motion, slow JS, prerender). The
+  // animation is now a one-shot "land softly" on mount rather than a
+  // scroll-gated reveal.
+  const [animateIn, setAnimateIn] = useState(false)
   useEffect(() => {
-    if (!ref) return
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true) }, { threshold: 0.12 })
-    obs.observe(ref)
-    return () => obs.disconnect()
-  }, [ref])
+    const t = setTimeout(() => setAnimateIn(true), 16)
+    return () => clearTimeout(t)
+  }, [])
 
   return (
     <div
-      ref={setRef}
       className={className}
       style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(20px)',
-        transition: `opacity 0.6s ease-out ${delay}ms, transform 0.6s ease-out ${delay}ms`,
+        opacity: 1,
+        transform: animateIn ? 'translateY(0)' : 'translateY(8px)',
+        transition: `transform 0.4s ease-out ${delay}ms`,
       }}
     >
       {children}

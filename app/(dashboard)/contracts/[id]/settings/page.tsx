@@ -6,8 +6,49 @@ import { createClient } from '@/lib/supabase/client'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
+
+const CONTRACT_FORMS: { group: string; items: { value: string; label: string }[] }[] = [
+  { group: 'Standards Australia', items: [
+    { value: 'AS4000-1997', label: 'AS4000-1997 — General Conditions' },
+    { value: 'AS4902-2000', label: 'AS4902-2000 — Design & Construct' },
+    { value: 'AS2124-1992', label: 'AS2124-1992 — General Conditions' },
+    { value: 'AS4901-1998', label: 'AS4901-1998 — Subcontract' },
+    { value: 'AS4905-2002', label: 'AS4905-2002 — Minor Works' },
+  ]},
+  { group: 'ABIC', items: [
+    { value: 'ABIC-MW2018', label: 'ABIC MW-2018 — Major Works' },
+    { value: 'ABIC-SW2018', label: 'ABIC SW-2018 — Simple Works' },
+  ]},
+  { group: 'HIA / MBA', items: [
+    { value: 'HIA-LumpSum', label: 'HIA Lump Sum' },
+    { value: 'HIA-CostPlus', label: 'HIA Cost Plus' },
+    { value: 'MBA', label: 'MBA (Master Builders)' },
+  ]},
+  { group: 'International', items: [
+    { value: 'NEC4-ECC', label: 'NEC4 — Engineering & Construction' },
+    { value: 'FIDIC-Red', label: 'FIDIC Red Book' },
+    { value: 'FIDIC-Yellow', label: 'FIDIC Yellow Book' },
+    { value: 'JCT-SBC', label: 'JCT Standard Building' },
+  ]},
+  { group: 'Other', items: [
+    { value: 'GC21', label: 'GC21 — NSW Government' },
+    { value: 'AS-Amended', label: 'AS Standard (Amended)' },
+    { value: 'Bespoke', label: 'Bespoke / Custom' },
+    { value: 'Other', label: 'Other' },
+  ]},
+]
+const CURRENCIES = ['AUD', 'USD', 'GBP', 'EUR', 'NZD', 'SGD', 'HKD', 'CAD', 'JPY', 'INR', 'AED', 'ZAR', 'MYR', 'CNY']
 
 export default function GeneralSettingsPage() {
   const { id: contractId } = useParams()
@@ -28,9 +69,9 @@ export default function GeneralSettingsPage() {
   const handleSave = async () => {
     setSaving(true)
     const supabase = createClient()
-    const { name, reference_number, contract_form, contract_sum } = form
+    const { name, reference_number, contract_form, contract_sum, currency, gst_type } = form
     const { error } = await supabase.from('contracts').update({
-      name, reference_number, contract_form, contract_sum,
+      name, reference_number, contract_form, contract_sum, currency, gst_type,
       updated_at: new Date().toISOString(),
     }).eq('id', contractId)
     if (error) toast.error('Failed to save')
@@ -38,7 +79,25 @@ export default function GeneralSettingsPage() {
     setSaving(false)
   }
 
-  if (loading) return <div className="space-y-4 animate-pulse"><div className="h-6 w-32 bg-muted rounded" /><div className="h-40 bg-muted rounded-lg" /></div>
+  if (loading) {
+    return (
+      <div className="space-y-4 animate-pulse">
+        <div className="h-6 w-32 bg-muted rounded" />
+        <div className="h-40 bg-muted rounded-lg" />
+      </div>
+    )
+  }
+
+  // Find the label for the current contract_form so SelectValue can render it
+  const currentForm = (form.contract_form as string) || ''
+  const currentFormLabel = (() => {
+    for (const g of CONTRACT_FORMS) {
+      const m = g.items.find(i => i.value === currentForm)
+      if (m) return m.label
+    }
+    return currentForm || ''
+  })()
+  const currentCurrency = (form.currency as string) || 'AUD'
 
   return (
     <div className="space-y-6">
@@ -53,52 +112,55 @@ export default function GeneralSettingsPage() {
           <Label className="text-xs text-muted-foreground">Contract Reference Number</Label>
           <Input value={(form.reference_number as string) || ''} onChange={e => update('reference_number', e.target.value)} className="bg-main-panel border-border text-foreground" />
         </div>
+
         <div className="space-y-1.5">
           <Label className="text-xs text-muted-foreground">Contract Form</Label>
-          <select value={(form.contract_form as string) || ''} onChange={e => update('contract_form', e.target.value)}
-            className="w-full h-10 px-3 rounded-md border border-border bg-main-panel text-foreground text-sm">
-            <optgroup label="Standards Australia">
-              <option value="AS4000-1997">AS4000-1997 — General Conditions</option>
-              <option value="AS4902-2000">AS4902-2000 — Design & Construct</option>
-              <option value="AS2124-1992">AS2124-1992 — General Conditions</option>
-              <option value="AS4901-1998">AS4901-1998 — Subcontract</option>
-              <option value="AS4905-2002">AS4905-2002 — Minor Works</option>
-            </optgroup>
-            <optgroup label="ABIC">
-              <option value="ABIC-MW2018">ABIC MW-2018 — Major Works</option>
-              <option value="ABIC-SW2018">ABIC SW-2018 — Simple Works</option>
-            </optgroup>
-            <optgroup label="HIA / MBA">
-              <option value="HIA-LumpSum">HIA Lump Sum</option>
-              <option value="HIA-CostPlus">HIA Cost Plus</option>
-              <option value="MBA">MBA (Master Builders)</option>
-            </optgroup>
-            <optgroup label="International">
-              <option value="NEC4-ECC">NEC4 — Engineering & Construction</option>
-              <option value="FIDIC-Red">FIDIC Red Book</option>
-              <option value="FIDIC-Yellow">FIDIC Yellow Book</option>
-              <option value="JCT-SBC">JCT Standard Building</option>
-            </optgroup>
-            <optgroup label="Other">
-              <option value="GC21">GC21 — NSW Government</option>
-              <option value="AS-Amended">AS Standard (Amended)</option>
-              <option value="Bespoke">Bespoke / Custom</option>
-              <option value="Other">Other</option>
-            </optgroup>
-          </select>
+          <Select
+            value={currentForm}
+            onValueChange={(v) => v && update('contract_form', v)}
+          >
+            <SelectTrigger className="w-full bg-main-panel border-border text-foreground">
+              <SelectValue placeholder="Select a contract form">
+                {() => currentFormLabel || 'Select a contract form'}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {CONTRACT_FORMS.map(g => (
+                <SelectGroup key={g.group}>
+                  <SelectLabel>{g.group}</SelectLabel>
+                  {g.items.map(i => (
+                    <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>
+                  ))}
+                </SelectGroup>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
+
         <div className="space-y-1.5">
           <Label className="text-xs text-muted-foreground">Contract Sum</Label>
           <div className="flex gap-2">
-            <select value={(form.currency as string) || 'AUD'} onChange={e => update('currency', e.target.value)}
-              className="w-24 h-10 px-2 rounded-md border border-border bg-main-panel text-foreground text-sm flex-shrink-0">
-              <option value="AUD">AUD</option><option value="USD">USD</option><option value="GBP">GBP</option>
-              <option value="EUR">EUR</option><option value="NZD">NZD</option><option value="SGD">SGD</option>
-              <option value="HKD">HKD</option><option value="CAD">CAD</option><option value="JPY">JPY</option>
-              <option value="INR">INR</option><option value="AED">AED</option><option value="ZAR">ZAR</option>
-              <option value="MYR">MYR</option><option value="CNY">CNY</option>
-            </select>
-            <Input type="number" step="0.01" value={(form.contract_sum as number) ?? ''} onChange={e => update('contract_sum', e.target.value ? Number(e.target.value) : null)} placeholder="0.00" className="flex-1 bg-main-panel border-border text-foreground" />
+            <Select
+              value={currentCurrency}
+              onValueChange={(v) => v && update('currency', v)}
+            >
+              <SelectTrigger className="w-24 bg-main-panel border-border text-foreground flex-shrink-0">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {CURRENCIES.map(c => (
+                  <SelectItem key={c} value={c}>{c}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Input
+              type="number"
+              step="0.01"
+              value={(form.contract_sum as number) ?? ''}
+              onChange={e => update('contract_sum', e.target.value ? Number(e.target.value) : null)}
+              placeholder="0.00"
+              className="flex-1 bg-main-panel border-border text-foreground"
+            />
           </div>
           <div className="flex items-center gap-4 mt-1">
             <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer">
@@ -112,7 +174,9 @@ export default function GeneralSettingsPage() {
       </div>
 
       <div className="pt-4">
-        <Button onClick={handleSave} disabled={saving} size="sm">{saving && <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />}Save</Button>
+        <Button onClick={handleSave} disabled={saving} size="sm">
+          {saving && <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />}Save
+        </Button>
       </div>
     </div>
   )
