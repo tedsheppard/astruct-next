@@ -40,6 +40,29 @@ export default function RegisterPage() {
     setLoading(true)
 
     const supabase = createClient()
+    const cleanEmail = trimmedEmail.toLowerCase()
+
+    // Translate the cryptic supabase auth errors into something a real user
+    // can act on. Supabase returns `Email address "" is invalid` (with empty
+    // quotes) when its server-side validator rejects the format — even when
+    // the user typed something like `test@test.com`. Show the actual value
+    // we sent so the user knows which email is being rejected.
+    const translateAuthError = (raw: string | undefined): string => {
+      const m = (raw || '').toLowerCase()
+      if (m.includes('registered')) {
+        return "That email is already registered. Try signing in instead."
+      }
+      if (m.includes('rate limit')) {
+        return "We're sending too many confirmation emails right now — please try again in a minute."
+      }
+      if (m.includes('invalid') && m.includes('email')) {
+        return `The email "${cleanEmail}" was rejected. Try a different address (some test/disposable domains are blocked).`
+      }
+      if (m.includes('password')) {
+        return raw || 'Password must be at least 6 characters.'
+      }
+      return raw || 'Could not create your account.'
+    }
 
     // If the visitor is currently in an anonymous Supabase session, upgrade
     // it in place via updateUser — preserves auth.uid() so all guest work
@@ -48,15 +71,9 @@ export default function RegisterPage() {
     const isAnonUpgrade = existing.user?.is_anonymous === true
 
     if (isAnonUpgrade) {
-      const { error: updErr } = await supabase.auth.updateUser({ email, password })
+      const { error: updErr } = await supabase.auth.updateUser({ email: cleanEmail, password })
       if (updErr) {
-        if (updErr.message?.toLowerCase().includes('registered')) {
-          setError(
-            "That email is already registered. Log in instead — we'll merge your guest work after sign in.",
-          )
-        } else {
-          setError(updErr.message)
-        }
+        setError(translateAuthError(updErr.message))
         setLoading(false)
         return
       }
@@ -64,8 +81,8 @@ export default function RegisterPage() {
       await supabase
         .from('profiles')
         .update({
-          name: name || null,
-          email,
+          name: trimmedName,
+          email: cleanEmail,
           is_anonymous: false,
           anon_linked_at: new Date().toISOString(),
         })
@@ -78,13 +95,13 @@ export default function RegisterPage() {
     }
 
     const { error } = await supabase.auth.signUp({
-      email,
+      email: cleanEmail,
       password,
-      options: { data: { name } },
+      options: { data: { name: trimmedName } },
     })
 
     if (error) {
-      setError(error.message)
+      setError(translateAuthError(error.message))
       setLoading(false)
       return
     }

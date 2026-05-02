@@ -10,6 +10,70 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
 
+// Standard party-role names found in Australian construction contracts.
+// "Other (specify)" lets the user enter a free-text role.
+const PARTY_ROLES = [
+  'Principal',
+  'Head Contractor',
+  'Contractor',
+  'Subcontractor',
+  'Sub-subcontractor',
+  'Owner',
+  'Developer',
+  'Builder',
+  'Employer',
+  'Consultant',
+  'Client',
+  'Supplier',
+] as const
+
+function RoleSelect({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: (next: string) => void
+}) {
+  const isCustom = !!value && !PARTY_ROLES.includes(value as typeof PARTY_ROLES[number])
+  const [customText, setCustomText] = useState(isCustom ? value : '')
+  const selectValue = isCustom ? '__custom__' : (value || '')
+
+  const handleSelect = (next: string | null) => {
+    if (!next) return
+    if (next === '__custom__') {
+      onChange(customText)
+    } else {
+      onChange(next)
+    }
+  }
+
+  return (
+    <>
+      <Select value={selectValue} onValueChange={handleSelect}>
+        <SelectTrigger className="bg-main-panel border-border text-foreground">
+          <SelectValue placeholder="Select a role">
+            {() => isCustom ? (customText || 'Other (specify)') : (value || 'Select a role')}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {PARTY_ROLES.map(r => (
+            <SelectItem key={r} value={r}>{r}</SelectItem>
+          ))}
+          <SelectItem value="__custom__">Other (specify)…</SelectItem>
+        </SelectContent>
+      </Select>
+      {isCustom && (
+        <Input
+          value={customText}
+          onChange={e => { setCustomText(e.target.value); onChange(e.target.value) }}
+          placeholder="Type the role as it appears in the contract"
+          className="bg-main-panel border-border text-foreground placeholder:text-muted-foreground mt-2"
+        />
+      )}
+    </>
+  )
+}
+
 export default function PartiesSettingsPage() {
   const { id: contractId } = useParams()
   const [form, setForm] = useState<Record<string, unknown>>({})
@@ -53,7 +117,7 @@ export default function PartiesSettingsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Role *</Label>
-            <Input value={(form.party1_role as string) || ''} onChange={e => update('party1_role', e.target.value)} placeholder="e.g. Principal, Head Contractor" className="bg-main-panel border-border text-foreground placeholder:text-muted-foreground" />
+            <RoleSelect value={(form.party1_role as string) || ''} onChange={v => update('party1_role', v)} />
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Company / Entity Name *</Label>
@@ -94,7 +158,7 @@ export default function PartiesSettingsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Role *</Label>
-            <Input value={(form.party2_role as string) || ''} onChange={e => update('party2_role', e.target.value)} placeholder="e.g. Contractor, Subcontractor" className="bg-main-panel border-border text-foreground placeholder:text-muted-foreground" />
+            <RoleSelect value={(form.party2_role as string) || ''} onChange={v => update('party2_role', v)} />
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Company / Entity Name *</Label>

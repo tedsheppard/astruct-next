@@ -144,7 +144,16 @@ export function AnonHardWall({ open, reason, onClose, onConverted }: Props) {
           options: { data: { name } },
         })
         if (signUpErr) {
-          setError(signUpErr.message)
+          const m = signUpErr.message?.toLowerCase() || ''
+          if (m.includes('registered')) {
+            setError('That email is already registered. Try signing in instead.')
+          } else if (m.includes('rate limit')) {
+            setError("We're sending too many confirmation emails right now — please try again in a minute.")
+          } else if (m.includes('invalid') && m.includes('email')) {
+            setError(`The email "${cleanEmail}" was rejected. Try a different address (some test/disposable domains are blocked).`)
+          } else {
+            setError(signUpErr.message || 'Could not create your account.')
+          }
           setSubmitting(false)
           return
         }
