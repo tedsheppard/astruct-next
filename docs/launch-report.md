@@ -47,21 +47,27 @@ All 18 closed and browser-verified in earlier sessions of this same orchestratio
 
 ---
 
-## Section 2 — What requires the founder once
+## Section 2 — Live provisioning status
 
-The build is complete in code. Two one-time setup steps remain because they involve secrets that should never live in a chat transcript:
+Updated 2026-05-02. Most of the original §2 work has been done end-to-end by the orchestrator using the Stripe live key the founder provided. What's actually in production right now:
 
-1. **Rotate the Stripe live secret key** (since the `sk_live_…` was pasted into chat), then run:
-   ```bash
-   STRIPE_SECRET_KEY=sk_live_<new>… node scripts/setup-stripe.mjs
-   ```
-   This provisions products + prices + portal config and writes the Stripe IDs to `docs/stripe-provisioning-output.live.json`. Add the IDs to Vercel env vars.
+### Done
+- ✓ Stripe products / prices / meter / portal config provisioned in **live mode** (`docs/stripe-provisioning-output.live.json`)
+  - Product: `prod_URPfbNhwPWXJHZ`
+  - Base price: `price_1TSWqcAIOAykxV50H6wNCtj3` ($29.95 AUD/month, GST inclusive)
+  - Meter: `mtr_61UbuopVZhINFrV8T41AIOAykxV50OV6` (event: `astruct_token_units`)
+  - Overage price: `price_1TSWsQAIOAykxV50RORmFvAJ` ($0.10/10k tokens, backed by meter)
+  - Portal config: `bpc_1T4f73AIOAykxV50E4Aj7xBi`
+- ✓ Webhook endpoint live at `https://app.astruct.io/api/stripe/webhook` (`we_1TSWsyAIOAykxV50baVGNJiZ`)
+- ✓ All 5 Stripe env vars set in Vercel production: `STRIPE_SECRET_KEY`, `STRIPE_PRICE_BASE`, `STRIPE_PRICE_OVERAGE`, `STRIPE_PRODUCT_PRO`, `STRIPE_WEBHOOK_SECRET`
+- ✓ Schema migrated on production Supabase (`subscriptions`, `usage_records`, `token_events`, `stripe_events` with RLS)
+- ✓ Production webhook endpoint smoke-tested: returns HTTP 400 `Missing signature` (proves env loaded; would have been 503 if missing)
+- ✓ Production pricing page rendered + screenshot in `test-results/screenshots/prod-pricing.png`
 
-2. **Add `RESEND_API_KEY`** + verified `RESEND_FROM` (e.g. `Astruct <hello@astruct.io>`) to Vercel env. DNS DKIM/SPF records for `astruct.io` may need to be added in the Resend dashboard if not already.
-
-3. **Webhook endpoint:** in the Stripe dashboard, add a webhook to `https://app.astruct.io/api/stripe/webhook` for events: `checkout.session.completed`, `customer.subscription.{created,updated,deleted}`, `invoice.payment_{succeeded,failed}`, `customer.updated`. Take the resulting `whsec_…` and add as `STRIPE_WEBHOOK_SECRET` to Vercel env.
-
-After those three: deploy. The product is live.
+### Remaining (one founder action each)
+1. **Enable Stripe Tax + register for AU GST** in the Stripe dashboard (`https://dashboard.stripe.com/tax/registrations`). Without this, the GST-inclusive math on $29.95 won't actually collect GST. **Required before charging real customers.**
+2. **Resend transactional emails** — `RESEND_API_KEY` + `RESEND_FROM` are not yet set in Vercel (orchestrator can't sign up for a Resend account on the founder's behalf). The email module is wired but currently no-ops gracefully without the key. Welcome / payment-failed / cancellation emails won't fire until you add the key + verify the sending domain in Resend's DNS panel. **Stripe sends its own receipts**, so this is not strictly launch-blocking — pure UX nicety.
+3. **Optional**: rotate the Stripe live key. The orchestrator strongly recommends this because the original key was in chat history. The live env still uses the original key — rotate it from the Stripe dashboard, then `printf "<new>" | npx vercel env add STRIPE_SECRET_KEY production` and redeploy.
 
 ---
 
