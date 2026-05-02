@@ -521,8 +521,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 {!collapsed && (
                   <Button
                     onClick={() => router.push('/register')}
-                    className="w-full justify-center text-sm"
-                    size="sm"
+                    className="w-full justify-center text-sm min-h-[44px]"
+                    size="lg"
                   >
                     Sign up free
                   </Button>
@@ -588,7 +588,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="flex items-center gap-2 min-w-0">
               <button
                 onClick={() => setMobileNavOpen(true)}
-                className="md:hidden h-9 w-9 -ml-1 rounded-md hover:bg-main-fg/5 flex items-center justify-center text-main-fg flex-shrink-0"
+                className="md:hidden h-12 w-12 -ml-2 rounded-md hover:bg-main-fg/5 flex items-center justify-center text-main-fg flex-shrink-0"
                 aria-label="Open menu"
               >
                 <Menu className="h-5 w-5" />
