@@ -26,7 +26,7 @@ export function AnonGuestPill() {
             }`}
           >
             <span className="h-1.5 w-1.5 rounded-full bg-current opacity-60" />
-            Guest · {messagesSent}/{ANON_MESSAGE_LIMIT} messages
+            {messagesSent} / {ANON_MESSAGE_LIMIT} messages
           </span>
         }
       />

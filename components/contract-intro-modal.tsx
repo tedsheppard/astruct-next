@@ -16,16 +16,22 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 type Phase = 'upload' | 'processing' | 'review' | 'saving'
 
 type ContractType =
-  | 'head_contract'
-  | 'subcontract'
+  | 'dc_head_contract'
+  | 'construct_only_head_contract'
+  | 'dc_subcontract'
+  | 'construct_only_subcontract'
   | 'consultancy_agreement'
-  | 'supply_agreement'
-  | 'design_and_construct'
-  | 'deed_of_variation'
   | 'other'
 
 interface PartyFact {
@@ -55,11 +61,23 @@ const CONTRACT_FORMS = [
   'AS4902-2000',
   'AS2124-1992',
   'AS4901-1998',
+  'AS4903-2000',
   'AS4300-1995',
+  'AS4305-1996',
   'AS4905-2002',
+  'AS4906-2002',
+  'AS4910-2002',
+  'AS4912-2002',
+  'AS4915-2002',
+  'AS4916-2002',
+  'AS4949-2003',
+  'AS4950-2006',
+  'AS4970-2009',
+  'AS4920-2003',
   'GC21',
   'MW21',
-  'ABIC',
+  'ABIC SW-2018',
+  'ABIC MW-2018',
   'NEC4',
   'FIDIC Red Book',
   'FIDIC Yellow Book',
@@ -69,12 +87,11 @@ const CONTRACT_FORMS = [
 ]
 
 const CONTRACT_TYPE_LABELS: Record<ContractType, string> = {
-  head_contract: 'Head contract',
-  subcontract: 'Subcontract',
+  dc_head_contract: 'Design & Construct head contract',
+  construct_only_head_contract: 'Construct only head contract',
+  dc_subcontract: 'D&C subcontract',
+  construct_only_subcontract: 'Construct only subcontract',
   consultancy_agreement: 'Consultancy agreement',
-  supply_agreement: 'Supply agreement',
-  design_and_construct: 'Design & construct',
-  deed_of_variation: 'Deed of variation',
   other: 'Other',
 }
 
@@ -159,7 +176,7 @@ export function ContractIntroModal({
 
   // Form state — starts empty, fills after extraction.
   const [projectName, setProjectName] = useState('')
-  const [contractType, setContractType] = useState<ContractType>('other')
+  const [contractType, setContractType] = useState<ContractType>('dc_head_contract')
   const [contractForm, setContractForm] = useState('bespoke')
   const [referenceNumber, setReferenceNumber] = useState('')
   const [party1Name, setParty1Name] = useState('')
@@ -263,7 +280,7 @@ export function ContractIntroModal({
 
       // 2. Tell the function to process the file already in storage.
       const tick1 = setTimeout(() => setProgress('Extracting clauses and parties…'), 1500)
-      const tick2 = setTimeout(() => setProgress('Identifying contract form and time bars…'), 6000)
+      const tick2 = setTimeout(() => setProgress('Identifying contract form and key dates…'), 6000)
 
       const res = await fetch('/api/contracts/quick-init', {
         method: 'POST',
@@ -294,11 +311,16 @@ export function ContractIntroModal({
       }
 
       const facts = (data.facts || {}) as ExtractedFacts
+      const aiTitle = (data.project_title as string | undefined)?.trim()
 
-      // Project name comes from extracted_facts.project_name. We do NOT fall
-      // back to the filename — leaving the field empty signals to the user
-      // that the model couldn't find a project name and they should enter one.
-      if (facts.project_name?.value) setProjectName(facts.project_name.value)
+      // Project name: prefer extractor's project_name (cited from text), fall
+      // back to the AI-generated short title from the title generator. Never
+      // leave the field empty if we have either signal.
+      if (facts.project_name?.value) {
+        setProjectName(facts.project_name.value)
+      } else if (aiTitle) {
+        setProjectName(aiTitle)
+      }
 
       if (facts.contract_type?.value) setContractType(facts.contract_type.value)
       if (facts.contract_form?.value) setContractForm(matchContractForm(facts.contract_form.value))
@@ -361,6 +383,12 @@ export function ContractIntroModal({
         return
       }
       toast.success("You're set — ask Astruct anything about this contract.")
+      // Notify the dashboard layout so the contract picker refetches and
+      // shows the new project name (was "Untitled project" until the modal
+      // ran the PATCH).
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('astruct:contract-updated', { detail: { contractId } }))
+      }
       close()
       router.refresh()
     } catch (e) {
@@ -572,27 +600,31 @@ function ReviewStep(props: {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Contract type</Label>
-            <select
-              value={contractType}
-              onChange={(e) => setContractType(e.target.value as ContractType)}
-              className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
-            >
-              {(Object.keys(CONTRACT_TYPE_LABELS) as ContractType[]).map((k) => (
-                <option key={k} value={k}>{CONTRACT_TYPE_LABELS[k]}</option>
-              ))}
-            </select>
+            <Select value={contractType} onValueChange={(v) => setContractType((v || 'other') as ContractType)}>
+              <SelectTrigger className="w-full h-9">
+                <SelectValue placeholder="Select…">
+                  {contractType in CONTRACT_TYPE_LABELS ? CONTRACT_TYPE_LABELS[contractType] : contractType}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {(Object.keys(CONTRACT_TYPE_LABELS) as ContractType[]).map((k) => (
+                  <SelectItem key={k} value={k} label={CONTRACT_TYPE_LABELS[k]}>{CONTRACT_TYPE_LABELS[k]}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Contract form</Label>
-            <select
-              value={contractForm}
-              onChange={(e) => setContractForm(e.target.value)}
-              className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
-            >
-              {CONTRACT_FORMS.map((f) => (
-                <option key={f} value={f}>{f}</option>
-              ))}
-            </select>
+            <Select value={contractForm} onValueChange={(v) => setContractForm(v || 'bespoke')}>
+              <SelectTrigger className="w-full h-9">
+                <SelectValue placeholder="Select…" />
+              </SelectTrigger>
+              <SelectContent>
+                {CONTRACT_FORMS.map((f) => (
+                  <SelectItem key={f} value={f}>{f}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -631,15 +663,19 @@ function ReviewStep(props: {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Role</Label>
-              <select
+              <Select
                 value={ROLE_OPTIONS.includes(party1Role) ? party1Role : 'Other'}
-                onChange={(e) => setParty1Role(e.target.value)}
-                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                onValueChange={(v) => setParty1Role(v || 'Other')}
               >
-                {ROLE_OPTIONS.map((r) => (
-                  <option key={r} value={r}>{r}</option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full h-9">
+                  <SelectValue placeholder="Select…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ROLE_OPTIONS.map((r) => (
+                    <SelectItem key={r} value={r}>{r}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
@@ -659,15 +695,19 @@ function ReviewStep(props: {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Role</Label>
-              <select
+              <Select
                 value={ROLE_OPTIONS.includes(party2Role) ? party2Role : 'Other'}
-                onChange={(e) => setParty2Role(e.target.value)}
-                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                onValueChange={(v) => setParty2Role(v || 'Other')}
               >
-                {ROLE_OPTIONS.map((r) => (
-                  <option key={r} value={r}>{r}</option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full h-9">
+                  <SelectValue placeholder="Select…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ROLE_OPTIONS.map((r) => (
+                    <SelectItem key={r} value={r}>{r}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
@@ -684,19 +724,23 @@ function ReviewStep(props: {
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Role</Label>
-                <select
+                <Select
                   value={administratorRole}
-                  onChange={(e) => setAdministratorRole(e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
+                  onValueChange={(v) => setAdministratorRole(v || 'Superintendent')}
                 >
-                  <option value="Superintendent">Superintendent</option>
-                  <option value="Principal's Representative">Principal&apos;s Representative</option>
-                  <option value="Contract Administrator">Contract Administrator</option>
-                  <option value="Engineer">Engineer</option>
-                  <option value="Project Manager">Project Manager</option>
-                  <option value="Architect">Architect</option>
-                  <option value="Other">Other</option>
-                </select>
+                  <SelectTrigger className="w-full h-9">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Superintendent">Superintendent</SelectItem>
+                    <SelectItem value="Principal's Representative">Principal&apos;s Representative</SelectItem>
+                    <SelectItem value="Contract Administrator">Contract Administrator</SelectItem>
+                    <SelectItem value="Engineer">Engineer</SelectItem>
+                    <SelectItem value="Project Manager">Project Manager</SelectItem>
+                    <SelectItem value="Architect">Architect</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>

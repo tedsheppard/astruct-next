@@ -1,5 +1,6 @@
 import { type NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { runRAGPipeline } from '@/lib/rag/pipeline'
 
 export const dynamic = 'force-dynamic'
@@ -107,22 +108,31 @@ export async function POST(request: NextRequest) {
         sendLog(controller, 'User message saved')
 
         // Increment usage counter for anon-first soft prompt + hard wall.
-        // Best-effort — failure here must not block chat.
+        // Use the admin client so RLS never silently blocks the update — the
+        // service-role write is safe because we've already verified user.id
+        // above via supabase.auth.getUser().
         try {
-          const { data: prof } = await supabase
+          const admin = createAdminClient()
+          const { data: prof } = await admin
             .from('profiles')
             .select('messages_sent')
             .eq('id', user.id)
             .maybeSingle()
-          await supabase
+          const next = (prof?.messages_sent || 0) + 1
+          const { error: updErr } = await admin
             .from('profiles')
             .update({
-              messages_sent: (prof?.messages_sent || 0) + 1,
+              messages_sent: next,
               last_active_at: new Date().toISOString(),
             })
             .eq('id', user.id)
-        } catch {
-          // Counter columns may not exist yet — migration 021 lands them.
+          if (updErr) {
+            console.error('[Chat] counter update failed:', updErr)
+          } else {
+            sendLog(controller, `Counter: messages_sent=${next}`)
+          }
+        } catch (e) {
+          console.error('[Chat] counter update threw:', e)
         }
 
         // Load history

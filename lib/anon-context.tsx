@@ -68,6 +68,43 @@ export function AnonProvider({ children }: { children: React.ReactNode }) {
     refresh()
   }, [refresh])
 
+  // Poll while the tab is focused so the header counter stays live without
+  // having to thread a refresh callback through the entire chat send path.
+  // Every 4 seconds is light and covers anon increment + bytes_uploaded
+  // changes from upload routes too.
+  useEffect(() => {
+    if (!ANON_FIRST_ENABLED) return
+    let intervalId: ReturnType<typeof setInterval> | null = null
+    const start = () => {
+      if (intervalId) return
+      intervalId = setInterval(() => {
+        if (document.visibilityState === 'visible') refresh()
+      }, 4000)
+    }
+    const stop = () => {
+      if (intervalId) {
+        clearInterval(intervalId)
+        intervalId = null
+      }
+    }
+    start()
+    const onVis = () => {
+      if (document.visibilityState === 'visible') {
+        refresh()
+        start()
+      } else {
+        stop()
+      }
+    }
+    document.addEventListener('visibilitychange', onVis)
+    window.addEventListener('focus', refresh)
+    return () => {
+      stop()
+      document.removeEventListener('visibilitychange', onVis)
+      window.removeEventListener('focus', refresh)
+    }
+  }, [refresh])
+
   // Auto-trigger hard wall when threshold crossed.
   useEffect(() => {
     if (!isAnon) return

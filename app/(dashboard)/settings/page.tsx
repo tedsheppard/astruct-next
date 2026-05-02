@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -8,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
-import { User, Building2, Save, Image, Moon, Sun } from 'lucide-react'
+import { User, Building2, Save, Image, Moon, Sun, Lock } from 'lucide-react'
 import { useTheme } from '@/lib/theme'
 
 interface Profile {
@@ -26,9 +27,11 @@ interface Profile {
 }
 
 export default function SettingsPage() {
+  const router = useRouter()
   const { theme, setTheme } = useTheme()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [isAnon, setIsAnon] = useState(false)
   const [email, setEmail] = useState('')
   const [form, setForm] = useState({
     name: '',
@@ -49,6 +52,12 @@ export default function SettingsPage() {
         data: { user },
       } = await supabase.auth.getUser()
       if (!user) return
+
+      if (user.is_anonymous) {
+        setIsAnon(true)
+        setLoading(false)
+        return
+      }
 
       setEmail(user.email ?? '')
 
@@ -123,6 +132,34 @@ export default function SettingsPage() {
           <div className="h-7 w-32 bg-muted rounded" />
           <div className="h-48 bg-muted rounded-xl" />
           <div className="h-64 bg-muted rounded-xl" />
+        </div>
+      </div>
+    )
+  }
+
+  if (isAnon) {
+    return (
+      <div className="min-h-[calc(100vh-3.5rem)] flex items-center justify-center p-6">
+        <div className="max-w-md w-full text-center space-y-5">
+          <div className="mx-auto h-12 w-12 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
+            <Lock className="h-5 w-5 text-amber-600" />
+          </div>
+          <div>
+            <h1
+              className="text-2xl font-semibold text-foreground mb-2"
+              style={{ fontFamily: "var(--font-serif-display), 'DM Serif Display', Georgia, serif" }}
+            >
+              Sign up to access settings
+            </h1>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Settings let you manage your profile, company details, and letterhead so notices
+              draft on your branding. They&apos;re only available with a free account.
+            </p>
+          </div>
+          <div className="flex items-center justify-center gap-2">
+            <Button onClick={() => router.push('/register')}>Sign up free</Button>
+            <Button variant="outline" onClick={() => router.back()}>Back</Button>
+          </div>
         </div>
       </div>
     )

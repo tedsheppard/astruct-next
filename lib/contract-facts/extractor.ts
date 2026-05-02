@@ -20,13 +20,18 @@ const admin = () => createClient(
  * the correct frame.
  */
 
+/**
+ * Contract type — Ted's taxonomy. The split between D&C and Construct-only
+ * matters: a D&C head contract has design liability flowing from Principal to
+ * Contractor; a Construct-only head contract has design liability sitting with
+ * the Principal (or a separate consultant). Same split applies to subcontracts.
+ */
 export type ContractType =
-  | 'head_contract'
-  | 'subcontract'
+  | 'dc_head_contract'
+  | 'construct_only_head_contract'
+  | 'dc_subcontract'
+  | 'construct_only_subcontract'
   | 'consultancy_agreement'
-  | 'supply_agreement'
-  | 'design_and_construct'
-  | 'deed_of_variation'
   | 'other'
 
 export interface PartyFact {
@@ -60,11 +65,11 @@ export interface ExtractedFacts {
 
 const SYSTEM_PROMPT = `You are a senior Australian construction contracts analyst. Read the provided document text and extract the key facts as JSON.
 
-The document may be ANY type of construction contract — head contract, subcontract, consultancy agreement, supply agreement, deed of variation, etc. Identify the type FIRST, then extract the facts in the correct frame.
+The document may be any type of construction contract. Identify the type FIRST, then extract the facts in the correct frame.
 
 CRITICAL RULES — read carefully:
 
-1. The two parties you return must be the parties to THIS document. If the document is a subcontract, the parties are the head contractor and the subcontractor — NOT the original Principal and Contractor of the head contract that may be mentioned in the recitals as background.
+1. The two parties you return must be the parties to THIS document. If the document is a subcontract, the parties are the head contractor and the subcontractor — NOT the Principal and Contractor of the head contract that may be referenced in recitals as background.
 
 2. Use the actual entity names, not generic role labels. "John Holland Pty Ltd" — not "Principal" or "Contractor". If you cannot find an entity name with confidence, omit the party rather than guess.
 
@@ -74,17 +79,27 @@ CRITICAL RULES — read carefully:
 
 5. contract_title is the title of this specific document (e.g. "Subcontract Agreement", "Consultancy Services Agreement", "Head Contract — Conditions of Contract").
 
-6. contract_form is the published standard form on which the contract is based, if any. Use one of: "AS4000-1997", "AS4902-2000", "AS2124-1992", "AS4901-1998", "AS4300-1995", "AS4905-2002", "GC21", "MW21", "ABIC", "NEC4", "FIDIC Red Book", "FIDIC Yellow Book", "FIDIC Silver Book", "JCT", or "bespoke". Only return one of these. If you cannot identify with reasonable confidence, return "bespoke".
+6. contract_type — return EXACTLY ONE of these six values:
+   - "dc_head_contract" — Design & Construct head contract (between Principal and Head Contractor; design liability flows to the Contractor)
+   - "construct_only_head_contract" — Construct only head contract (between Principal and Head Contractor; design done by Principal/its consultant)
+   - "dc_subcontract" — Design & Construct subcontract (between Head Contractor and Subcontractor; design portion flows to Subcontractor)
+   - "construct_only_subcontract" — Construct only subcontract (between Head Contractor and Subcontractor; no design obligation on Subcontractor)
+   - "consultancy_agreement" — Consultancy agreement (engaging an architect, engineer, project manager, etc.)
+   - "other" — anything else (deed of variation, supply only, novation deed, etc.)
 
-7. contract_administrator is the named person/entity who administers the contract under it (Superintendent, Principal's Representative, Contract Administrator, Engineer, Project Manager, Architect, etc.). Include who they represent (party "a" or party "b") if the contract says.
+   Use textual cues: subcontract terminology means it's a subcontract; "design and construct" / "design liability" / "design responsibility" wording indicates a D&C; absence of design wording in a build-only scope indicates Construct only.
 
-8. Provide a source_text quote (verbatim, short — under 30 words) for every non-trivial fact so a reviewer can verify.
+7. contract_form is the published standard form on which the contract is based, if any. Use one of: "AS4000-1997", "AS4902-2000", "AS2124-1992", "AS4901-1998", "AS4903-2000", "AS4300-1995", "AS4305-1996", "AS4905-2002", "AS4906-2002", "AS4910-2002", "AS4912-2002", "AS4915-2002", "AS4916-2002", "AS4949-2003", "AS4950-2006", "AS4970-2009", "AS4920-2003", "GC21", "MW21", "ABIC SW-2018", "ABIC MW-2018", "NEC4", "FIDIC Red Book", "FIDIC Yellow Book", "FIDIC Silver Book", "JCT", or "bespoke". Only return one of these. If you cannot identify with reasonable confidence, return "bespoke".
 
-9. If a fact cannot be found in the text, OMIT IT from the JSON. Do NOT include null/empty values. Do NOT guess.
+8. contract_administrator is the named person/entity who administers the contract under it (Superintendent, Principal's Representative, Contract Administrator, Engineer, Project Manager, Architect, etc.). Include who they represent (party "a" or party "b") if the contract says.
+
+9. Provide a source_text quote (verbatim, short — under 30 words) for every non-trivial fact so a reviewer can verify.
+
+10. If a fact cannot be found in the text, OMIT IT from the JSON. Do NOT include null/empty values. Do NOT guess.
 
 Output JSON only, no markdown fences. Schema:
 {
-  "contract_type": { "value": "head_contract|subcontract|consultancy_agreement|supply_agreement|design_and_construct|deed_of_variation|other", "confidence": 0.0-1.0, "source_text": "quote" },
+  "contract_type": { "value": "dc_head_contract|construct_only_head_contract|dc_subcontract|construct_only_subcontract|consultancy_agreement|other", "confidence": 0.0-1.0, "source_text": "quote" },
   "contract_title": { "value": "...", "source_text": "quote" },
   "project_name": { "value": "...", "source_text": "quote" },
   "contract_form": { "value": "AS4000-1997|...|bespoke", "confidence": 0.0-1.0, "source_text": "quote" },

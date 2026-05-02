@@ -42,3 +42,7 @@ next-env.d.ts
 *.mov
 *.mov
 *.mp4
+
+# QA artifacts
+.qa-auth-state.json
+test-results/screenshots/

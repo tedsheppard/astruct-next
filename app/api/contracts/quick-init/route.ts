@@ -40,6 +40,47 @@ async function extractPdfText(buffer: Buffer): Promise<string> {
   }
 }
 
+/**
+ * Generate a 3-7 word project title from the contract text. Falls back to a
+ * filename-derived title only if the model returns nothing usable. Crucially
+ * never returns "Untitled project" — that's a UX failure to leak to the user.
+ */
+async function generateProjectTitle(text: string, filename: string): Promise<string> {
+  const seed = (text || '').slice(0, 4000).trim()
+  if (seed.length < 100) {
+    // No usable text — derive from filename, stripped of common noise
+    const base = filename.replace(/\.[^.]+$/, '')
+      .replace(/[-_]+/g, ' ')
+      .replace(/\b(final|signed|signed off|copy|draft|v\d+|rev\d+)\b/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+    return base.length > 0 ? base : 'New project'
+  }
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      temperature: 0.2,
+      max_tokens: 30,
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You generate short project titles for construction contracts. Output ONLY the title (no quotes, no prefix, no trailing period). 3 to 7 words. Use the actual project name if stated; otherwise use the works/asset description plus location. Never use "Untitled". Never include the contract reference number. Examples: "Cross River Rail — Albert Street Station", "Riverside Industrial Estate Stage 2", "Brisbane Airport Multi-Level Carpark Expansion".',
+        },
+        { role: 'user', content: seed },
+      ],
+    })
+    const raw = (response.choices[0]?.message?.content || '').trim()
+    // Strip surrounding quotes and trailing punctuation
+    const cleaned = raw.replace(/^["'`“‘]/, '').replace(/["'`”’][.!?]?$/, '').replace(/^Project:\s*/i, '').trim()
+    if (cleaned.length === 0 || /untitled/i.test(cleaned)) return 'New project'
+    return cleaned.split(/\s+/).slice(0, 8).join(' ')
+  } catch (e) {
+    console.error('[quick-init] title gen failed', e)
+    return filename.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').trim() || 'New project'
+  }
+}
+
 async function classifyDocument(
   text: string,
   filename: string,
@@ -221,7 +262,21 @@ export async function POST(request: NextRequest) {
     // Run the existing fact-extractor against the new chunks.
     const facts = await extractFacts(contract_id)
 
-    return Response.json({ ok: true, document_id: doc.id, facts })
+    // Set a real project title — extractor's project_name if it found one,
+    // otherwise a fast-generated short title. Never leave "Untitled project".
+    const titleFromFacts = (facts as { project_name?: { value?: string } })?.project_name?.value?.trim()
+    let finalTitle: string
+    if (titleFromFacts && !/untitled/i.test(titleFromFacts)) {
+      finalTitle = titleFromFacts
+    } else {
+      finalTitle = await generateProjectTitle(extractedText, filename)
+    }
+    await admin
+      .from('contracts')
+      .update({ name: finalTitle })
+      .eq('id', contract_id)
+
+    return Response.json({ ok: true, document_id: doc.id, facts, project_title: finalTitle })
   } catch (err) {
     console.error('[quick-init] error', err)
     return Response.json({ error: err instanceof Error ? err.message : 'Failed' }, { status: 500 })

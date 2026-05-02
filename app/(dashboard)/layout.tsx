@@ -56,6 +56,7 @@ interface UserProfile {
   name: string
   email: string
   company_name?: string
+  isAnonymous?: boolean
 }
 
 // ─── Nav Item ────────────────────────────────────────────────────────────────
@@ -195,6 +196,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (saved) setSelectedContractIdRaw(saved)
   }, [])
 
+  const refetchContracts = useCallback(async () => {
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('contracts')
+      .select('id, name, reference_number, contract_form, status')
+      .order('created_at', { ascending: false })
+    if (data) setContracts(data)
+  }, [])
+
   useEffect(() => {
     const supabase = createClient()
     async function loadData() {
@@ -211,11 +221,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         }
         setUser({
           ...profile,
-          name: profile.name || (isAnon ? 'Guest' : ''),
-          email: profile.email || (isAnon ? 'guest@astruct' : ''),
+          name: profile.name || '',
+          email: profile.email || '',
+          isAnonymous: isAnon,
         })
       } else if (isAnon) {
-        setUser({ name: 'Guest', email: 'guest@astruct' })
+        setUser({ name: '', email: '', isAnonymous: true })
       }
       const { data: contractData } = await supabase.from('contracts').select('id, name, reference_number, contract_form, status').order('created_at', { ascending: false })
       if (contractData) {
@@ -228,6 +239,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
     loadData()
   }, [setSelectedContractId, pathname])
+
+  // Listen for contract metadata updates from elsewhere (intro modal save,
+  // contract settings page save) so the sidebar dropdown refreshes immediately
+  // — fixes the "Untitled project" → real-name swap after intro modal Continue.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const onUpdate = () => { refetchContracts() }
+    window.addEventListener('astruct:contract-updated', onUpdate)
+    return () => window.removeEventListener('astruct:contract-updated', onUpdate)
+  }, [refetchContracts])
 
   // Redirect / to the selected contract's assistant
   useEffect(() => {
@@ -397,7 +418,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <NavItem icon={LayoutGrid} label="Browse Contracts" href="/contracts" isActive={pathname === '/contracts'} collapsed={collapsed} />
               <AnonLockedNavItem icon={FileText} label="Letterheads" href="/letterheads" isActive={pathname.startsWith('/letterheads') || pathname.startsWith('/templates')} collapsed={collapsed} />
               <AnonLockedNavItem icon={BookOpen} label="Knowledge Base" href="/knowledge-base" isActive={pathname.startsWith('/knowledge-base')} collapsed={collapsed} />
-              <NavItem icon={Settings} label="Settings" href="/settings" isActive={pathname === '/settings'} collapsed={collapsed} />
+              <AnonLockedNavItem icon={Settings} label="Settings" href="/settings" isActive={pathname === '/settings'} collapsed={collapsed} />
             </div>
           </nav>
 
@@ -411,7 +432,47 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </div>
               <span className={`ml-2 whitespace-nowrap transition-all duration-300 ${collapsed ? 'opacity-0 w-0 max-w-0 ml-0 overflow-hidden' : 'opacity-100'}`}>Collapse</span>
             </button>
-            {user && (
+            {user && user.isAnonymous && (
+              // Anon users have no real account. Replace the avatar block with a
+              // direct sign-up CTA. No logout, no profile.
+              <div className="space-y-1.5">
+                {!collapsed && (
+                  <Button
+                    onClick={() => router.push('/register')}
+                    className="w-full justify-center text-sm"
+                    size="sm"
+                  >
+                    Sign up free
+                  </Button>
+                )}
+                {!collapsed && (
+                  <button
+                    onClick={() => router.push('/login')}
+                    className="w-full text-center text-xs text-sidebar-fg/45 hover:text-sidebar-fg/80 py-1.5"
+                  >
+                    Already have an account? Log in
+                  </button>
+                )}
+                {collapsed && (
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={
+                        <button
+                          onClick={() => router.push('/register')}
+                          className="w-full flex items-center justify-center h-8 rounded-lg accent-gradient text-white text-xs font-medium"
+                        />
+                      }
+                    >
+                      ↑
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>Sign up free</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            )}
+            {user && !user.isAnonymous && (
               <Popover>
                 <PopoverTrigger className="w-full flex items-center rounded-lg transition-all hover:bg-sidebar-active/50" style={{ padding: '8px' }}>
                   <div className="w-8 h-8 rounded-lg accent-gradient flex items-center justify-center flex-shrink-0">

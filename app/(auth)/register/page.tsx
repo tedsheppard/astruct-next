@@ -13,10 +13,31 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
+  // Permissive email check — accepts plus-addressing, multi-dot TLDs,
+  // .com.au-style domains. Anything stricter rejects valid emails.
+  const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim())
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
     setError(null)
+
+    const trimmedName = name.trim()
+    const trimmedEmail = email.trim()
+
+    if (trimmedName.length === 0) {
+      setError('Please enter your name.')
+      return
+    }
+    if (!isValidEmail(trimmedEmail)) {
+      setError('That email doesn’t look right. Try again with a full address like name@company.com.')
+      return
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.')
+      return
+    }
+
+    setLoading(true)
 
     const supabase = createClient()
 
@@ -125,14 +146,21 @@ export default function RegisterPage() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs text-[#8f8b85] mb-1.5">Name</label>
+                <label className="block text-xs text-[#8f8b85] mb-1.5">Name <span className="text-red-500">*</span></label>
                 <input required value={name} onChange={e => setName(e.target.value)} placeholder="Your name"
                   className="w-full h-11 px-3.5 rounded-md border border-[#e5e5e3] bg-white text-sm text-[#0f0e0d] placeholder:text-[#adaba5] focus:outline-none focus:border-[#0f0e0d] transition-colors" />
               </div>
               <div>
-                <label className="block text-xs text-[#8f8b85] mb-1.5">Email</label>
-                <input required type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@company.com"
-                  className="w-full h-11 px-3.5 rounded-md border border-[#e5e5e3] bg-white text-sm text-[#0f0e0d] placeholder:text-[#adaba5] focus:outline-none focus:border-[#0f0e0d] transition-colors" />
+                <label className="block text-xs text-[#8f8b85] mb-1.5">Email <span className="text-red-500">*</span></label>
+                <input
+                  required
+                  inputMode="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="you@company.com"
+                  className="w-full h-11 px-3.5 rounded-md border border-[#e5e5e3] bg-white text-sm text-[#0f0e0d] placeholder:text-[#adaba5] focus:outline-none focus:border-[#0f0e0d] transition-colors"
+                />
               </div>
               <div>
                 <label className="block text-xs text-[#8f8b85] mb-1.5">Password</label>
