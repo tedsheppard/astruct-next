@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 const STEPS = [
   {
     title: 'Create your first project',
-    description: 'Each project in Astruct represents a construction contract - your head contract, subcontract, or consultancy agreement. Click "New Contract" to get started.',
+    description: 'Each project in Astruct represents a construction contract — your head contract, subcontract, or consultancy agreement. Click "New Project" to upload a contract and get started.',
   },
   {
     title: 'Upload your contract documents',

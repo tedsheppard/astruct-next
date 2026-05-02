@@ -256,6 +256,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (data) setContracts(data)
   }, [])
 
+  // Create a blank project then drop into its assistant with the upload
+  // intro modal open. Same flow for first-project, sidebar "+ New Project",
+  // and the empty-state CTA — keeps the create-experience consistent.
+  const startNewProject = useCallback(async () => {
+    try {
+      const r = await fetch('/api/contracts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: 'New project' }),
+      })
+      const d = await r.json()
+      if (r.ok && d?.id) {
+        selectContractAndNavigate(d.id, `/contracts/${d.id}/assistant?intro=1`)
+        await refetchContracts()
+      } else {
+        router.push('/contracts/new')
+      }
+    } catch {
+      router.push('/contracts/new')
+    }
+  }, [router, selectContractAndNavigate, refetchContracts])
+
   useEffect(() => {
     const supabase = createClient()
     async function loadData() {
@@ -351,7 +373,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { icon: Mail, label: 'Correspondence', subpath: 'correspondence' },
     { icon: FileText, label: 'Templates', subpath: 'templates' },
     { icon: CalendarDays, label: 'Calendar', subpath: 'calendar' },
-    { icon: Settings, label: 'Contract Settings', subpath: 'settings' },
+    { icon: Settings, label: 'Project Settings', subpath: 'settings' },
   ]
 
   const getBreadcrumb = () => {
@@ -369,8 +391,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (pathname === '/history') return 'History'
     if (pathname === '/knowledge-base') return 'Knowledge Base'
     if (pathname === '/settings') return 'Settings'
-    if (pathname === '/contracts') return 'Browse Contracts'
-    if (pathname === '/contracts/new') return 'New Contract'
+    if (pathname === '/contracts') return 'Your projects'
+    if (pathname === '/contracts/new') return 'New project'
     if (pathname === '/letterheads' || pathname === '/templates') return 'Letterheads'
     return 'Astruct'
   }
@@ -423,9 +445,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         ))}
                         {!(user?.isAnonymous && contracts.length >= 1) && (
                           <div className="border-t mt-1 pt-1">
-                            <button onClick={() => { setContractDropdownOpen(false); router.push('/contracts/new') }}
+                            <button onClick={() => { setContractDropdownOpen(false); startNewProject() }}
                               className="w-full text-left px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors flex items-center gap-2">
-                              <Plus className="h-3.5 w-3.5" />New Contract
+                              <Plus className="h-3.5 w-3.5" />New Project
                             </button>
                           </div>
                         )}
@@ -438,10 +460,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </Popover>
                   ) : (
                     <div className="px-1">
-                      <p className="text-xs text-sidebar-fg/30 mb-2">No contracts yet</p>
-                      <Button onClick={() => router.push('/contracts/new')} variant="outline" size="sm"
+                      <p className="text-xs text-sidebar-fg/30 mb-2">No projects yet</p>
+                      <Button onClick={startNewProject} variant="outline" size="sm"
                         className="w-full text-xs border-sidebar-fg/15 text-sidebar-fg/50 hover:text-sidebar-fg bg-transparent">
-                        <Plus className="h-3 w-3 mr-1.5" />Create your first contract
+                        <Plus className="h-3 w-3 mr-1.5" />Create your first project
                       </Button>
                     </div>
                   )}
@@ -497,7 +519,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             {/* ═══ BOTTOM: Global Items ═══ */}
             <div className="border-t border-sidebar-fg/8 pt-3 space-y-0.5">
-              <NavItem icon={LayoutGrid} label="Browse Contracts" href="/contracts" isActive={pathname === '/contracts'} collapsed={collapsed} />
+              <NavItem icon={LayoutGrid} label="Your Projects" href="/contracts" isActive={pathname === '/contracts'} collapsed={collapsed} />
               <AnonLockedNavItem icon={FileText} label="Letterheads" href="/letterheads" isActive={pathname.startsWith('/letterheads') || pathname.startsWith('/templates')} collapsed={collapsed} />
               <AnonLockedNavItem icon={BookOpen} label="Knowledge Base" href="/knowledge-base" isActive={pathname.startsWith('/knowledge-base')} collapsed={collapsed} />
               <AnonLockedNavItem icon={Settings} label="Settings" href="/settings" isActive={pathname === '/settings'} collapsed={collapsed} />
@@ -648,8 +670,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                           { label: 'Library', path: selectedContractId ? `/contracts/${selectedContractId}/library` : '#' },
                           { label: 'Correspondence', path: selectedContractId ? `/contracts/${selectedContractId}/correspondence` : '#' },
                           { label: 'Calendar', path: selectedContractId ? `/contracts/${selectedContractId}/calendar` : '#' },
-                          { label: 'Contract Settings', path: selectedContractId ? `/contracts/${selectedContractId}/settings` : '#' },
-                          { label: 'Browse Contracts', path: '/contracts' },
+                          { label: 'Project Settings', path: selectedContractId ? `/contracts/${selectedContractId}/settings` : '#' },
+                          { label: 'Your Projects', path: '/contracts' },
                           { label: 'Letterheads', path: '/letterheads' },
                           { label: 'Knowledge Base', path: '/knowledge-base' },
                           { label: 'Settings', path: '/settings' },

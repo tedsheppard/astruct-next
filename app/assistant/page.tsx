@@ -46,27 +46,30 @@ export default async function AssistantEntry() {
       redirect(`/contracts/${contracts[0].id}/assistant`)
     }
 
-    if (user.is_anonymous) {
-      const admin = createAdminClient()
-      const { data: contract } = await admin
-        .from('contracts')
-        .insert({
-          user_id: user.id,
-          name: 'Untitled project',
-          contract_form: 'bespoke',
-          party1_role: 'Principal',
-          party2_role: 'Contractor',
-          user_is_party: 'party2',
-          status: 'active',
-        })
-        .select('id')
-        .single()
-      if (contract?.id) {
-        redirect(`/contracts/${contract.id}/assistant?intro=1`)
-      }
+    // Both anon AND newly-signed-up authed users with no contracts: create
+    // a blank project server-side and drop them straight into the assistant
+    // with the upload-intro modal open. This is the canonical create-project
+    // flow — no manual form needed.
+    const admin = createAdminClient()
+    const { data: contract } = await admin
+      .from('contracts')
+      .insert({
+        user_id: user.id,
+        name: 'New project',
+        contract_form: 'bespoke',
+        party1_role: 'Principal',
+        party2_role: 'Contractor',
+        user_is_party: 'party2',
+        status: 'active',
+      })
+      .select('id')
+      .single()
+    if (contract?.id) {
+      redirect(`/contracts/${contract.id}/assistant?intro=1`)
     }
 
-    redirect('/contracts/new')
+    // Last resort fallback if insert somehow failed
+    redirect('/contracts')
   }
 
   return <AnonAssistantBootstrap />

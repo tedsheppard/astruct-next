@@ -28,8 +28,33 @@ interface Contract {
 export default function ContractsPage() {
   const [contracts, setContracts] = useState<Contract[]>([])
   const [loading, setLoading] = useState(true)
+  const [creating, setCreating] = useState(false)
   const router = useRouter()
   const { selectContractAndNavigate } = useContract()
+
+  async function startNewProject() {
+    if (creating) return
+    setCreating(true)
+    try {
+      const r = await fetch('/api/contracts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: 'New project' }),
+      })
+      const d = await r.json()
+      if (!r.ok || !d?.id) {
+        // 403 = anon contract limit; route to existing-project page so the
+        // sign-up CTA surfaces. 503 = service issue.
+        router.push('/contracts/new')
+        return
+      }
+      selectContractAndNavigate(d.id, `/contracts/${d.id}/assistant?intro=1`)
+    } catch {
+      router.push('/contracts/new')
+    } finally {
+      setCreating(false)
+    }
+  }
 
   useEffect(() => {
     const supabase = createClient()
@@ -70,19 +95,20 @@ export default function ContractsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-            Browse Contracts
+            Your projects
           </h1>
           <p className="text-sm mt-1 text-muted-foreground">
-            Manage your construction contracts
+            Each project is one construction contract — head contract or subcontract.
           </p>
         </div>
         <Button
-          onClick={() => router.push('/contracts/new')}
+          onClick={startNewProject}
+          disabled={creating}
           className="bg-foreground text-background hover:bg-foreground/90 btn-press"
           data-testid="create-contract-btn"
         >
           <Plus className="mr-2 h-4 w-4" />
-          New Contract
+          New Project
         </Button>
       </div>
 
@@ -96,18 +122,18 @@ export default function ContractsPage() {
               />
             </div>
             <h3 className="text-lg font-medium text-foreground mb-2">
-              Create your first contract
+              Create your first project
             </h3>
             <p className="text-sm text-muted-foreground max-w-sm mb-6">
-              Set up a construction contract to start tracking obligations,
-              generating notices, and managing correspondence.
+              Upload your contract — Astruct reads it and pre-fills the project details so you can start asking questions in seconds.
             </p>
             <Button
-              onClick={() => router.push('/contracts/new')}
+              onClick={startNewProject}
+              disabled={creating}
               className="bg-foreground text-background hover:bg-foreground/90 btn-press"
               data-testid="onboarding-create-contract"
             >
-              Create Contract
+              Upload Contract
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </CardContent>

@@ -168,11 +168,20 @@ export function ContractIntroModal({
   const router = useRouter()
   const searchParams = useSearchParams()
   const [show, setShow] = useState(false)
+  const [isAnon, setIsAnon] = useState(false)
   const [phase, setPhase] = useState<Phase>('upload')
   const [error, setError] = useState<string | null>(null)
   const [dragOver, setDragOver] = useState(false)
   const [progress, setProgress] = useState('Reading your contract…')
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Detect anon vs signed-in so the footer copy can adapt
+  useEffect(() => {
+    const sb = createClient()
+    sb.auth.getUser().then(({ data }) => {
+      setIsAnon(data.user?.is_anonymous === true)
+    })
+  }, [])
 
   // Form state — starts empty, fills after extraction.
   const [projectName, setProjectName] = useState('')
@@ -415,6 +424,7 @@ export function ContractIntroModal({
             fileInputRef={fileInputRef}
             handleFile={handleFile}
             error={error}
+            isAnon={isAnon}
           />
         )}
 
@@ -469,12 +479,14 @@ function UploadStep({
   fileInputRef,
   handleFile,
   error,
+  isAnon,
 }: {
   dragOver: boolean
   setDragOver: (b: boolean) => void
   fileInputRef: React.RefObject<HTMLInputElement | null>
   handleFile: (f: File) => void
   error: string | null
+  isAnon: boolean
 }) {
   return (
     <div className="p-6 sm:p-10">
@@ -537,7 +549,9 @@ function UploadStep({
       )}
 
       <p className="text-xs text-muted-foreground/70 mt-6 text-center">
-        No signup, no credit card. Free forever for your first project.
+        {isAnon
+          ? 'No signup, no credit card. Free forever for your first project.'
+          : 'Astruct will read the contract and pre-fill the project details so you can start in seconds.'}
       </p>
     </div>
   )
