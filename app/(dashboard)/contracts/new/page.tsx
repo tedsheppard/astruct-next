@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useContract } from '@/lib/contract-context'
@@ -60,6 +60,28 @@ export default function NewContractPage() {
   const [customParty1Role, setCustomParty1Role] = useState('')
   const [customParty2Role, setCustomParty2Role] = useState('')
   const [customAdminRole, setCustomAdminRole] = useState('')
+  const [anonBlocked, setAnonBlocked] = useState<{ existingId: string } | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (cancelled || !user) return
+      if (!user.is_anonymous) return
+      const { data: contracts } = await supabase
+        .from('contracts')
+        .select('id')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+      if (cancelled) return
+      if (contracts && contracts.length >= 1) {
+        setAnonBlocked({ existingId: contracts[0].id })
+      }
+    })()
+    return () => { cancelled = true }
+  }, [])
 
   const [formData, setFormData] = useState({
     name: '',
@@ -119,52 +141,67 @@ export default function NewContractPage() {
     setLoading(true)
     setError(null)
 
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const res = await fetch('/api/contracts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: formData.name,
+        reference_number: formData.reference_number || null,
+        contract_form: formData.contract_form,
+        party1_role: getParty1RoleDisplay() || 'Party 1',
+        party1_name: formData.party1_name || null,
+        party1_address: formData.party1_address || null,
+        party2_role: getParty2RoleDisplay() || 'Party 2',
+        party2_name: formData.party2_name || null,
+        party2_address: formData.party2_address || null,
+        user_is_party: formData.user_is_party,
+        administrator_role: getAdminRoleDisplay() || null,
+        administrator_name: formData.administrator_name || null,
+        administrator_address: formData.administrator_address || null,
+        principal_name: formData.party1_role === 'Principal' ? formData.party1_name : null,
+        contractor_name: formData.party2_role === 'Contractor' ? formData.party2_name : null,
+        superintendent_name: formData.administrator_role === 'Superintendent' ? formData.administrator_name : null,
+        date_of_contract: formData.date_of_contract || null,
+        date_practical_completion: formData.date_practical_completion || null,
+        contract_sum: formData.contract_sum ? parseFloat(formData.contract_sum) : null,
+      }),
+    })
 
-    if (!user) {
-      setError('You must be logged in.')
+    const result = await res.json().catch(() => ({}))
+
+    if (!res.ok) {
+      setError(result?.error || 'Could not create contract')
       setLoading(false)
       return
     }
 
-    const { data: inserted, error: insertError } = await supabase.from('contracts').insert({
-      user_id: user.id,
-      name: formData.name,
-      reference_number: formData.reference_number || null,
-      contract_form: formData.contract_form,
-      party1_role: getParty1RoleDisplay() || 'Party 1',
-      party1_name: formData.party1_name || null,
-      party1_address: formData.party1_address || null,
-      party2_role: getParty2RoleDisplay() || 'Party 2',
-      party2_name: formData.party2_name || null,
-      party2_address: formData.party2_address || null,
-      user_is_party: formData.user_is_party,
-      administrator_role: getAdminRoleDisplay() || null,
-      administrator_name: formData.administrator_name || null,
-      administrator_address: formData.administrator_address || null,
-      // Legacy fields for backward compat
-      principal_name: formData.party1_role === 'Principal' ? formData.party1_name : null,
-      contractor_name: formData.party2_role === 'Contractor' ? formData.party2_name : null,
-      superintendent_name: formData.administrator_role === 'Superintendent' ? formData.administrator_name : null,
-      date_of_contract: formData.date_of_contract || null,
-      date_practical_completion: formData.date_practical_completion || null,
-      contract_sum: formData.contract_sum ? parseFloat(formData.contract_sum) : null,
-    }).select('id').single()
-
-    if (insertError) {
-      setError(insertError.message)
-      setLoading(false)
-      return
-    }
-
-    // Auto-select the new contract and navigate to its assistant
-    if (inserted?.id) {
-      selectContractAndNavigate(inserted.id, `/contracts/${inserted.id}/assistant`)
+    if (result?.id) {
+      selectContractAndNavigate(result.id, `/contracts/${result.id}/assistant`)
     } else {
       router.push('/contracts')
     }
     router.refresh()
+  }
+
+  if (anonBlocked) {
+    return (
+      <div className="p-6 h-[calc(100vh-3.5rem)] flex items-center justify-center">
+        <Card className="max-w-md w-full">
+          <CardContent className="p-8 text-center space-y-4">
+            <h2 className="text-xl font-semibold tracking-tight">Sign up to add another project</h2>
+            <p className="text-sm text-muted-foreground">
+              Guest accounts can have one project at a time. Sign up free to add more — your existing project stays exactly as it is.
+            </p>
+            <div className="flex gap-2 justify-center pt-2">
+              <Button onClick={() => router.push(`/contracts/${anonBlocked.existingId}/assistant`)} variant="outline">
+                Back to project
+              </Button>
+              <Button onClick={() => router.push('/register')}>Sign up free</Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (

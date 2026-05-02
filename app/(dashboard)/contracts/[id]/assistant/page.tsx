@@ -307,10 +307,10 @@ function DocumentPreview({ document, onClose }: { document: GeneratedDocument; o
     toast.success('Copied to clipboard')
   }
 
-  const handleDownloadDocx = async () => {
+  const downloadAs = async (format: 'docx' | 'pdf') => {
     setDownloading(true)
     try {
-      const res = await fetch('/api/documents/generate-docx', {
+      const res = await fetch(`/api/documents/generate-${format}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: document.content, metadata: document.metadata, title: document.title }),
@@ -320,16 +320,18 @@ function DocumentPreview({ document, onClose }: { document: GeneratedDocument; o
       const url = URL.createObjectURL(blob)
       const a = window.document.createElement('a')
       a.href = url
-      a.download = `${document.title.replace(/[^a-zA-Z0-9\s-]/g, '').replace(/\s+/g, '_')}.docx`
+      a.download = `${document.title.replace(/[^a-zA-Z0-9\s-]/g, '').replace(/\s+/g, '_')}.${format}`
       a.click()
       URL.revokeObjectURL(url)
-      toast.success('DOCX downloaded')
+      toast.success(`${format.toUpperCase()} downloaded`)
     } catch {
-      toast.error('Failed to generate DOCX')
+      toast.error(`Failed to generate ${format.toUpperCase()}`)
     } finally {
       setDownloading(false)
     }
   }
+  const handleDownloadDocx = () => downloadAs('docx')
+  const handleDownloadPdf = () => downloadAs('pdf')
 
   const badgeColor = NOTICE_TYPE_COLORS[document.noticeType] || NOTICE_TYPE_COLORS['Other']
 
@@ -356,7 +358,11 @@ function DocumentPreview({ document, onClose }: { document: GeneratedDocument; o
         </Button>
         <Button size="sm" variant="ghost" onClick={handleDownloadDocx} disabled={downloading} className="text-muted-foreground hover:text-foreground hover:bg-muted">
           {downloading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <FileDown className="h-3.5 w-3.5 mr-1.5" />}
-          Download DOCX
+          DOCX
+        </Button>
+        <Button size="sm" variant="ghost" onClick={handleDownloadPdf} disabled={downloading} className="text-muted-foreground hover:text-foreground hover:bg-muted">
+          {downloading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <FileDown className="h-3.5 w-3.5 mr-1.5" />}
+          PDF
         </Button>
         <div className="flex-1" />
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground/40">
@@ -381,6 +387,7 @@ export default function AssistantPage() {
   const [activeDocument, setActiveDocument] = useState<GeneratedDocument | null>(null)
   const [pdfViewer, setPdfViewer] = useState<{ documentId: string; documentName: string; searchText: string } | null>(null)
   const [contractDocuments, setContractDocuments] = useState<ThinkingDocument[]>([])
+  const [clauseTopics, setClauseTopics] = useState<Record<string, string> | null>(null)
 
   // Full document list with categories for source selection
   const [allDocs, setAllDocs] = useState<{ id: string; filename: string; category: string }[]>([])
@@ -472,6 +479,29 @@ export default function AssistantPage() {
         setSelectedDocIds(new Set(docs.map(d => d.id)))
       })
       .catch(() => {/* ignore */})
+  }, [contractId])
+
+  // Fetch extracted clause topics so the suggestion chips can reference real
+  // clause numbers (e.g. "Draft a variation claim under clause 12.4").
+  useEffect(() => {
+    if (!contractId) return
+    let active = true
+    const load = () => fetch(`/api/contracts/${contractId}/facts`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (!active) return
+        const topics = data?.extracted_facts?.clause_topics as Record<string, string> | undefined
+        if (topics && Object.keys(topics).length > 0) setClauseTopics(topics)
+      })
+      .catch(() => {/* ignore */})
+    load()
+    // Re-fetch when the modal saves (extract may have just finished)
+    const onUpdate = () => load()
+    window.addEventListener('astruct:contract-updated', onUpdate)
+    return () => {
+      active = false
+      window.removeEventListener('astruct:contract-updated', onUpdate)
+    }
   }, [contractId])
 
   const scrollToBottom = useCallback(() => {
@@ -1387,17 +1417,21 @@ export default function AssistantPage() {
               </div>
             </div>
 
-            {/* Prompt tabs — Perplexity style */}
+            {/* Prompt tabs — Perplexity style. Personalises with extracted clause numbers when available. */}
             {(() => {
+              const c = (key: string, fallback: string) => {
+                const num = clauseTopics?.[key]
+                return num ? `clause ${num}` : fallback
+              }
               const tabs = [
                 {
                   label: 'Generate a notice',
                   icon: AlertTriangle,
                   prompts: [
-                    'Draft a notice of delay citing the relevant delay clause',
-                    'Draft a variation claim with clause references',
-                    'Draft an extension of time claim',
-                    'Draft a notice of dispute under the dispute resolution clause',
+                    `Draft a notice of delay citing ${c('delay', 'the relevant delay clause')}`,
+                    `Draft a variation claim citing ${c('variation', 'the variation clause')}`,
+                    `Draft an extension of time claim under ${c('extension_of_time', 'the EOT clause')}`,
+                    `Draft a notice of dispute under ${c('dispute_resolution', 'the dispute resolution clause')}`,
                     'Draft a show cause response',
                   ],
                 },
@@ -1407,9 +1441,9 @@ export default function AssistantPage() {
                   prompts: [
                     'Draft a letter requesting a site inspection',
                     'Draft a response to a notice of default',
-                    'Draft a payment claim cover letter',
+                    `Draft a payment claim cover letter under ${c('payment_claim', 'the payment clause')}`,
                     'Draft a letter requesting release of retention',
-                    'Draft a practical completion notification letter',
+                    `Draft a practical completion notification letter under ${c('practical_completion', 'the practical completion clause')}`,
                   ],
                 },
                 {
@@ -1418,9 +1452,9 @@ export default function AssistantPage() {
                   prompts: [
                     'Summarise the key obligations and deadlines',
                     'Identify all notice requirements and time bars',
-                    'What are the payment claim provisions and deadlines?',
+                    `What are the payment claim provisions and deadlines? Cite ${c('payment_claim', 'the payment clauses')}`,
                     'Extract all key dates from the contract',
-                    'Review the variation provisions and our rights',
+                    `Review the variation provisions under ${c('variation', 'the variation clause')} and our rights`,
                   ],
                 },
                 {
@@ -1428,10 +1462,10 @@ export default function AssistantPage() {
                   icon: MessageSquare,
                   prompts: [
                     'What are our rights if site access is delayed?',
-                    'What is the process for claiming a variation?',
-                    'What are the liquidated damages provisions?',
-                    'What are the defects liability requirements?',
-                    'What happens if we encounter latent conditions?',
+                    `What is the process for claiming a variation under ${c('variation', 'the variation clause')}?`,
+                    `What are the liquidated damages provisions under ${c('liquidated_damages', 'the LD clause')}?`,
+                    `What are the defects liability requirements under ${c('defects_liability', 'the defects clause')}?`,
+                    `What happens if we encounter latent conditions under ${c('latent_conditions', 'the latent conditions clause')}?`,
                   ],
                 },
               ]

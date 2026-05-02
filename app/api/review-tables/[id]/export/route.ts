@@ -1,9 +1,10 @@
 import { type NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import * as XLSX from 'xlsx'
 
 export const dynamic = 'force-dynamic'
 
-// GET: export review table as CSV
+// GET ?format=csv|xlsx — defaults to CSV for back-compat.
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -14,6 +15,7 @@ export async function GET(
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { id } = await params
+    const format = request.nextUrl.searchParams.get('format') === 'xlsx' ? 'xlsx' : 'csv'
 
     const { data: table } = await supabase.from('review_tables').select('name, document_ids').eq('id', id).single()
     if (!table) return Response.json({ error: 'Not found' }, { status: 404 })
@@ -30,22 +32,37 @@ export async function GET(
       cellMap.set(`${cell.document_id}:${cell.review_column_id}`, cell.value || '')
     }
 
-    // Build CSV
     const headers = ['Document', ...columns.map(c => c.name)]
-    const rows = (table.document_ids || []).map((docId: string) => {
+    const dataRows = (table.document_ids || []).map((docId: string) => {
       const filename = docMap[docId] || 'Unknown'
-      const values = columns.map(col => {
-        const val = cellMap.get(`${docId}:${col.id}`) || ''
-        // Escape CSV
-        return val.includes(',') || val.includes('"') || val.includes('\n')
-          ? `"${val.replace(/"/g, '""')}"`
-          : val
-      })
-      return [filename, ...values].join(',')
+      const values = columns.map(col => cellMap.get(`${docId}:${col.id}`) || '')
+      return [filename, ...values]
     })
 
-    const csv = [headers.join(','), ...rows].join('\n')
     const filename = table.name.replace(/[^a-zA-Z0-9\s-]/g, '').replace(/\s+/g, '_')
+
+    if (format === 'xlsx') {
+      const wb = XLSX.utils.book_new()
+      const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows])
+      XLSX.utils.book_append_sheet(wb, ws, 'Review')
+      const buf = XLSX.write(wb, { type: 'array', bookType: 'xlsx' }) as ArrayBuffer
+      return new Response(buf, {
+        headers: {
+          'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'Content-Disposition': `attachment; filename="${filename}.xlsx"`,
+        },
+      })
+    }
+
+    // CSV fallback
+    const csv = [headers, ...dataRows]
+      .map((row: unknown[]) => row.map((val: unknown) => {
+        const s = String(val ?? '')
+        return s.includes(',') || s.includes('"') || s.includes('\n')
+          ? `"${s.replace(/"/g, '""')}"`
+          : s
+      }).join(','))
+      .join('\n')
 
     return new Response(csv, {
       headers: {
@@ -54,6 +71,7 @@ export async function GET(
       },
     })
   } catch (error) {
+    console.error('[review-tables/export]', error)
     return Response.json({ error: 'Export failed' }, { status: 500 })
   }
 }

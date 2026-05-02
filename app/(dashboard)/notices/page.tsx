@@ -114,9 +114,9 @@ export default function NoticesPage() {
     }
   }
 
-  const handleDownloadDocx = async (notice: Notice) => {
+  const downloadNoticeAs = async (notice: Notice, format: 'docx' | 'pdf') => {
     try {
-      const res = await fetch('/api/documents/generate-docx', {
+      const res = await fetch(`/api/documents/generate-${format}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -132,16 +132,18 @@ export default function NoticesPage() {
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `${notice.title.replace(/[^a-zA-Z0-9]/g, '_')}.docx`
+      a.download = `${notice.title.replace(/[^a-zA-Z0-9]/g, '_')}.${format}`
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
-      toast.success('Document downloaded')
+      toast.success(`${format.toUpperCase()} downloaded`)
     } catch {
-      toast.error('Failed to download document')
+      toast.error(`Failed to download ${format.toUpperCase()}`)
     }
   }
+  const handleDownloadDocx = (notice: Notice) => downloadNoticeAs(notice, 'docx')
+  const handleDownloadPdf = (notice: Notice) => downloadNoticeAs(notice, 'pdf')
 
   const toggleExpanded = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id))
@@ -224,6 +226,7 @@ export default function NoticesPage() {
                     onToggle={() => toggleExpanded(notice.id)}
                     onCopy={() => handleCopy(notice.content)}
                     onDownload={() => handleDownloadDocx(notice)}
+                    onDownloadPdf={() => handleDownloadPdf(notice)}
                   />
                 ))}
               </div>
@@ -243,12 +246,14 @@ function NoticeCard({
   onToggle,
   onCopy,
   onDownload,
+  onDownloadPdf,
 }: {
   notice: Notice
   expanded: boolean
   onToggle: () => void
   onCopy: () => void
   onDownload: () => void
+  onDownloadPdf: () => void
 }) {
   const color = getTypeColor(notice.notice_type)
   const date = new Date(notice.created_at).toLocaleDateString('en-AU', {
@@ -348,7 +353,19 @@ function NoticeCard({
                 className="gap-1.5"
               >
                 <Download className="h-3.5 w-3.5" />
-                Download DOCX
+                DOCX
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onDownloadPdf()
+                }}
+                className="gap-1.5"
+              >
+                <Download className="h-3.5 w-3.5" />
+                PDF
               </Button>
             </div>
           </div>

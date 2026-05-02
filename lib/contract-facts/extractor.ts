@@ -42,6 +42,19 @@ export interface PartyFact {
   source_text?: string
 }
 
+export interface ClauseTopics {
+  delay?: string
+  extension_of_time?: string
+  variation?: string
+  payment_claim?: string
+  dispute_resolution?: string
+  defects_liability?: string
+  liquidated_damages?: string
+  latent_conditions?: string
+  termination?: string
+  practical_completion?: string
+}
+
 export interface ExtractedFacts {
   contract_type?: { value: ContractType; confidence?: number; source_text?: string }
   contract_title?: { value: string; source_text?: string }
@@ -57,6 +70,7 @@ export interface ExtractedFacts {
   reference_number?: { value: string; source_text?: string }
   site_address?: { value: string; source_text?: string }
   scope_summary?: { value: string }
+  clause_topics?: ClauseTopics
   // Backwards-compatibility shims — legacy callers still read these fields.
   principal?: PartyFact
   contractor?: PartyFact
@@ -226,6 +240,18 @@ export async function extractFacts(contractId: string): Promise<ExtractedFacts> 
     const facts = JSON.parse(raw) as ExtractedFacts
     const enriched = deriveLegacyShims(facts)
 
+    // Best-effort: also pull a topic→clause map so the assistant page can
+    // show contract-specific suggestion chips ("Draft a variation claim
+    // under clause 12.4"). Failure here must not break the main flow.
+    try {
+      const topics = await extractClauseTopics(contractId)
+      if (topics && Object.keys(topics).length > 0) {
+        enriched.clause_topics = topics
+      }
+    } catch (e) {
+      console.error('[ContractFacts] clause_topics extraction failed:', e)
+    }
+
     await sb.from('contracts').update({
       extracted_facts: enriched,
       facts_extracted_at: new Date().toISOString(),
@@ -241,4 +267,85 @@ export async function extractFacts(contractId: string): Promise<ExtractedFacts> 
     console.error('[ContractFacts] Extraction failed:', err)
     return {}
   }
+}
+
+const CLAUSE_TOPIC_PROMPT = `You map common contract topics to the specific clause number used in this construction contract.
+
+Read the chunks below and return JSON with the clause number string for each topic that the contract addresses. Use the exact clause numbering style the contract uses (e.g. "10.4", "34", "11.1(a)", "Clause 27" → return "27").
+
+Schema:
+{
+  "delay": "clause number for delay events / qualifying causes of delay",
+  "extension_of_time": "clause number for EOT claims",
+  "variation": "clause number for variations / changes / directions to vary",
+  "payment_claim": "clause number for payment claims and progress payments",
+  "dispute_resolution": "clause number for disputes / dispute resolution",
+  "defects_liability": "clause number for defects liability period / rectification",
+  "liquidated_damages": "clause number for liquidated damages",
+  "latent_conditions": "clause number for latent conditions / unforeseen physical conditions",
+  "termination": "clause number for termination",
+  "practical_completion": "clause number for practical completion"
+}
+
+OMIT any topic the contract does not clearly address. Do NOT guess. Return ONLY the JSON, no prose.`
+
+async function extractClauseTopics(contractId: string): Promise<ClauseTopics | null> {
+  const sb = admin()
+
+  const topicHints = [
+    '%delay%', '%extension of time%', '%eot%',
+    '%variation%', '%change order%', '%direct%vary%',
+    '%payment claim%', '%progress claim%', '%progress payment%',
+    '%dispute%', '%adjudic%',
+    '%defect%', '%rectif%',
+    '%liquidated damages%',
+    '%latent condition%', '%unforeseen%physical%',
+    '%termination%', '%terminate%',
+    '%practical completion%',
+  ]
+
+  const { data: hits } = await sb
+    .from('document_chunks')
+    .select('content, clause_numbers')
+    .eq('contract_id', contractId)
+    .or(topicHints.map(h => `content.ilike.${h}`).join(','))
+    .limit(40)
+
+  if (!hits || hits.length === 0) return null
+
+  // Trim per-chunk content so we stay under the token budget
+  const text = hits
+    .map(h => h.content.slice(0, 1500))
+    .join('\n\n---\n\n')
+    .slice(0, 30000)
+
+  if (text.length < 100) return null
+
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    temperature: 0,
+    max_tokens: 400,
+    messages: [
+      { role: 'system', content: CLAUSE_TOPIC_PROMPT },
+      { role: 'user', content: `Contract chunks:\n\n${text}` },
+    ],
+    response_format: { type: 'json_object' },
+  })
+
+  const raw = response.choices[0]?.message?.content || '{}'
+  const parsed = JSON.parse(raw) as Record<string, unknown>
+
+  // Sanity-strip — keep only string values that contain a digit (real clause refs)
+  const cleaned: ClauseTopics = {}
+  for (const key of [
+    'delay', 'extension_of_time', 'variation', 'payment_claim',
+    'dispute_resolution', 'defects_liability', 'liquidated_damages',
+    'latent_conditions', 'termination', 'practical_completion',
+  ] as const) {
+    const v = parsed[key]
+    if (typeof v === 'string' && /\d/.test(v) && v.length < 20) {
+      cleaned[key] = v.replace(/^Clause\s+/i, '').trim()
+    }
+  }
+  return Object.keys(cleaned).length ? cleaned : null
 }

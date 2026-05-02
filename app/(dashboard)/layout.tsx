@@ -24,6 +24,7 @@ import {
   FileText,
   Clock,
   LayoutGrid,
+  X,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -71,6 +72,9 @@ function NavItem({
   indent,
   locked,
   onLockedClick,
+  cue,
+  cueLabel,
+  onCueDismiss,
 }: {
   icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
   label: string
@@ -81,6 +85,9 @@ function NavItem({
   indent?: boolean
   locked?: boolean
   onLockedClick?: () => void
+  cue?: boolean
+  cueLabel?: string
+  onCueDismiss?: () => void
 }) {
   const content = (
     <Link
@@ -94,6 +101,7 @@ function NavItem({
           e.preventDefault()
           onLockedClick?.()
         }
+        if (cue) onCueDismiss?.()
       }}
       className={`
         flex items-center rounded-lg text-sm transition-all duration-200 relative
@@ -110,8 +118,14 @@ function NavItem({
         paddingBottom: '8px',
       }}
     >
-      <div className="w-4 h-4 flex items-center justify-center flex-shrink-0">
+      <div className="w-4 h-4 flex items-center justify-center flex-shrink-0 relative">
         <Icon className="w-4 h-4" strokeWidth={1.5} />
+        {cue && (
+          <>
+            <span className="absolute inset-0 -m-1 rounded-full ring-2 ring-amber-400/70 animate-ping" />
+            <span className="absolute inset-0 -m-1 rounded-full ring-2 ring-amber-400/40" />
+          </>
+        )}
       </div>
       <span className={`ml-3 whitespace-nowrap transition-all duration-300 ease-in-out ${
         collapsed ? 'opacity-0 w-0 max-w-0 ml-0 overflow-hidden' : 'opacity-100'
@@ -134,6 +148,27 @@ function NavItem({
       </Tooltip>
     )
   }
+  if (cue && cueLabel) {
+    return (
+      <div className="relative">
+        {content}
+        <div
+          onClick={(e) => { e.stopPropagation(); e.preventDefault(); onCueDismiss?.() }}
+          className="mt-1.5 mx-1 mb-2 bg-foreground text-background text-[11px] font-medium px-2.5 py-1.5 rounded-md shadow-md flex items-center gap-1.5 cursor-default animate-pulse"
+          role="tooltip"
+        >
+          <span className="flex-1 leading-tight">{cueLabel}</span>
+          <button
+            onClick={(e) => { e.stopPropagation(); e.preventDefault(); onCueDismiss?.() }}
+            className="opacity-60 hover:opacity-100 transition-opacity flex-shrink-0"
+            aria-label="Dismiss hint"
+          >
+            <X className="h-3 w-3" />
+          </button>
+        </div>
+      </div>
+    )
+  }
   return content
 }
 
@@ -149,6 +184,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [contractDropdownOpen, setContractDropdownOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  // Library spatial cue: pulsing ring + speech bubble on first visit per browser.
+  const [libraryCueDismissed, setLibraryCueDismissed] = useState(true)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    setLibraryCueDismissed(localStorage.getItem('astruct_library_cue_dismissed') === '1')
+  }, [])
+  const dismissLibraryCue = useCallback(() => {
+    setLibraryCueDismissed(true)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('astruct_library_cue_dismissed', '1')
+    }
+  }, [])
 
   // Cmd+K to open search
   useEffect(() => {
@@ -357,12 +404,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             {c.name}
                           </button>
                         ))}
-                        <div className="border-t mt-1 pt-1">
-                          <button onClick={() => { setContractDropdownOpen(false); router.push('/contracts/new') }}
-                            className="w-full text-left px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors flex items-center gap-2">
-                            <Plus className="h-3.5 w-3.5" />New Contract
-                          </button>
-                        </div>
+                        {!(user?.isAnonymous && contracts.length >= 1) && (
+                          <div className="border-t mt-1 pt-1">
+                            <button onClick={() => { setContractDropdownOpen(false); router.push('/contracts/new') }}
+                              className="w-full text-left px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors flex items-center gap-2">
+                              <Plus className="h-3.5 w-3.5" />New Contract
+                            </button>
+                          </div>
+                        )}
+                        {user?.isAnonymous && contracts.length >= 1 && (
+                          <div className="border-t mt-1 pt-1 px-3 py-2 text-xs text-muted-foreground">
+                            Sign up to add another project.
+                          </div>
+                        )}
                       </PopoverContent>
                     </Popover>
                   ) : (
@@ -395,8 +449,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         />
                       )
                     }
+                    const showCue = subpath === 'library' && !libraryCueDismissed && !collapsed
                     return (
-                      <NavItem key={subpath} icon={icon} label={label} href={href} isActive={isActive} collapsed={collapsed} />
+                      <NavItem
+                        key={subpath}
+                        icon={icon}
+                        label={label}
+                        href={href}
+                        isActive={isActive}
+                        collapsed={collapsed}
+                        cue={showCue}
+                        cueLabel={showCue ? 'Upload Project Documents Here' : undefined}
+                        onCueDismiss={dismissLibraryCue}
+                      />
                     )
                   })}
                 </div>

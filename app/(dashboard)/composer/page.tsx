@@ -152,10 +152,10 @@ function DocumentPreview({
     toast.success('Copied to clipboard')
   }
 
-  const handleDownloadDocx = async () => {
+  const downloadAs = async (format: 'docx' | 'pdf') => {
     setDownloading(true)
     try {
-      const res = await fetch('/api/documents/generate-docx', {
+      const res = await fetch(`/api/documents/generate-${format}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -169,16 +169,18 @@ function DocumentPreview({
       const url = URL.createObjectURL(blob)
       const a = window.document.createElement('a')
       a.href = url
-      a.download = `${document.title.replace(/[^a-zA-Z0-9\s-]/g, '').replace(/\s+/g, '_')}.docx`
+      a.download = `${document.title.replace(/[^a-zA-Z0-9\s-]/g, '').replace(/\s+/g, '_')}.${format}`
       a.click()
       URL.revokeObjectURL(url)
-      toast.success('DOCX downloaded')
+      toast.success(`${format.toUpperCase()} downloaded`)
     } catch {
-      toast.error('Failed to generate DOCX')
+      toast.error(`Failed to generate ${format.toUpperCase()}`)
     } finally {
       setDownloading(false)
     }
   }
+  const handleDownloadDocx = () => downloadAs('docx')
+  const handleDownloadPdf = () => downloadAs('pdf')
 
   const badgeColor = NOTICE_TYPE_COLORS[document.noticeType] || NOTICE_TYPE_COLORS['Other']
 
@@ -240,7 +242,21 @@ function DocumentPreview({
           ) : (
             <FileDown className="h-3.5 w-3.5 mr-1.5" />
           )}
-          Download DOCX
+          DOCX
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={handleDownloadPdf}
+          disabled={downloading}
+          className="text-muted-foreground hover:text-foreground hover:bg-muted"
+        >
+          {downloading ? (
+            <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+          ) : (
+            <FileDown className="h-3.5 w-3.5 mr-1.5" />
+          )}
+          PDF
         </Button>
         <div className="flex-1" />
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground/40">
