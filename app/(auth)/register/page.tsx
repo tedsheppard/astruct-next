@@ -94,7 +94,7 @@ export default function RegisterPage() {
       return
     }
 
-    const { error } = await supabase.auth.signUp({
+    const { error, data } = await supabase.auth.signUp({
       email: cleanEmail,
       password,
       options: { data: { name: trimmedName } },
@@ -106,7 +106,24 @@ export default function RegisterPage() {
       return
     }
 
-    router.push('/verify-email')
+    // With mailer_autoconfirm on, signUp returns an active session and the
+    // user is logged in immediately. Land them in the assistant. Only fall
+    // back to /verify-email if Supabase didn't return a session (i.e.
+    // confirmation was somehow required).
+    if (data?.session) {
+      // Save name to profiles for first-time setup
+      if (data.user) {
+        await supabase.from('profiles').upsert({
+          id: data.user.id,
+          name: trimmedName,
+          email: cleanEmail,
+          is_anonymous: false,
+        }, { onConflict: 'id' })
+      }
+      router.push('/?upgraded=1')
+    } else {
+      router.push('/verify-email')
+    }
     router.refresh()
   }
 
