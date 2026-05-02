@@ -40,25 +40,30 @@ async function findProductByMetadataId(id) {
   return list.data[0] || null
 }
 
-// ─── Step 1: Pro Contract product ───────────────────────────────────────
-let product = await findProductByMetadataId('pro_contract')
-if (product) {
-  console.log(`✓ Product exists: ${product.id}`)
-} else {
-  product = await stripe.products.create({
-    name: 'Astruct Pro Contract',
-    description: 'One contract slot with included AI usage. Generous allowance + per-token overage.',
-    metadata: { astruct_id: 'pro_contract', tier: 'pro_contract' },
-    tax_code: 'txcd_10000000', // SaaS, electronically supplied service
-  })
-  console.log(`+ Created product: ${product.id}`)
-}
-
-// ─── Step 2: Base price ($29.95 AUD/month, GST inclusive) ──────────────
+// ─── Step 1+2: Base price + Product ─────────────────────────────────────
+// Find the base price first (single source of truth) and use its product.
+// This is robust to prior partial runs that may have left an orphan product.
 let basePrice = await findPriceByLookupKey('pro_contract_monthly_aud')
+let product
 if (basePrice) {
   console.log(`✓ Base price exists: ${basePrice.id}`)
+  const productId = typeof basePrice.product === 'string' ? basePrice.product : basePrice.product.id
+  product = await stripe.products.retrieve(productId)
+  console.log(`✓ Using product from base price: ${product.id}`)
 } else {
+  // No base price yet — find or create the product, then create the price.
+  product = await findProductByMetadataId('pro_contract')
+  if (product) {
+    console.log(`✓ Product exists: ${product.id}`)
+  } else {
+    product = await stripe.products.create({
+      name: 'Astruct Pro Contract',
+      description: 'One contract slot with included AI usage. Generous allowance + per-token overage.',
+      metadata: { astruct_id: 'pro_contract', tier: 'pro_contract' },
+      tax_code: 'txcd_10000000',
+    })
+    console.log(`+ Created product: ${product.id}`)
+  }
   basePrice = await stripe.prices.create({
     product: product.id,
     unit_amount: 2995,
@@ -71,24 +76,56 @@ if (basePrice) {
   console.log(`+ Created base price: ${basePrice.id}`)
 }
 
-// ─── Step 3: Metered overage price ($0.10 AUD per 10,000 tokens) ──────
+// ─── Step 3a: Meter for token overage ─────────────────────────────────
+// Stripe billing meters (introduced 2025-03-31) replace the legacy
+// "metered" usage_type. Idempotent: look up by event_name first.
+const meterEventName = 'astruct_token_units'
+let meter = null
+try {
+  const list = await stripe.billing.meters.list({ status: 'active', limit: 100 })
+  meter = list.data.find(m => m.event_name === meterEventName) || null
+} catch {/* ignore */}
+if (meter) {
+  console.log(`✓ Meter exists: ${meter.id} (event: ${meterEventName})`)
+} else {
+  meter = await stripe.billing.meters.create({
+    display_name: 'Astruct token units (10k tokens)',
+    event_name: meterEventName,
+    default_aggregation: { formula: 'sum' },
+    customer_mapping: { type: 'by_id', event_payload_key: 'stripe_customer_id' },
+    value_settings: { event_payload_key: 'value' },
+  })
+  console.log(`+ Created meter: ${meter.id} (event: ${meterEventName})`)
+}
+
+// ─── Step 3b: Metered overage price backed by the meter ──────────────
 let overagePrice = await findPriceByLookupKey('pro_contract_overage_aud')
 if (overagePrice) {
-  console.log(`✓ Overage price exists: ${overagePrice.id}`)
-} else {
+  const ovProductId = typeof overagePrice.product === 'string' ? overagePrice.product : overagePrice.product.id
+  if (ovProductId !== product.id) {
+    // Orphan — deactivate, drop the lookup_key, recreate under canonical product
+    console.log(`! Overage price ${overagePrice.id} is on the wrong product — archiving and recreating`)
+    await stripe.prices.update(overagePrice.id, { active: false, lookup_key: null })
+    overagePrice = null
+  } else {
+    console.log(`✓ Overage price exists: ${overagePrice.id}`)
+  }
+}
+if (!overagePrice) {
   overagePrice = await stripe.prices.create({
     product: product.id,
     currency: 'aud',
     recurring: {
       interval: 'month',
       usage_type: 'metered',
-      aggregate_usage: 'sum',
+      meter: meter.id,
     },
     billing_scheme: 'per_unit',
-    unit_amount: 10, // $0.10 per unit, where one unit = 10,000 tokens (we report units, not raw tokens)
+    unit_amount: 10, // $0.10 per 10k-token unit
     tax_behavior: 'inclusive',
     lookup_key: 'pro_contract_overage_aud',
-    metadata: { type: 'overage', tokens_per_unit: '10000' },
+    transfer_lookup_key: true,
+    metadata: { type: 'overage', tokens_per_unit: '10000', meter_event_name: meterEventName },
   })
   console.log(`+ Created overage price: ${overagePrice.id}`)
 }
@@ -157,6 +194,8 @@ const output = {
   base_price_lookup_key: basePrice.lookup_key,
   overage_price_id: overagePrice.id,
   overage_price_lookup_key: overagePrice.lookup_key,
+  meter_id: meter.id,
+  meter_event_name: meterEventName,
   portal_config_id: portalConfig.id,
 }
 const outFile = resolve(`docs/stripe-provisioning-output.${isLive ? 'live' : 'test'}.json`)

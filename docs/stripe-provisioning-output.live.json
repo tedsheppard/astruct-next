@@ -1,0 +1,12 @@
+{
+  "mode": "live",
+  "generated_at": "2026-05-02T06:18:11.712Z",
+  "product_id": "prod_URPfbNhwPWXJHZ",
+  "base_price_id": "price_1TSWqcAIOAykxV50H6wNCtj3",
+  "base_price_lookup_key": "pro_contract_monthly_aud",
+  "overage_price_id": "price_1TSWsQAIOAykxV50RORmFvAJ",
+  "overage_price_lookup_key": "pro_contract_overage_aud",
+  "meter_id": "mtr_61UbuopVZhINFrV8T41AIOAykxV50OV6",
+  "meter_event_name": "astruct_token_units",
+  "portal_config_id": "bpc_1T4f73AIOAykxV50E4Aj7xBi"
+}
