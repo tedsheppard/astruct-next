@@ -25,6 +25,7 @@ import {
   Clock,
   LayoutGrid,
   X,
+  Menu,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -184,6 +185,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [contractDropdownOpen, setContractDropdownOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  // Close mobile drawer on route change so users land on the new page directly
+  useEffect(() => { setMobileNavOpen(false) }, [pathname])
   // Library spatial cue: pulsing ring + speech bubble on first visit per browser.
   const [libraryCueDismissed, setLibraryCueDismissed] = useState(true)
   useEffect(() => {
@@ -376,8 +380,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <AnonProvider>
     <TooltipProvider>
       <div className="min-h-screen flex bg-sidebar">
+        {/* ─── Mobile drawer backdrop ─── */}
+        {mobileNavOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-black/50 md:hidden"
+            onClick={() => setMobileNavOpen(false)}
+          />
+        )}
         {/* ─── Sidebar ─── */}
-        <aside className={`${collapsed ? 'w-16' : 'w-64'} flex flex-col h-screen sticky top-0 transition-all duration-300 ease-in-out overflow-x-hidden overflow-y-auto bg-sidebar`}>
+        <aside className={`
+          ${collapsed ? 'w-16' : 'w-64'}
+          ${mobileNavOpen ? 'translate-x-0 fixed' : '-translate-x-full md:translate-x-0 fixed'}
+          md:sticky md:translate-x-0
+          flex flex-col h-screen top-0 left-0 z-50
+          transition-all duration-300 ease-in-out overflow-x-hidden overflow-y-auto bg-sidebar
+        `}>
           {/* Logo — matches header height */}
           <div className="h-14 flex items-center px-4 border-b border-sidebar-fg/8">
             <div className={`transition-all duration-300 ${collapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'}`}>
@@ -567,8 +584,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* ─── Main Content ─── */}
         <div className="flex-1 flex flex-col min-h-screen bg-main-panel rounded-tl-2xl">
-          <header className="h-14 border-b border-main-border flex items-center justify-between px-6 sticky top-0 z-40 bg-main-panel/95 backdrop-blur-sm rounded-tl-2xl">
-            <div className="flex items-center gap-2">
+          <header className="h-14 border-b border-main-border flex items-center justify-between px-3 md:px-6 sticky top-0 z-40 bg-main-panel/95 backdrop-blur-sm rounded-tl-2xl">
+            <div className="flex items-center gap-2 min-w-0">
+              <button
+                onClick={() => setMobileNavOpen(true)}
+                className="md:hidden h-9 w-9 -ml-1 rounded-md hover:bg-main-fg/5 flex items-center justify-center text-main-fg flex-shrink-0"
+                aria-label="Open menu"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
               {breadcrumb ? (
                 <>
                   <Link href="/contracts" className="text-sm hover:underline text-main-fg/40">Contracts</Link>

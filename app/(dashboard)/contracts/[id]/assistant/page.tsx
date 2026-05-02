@@ -941,7 +941,7 @@ export default function AssistantPage() {
                       onKeyDown={handleKeyDown}
                       placeholder="Ask Astruct anything..."
                       rows={3}
-                      className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 resize-none outline-none leading-relaxed"
+                      className="w-full bg-transparent text-base sm:text-sm text-foreground placeholder:text-muted-foreground/50 resize-none outline-none leading-relaxed min-h-[60px]"
                     />
                     {/* Pending uploads pills */}
                     {pendingUploads.length > 0 && (
@@ -1703,7 +1703,7 @@ export default function AssistantPage() {
                     placeholder="Reply..."
                     rows={1}
                     disabled={isStreaming}
-                    className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground resize-none outline-none max-h-[200px] leading-relaxed"
+                    className="flex-1 bg-transparent text-base sm:text-sm text-foreground placeholder:text-muted-foreground resize-none outline-none max-h-[200px] leading-relaxed min-h-[36px] py-2"
                   />
                   {/* Model selector in conversation */}
                   <Popover open={modelPopoverOpen2} onOpenChange={setModelPopoverOpen2}>

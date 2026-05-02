@@ -794,9 +794,9 @@ function ReviewStep(props: {
           </div>
         )}
 
-        <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
-          <Button onClick={onSave} disabled={saving}>
-            {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <ArrowRight className="h-3.5 w-3.5 mr-1.5" />}
+        <div className="flex items-center justify-end gap-2 pt-2 border-t border-border sticky bottom-0 bg-background pb-2">
+          <Button onClick={onSave} disabled={saving} size="lg" className="w-full sm:w-auto min-h-[44px]">
+            {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ArrowRight className="h-4 w-4 mr-2" />}
             Continue to assistant
           </Button>
         </div>
