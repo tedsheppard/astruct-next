@@ -310,10 +310,21 @@ function DocumentPreview({ document, onClose }: { document: GeneratedDocument; o
   const downloadAs = async (format: 'docx' | 'pdf') => {
     setDownloading(true)
     try {
+      // Pull the user's active letterhead (logo, margins, fonts) from
+      // localStorage. First entry wins for now — picker UI is a follow-up.
+      let letterhead: Record<string, unknown> | null = null
+      try {
+        const raw = localStorage.getItem('astruct_letterheads_v2')
+        if (raw) {
+          const list = JSON.parse(raw) as Record<string, unknown>[]
+          if (Array.isArray(list) && list.length > 0) letterhead = list[0]
+        }
+      } catch {}
+
       const res = await fetch(`/api/documents/generate-${format}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: document.content, metadata: document.metadata, title: document.title }),
+        body: JSON.stringify({ content: document.content, metadata: document.metadata, title: document.title, letterhead }),
       })
       if (!res.ok) throw new Error('Download failed')
       const blob = await res.blob()
@@ -409,6 +420,20 @@ export default function AssistantPage() {
   const [showTemplateSelector, setShowTemplateSelector] = useState(false)
   const [pendingDraftMessage, setPendingDraftMessage] = useState<string | null>(null)
   const [savedTemplates, setSavedTemplates] = useState<{ id: string; name: string; description: string }[]>([])
+
+  // Partner-program banner: dismissible, persisted in localStorage. Only
+  // rendered on the empty state of the assistant page.
+  const [partnerBannerDismissed, setPartnerBannerDismissed] = useState(true)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    setPartnerBannerDismissed(localStorage.getItem('astruct_partner_banner_dismissed') === '1')
+  }, [])
+  const dismissPartnerBanner = useCallback(() => {
+    setPartnerBannerDismissed(true)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('astruct_partner_banner_dismissed', '1')
+    }
+  }, [])
 
   // Load templates from localStorage
   useEffect(() => {
@@ -925,6 +950,32 @@ export default function AssistantPage() {
         ) : messages.length === 0 ? (
           /* ─── Empty: Harvey-style layout ─── */
           <div className="flex-1 flex flex-col">
+            {!partnerBannerDismissed && (
+              <div className="px-4 sm:px-6 pt-3">
+                <div className="max-w-[680px] mx-auto rounded-lg border border-violet-500/25 bg-violet-500/[0.04] px-4 py-3 flex items-start gap-3">
+                  <Sparkles className="h-4 w-4 text-violet-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1 text-xs sm:text-[13px] leading-relaxed text-foreground/80">
+                    We&apos;re looking for contractors to help us build out our agentic integrations with{' '}
+                    <span className="font-medium text-foreground">Procore, Aconex, Asite</span> and other platforms.
+                    If you&apos;d like to partner on this, reach out at{' '}
+                    <a
+                      href="mailto:hello@astruct.io?subject=Integration%20partner%20program"
+                      className="font-medium text-violet-700 underline underline-offset-2 hover:text-violet-800"
+                    >
+                      hello@astruct.io
+                    </a>
+                    {' '}— a discount on your subscription is on the table for design partners.
+                  </div>
+                  <button
+                    onClick={dismissPartnerBanner}
+                    aria-label="Dismiss banner"
+                    className="flex-shrink-0 -mr-1 -mt-1 h-7 w-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
             {/* Center section */}
             <div className="flex-1 flex flex-col items-center justify-center px-6">
               <div className="w-full max-w-[680px]">
@@ -1159,7 +1210,7 @@ export default function AssistantPage() {
                       {/* Model selector */}
                       <Popover open={modelPopoverOpen} onOpenChange={setModelPopoverOpen}>
                         <PopoverTrigger className="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg text-[10px] text-muted-foreground hover:text-foreground border border-border hover:border-foreground/15 transition-colors">
-                          {({ 'gpt-5-nano': '1x', 'gpt-5.4-nano': '4x', 'gpt-5-mini': '5x', 'gpt-5.4-mini': '15x', 'claude-haiku-4-5-20251001': '20x', 'gpt-5.4': '50x', 'claude-sonnet-4-6': '60x', 'claude-opus-4-6': '100x' } as Record<string, string>)[selectedModel] || selectedModel}
+                          {({ 'gpt-5-nano': '1x', 'gpt-5.4-nano': '4x', 'gpt-5-mini': '5x', 'gpt-5.4-mini': '15x', 'claude-haiku-4-5-20251001': '20x', 'gpt-5.4': '50x', 'claude-sonnet-4-6': '60x', 'claude-opus-4-6': '100x', 'gpt-5.5': '110x', 'claude-opus-4-7': '120x' } as Record<string, string>)[selectedModel] || selectedModel}
                           <ChevronDown className="h-2.5 w-2.5" />
                         </PopoverTrigger>
                         <PopoverContent side="top" align="end" className="w-56 p-1">
@@ -1172,6 +1223,8 @@ export default function AssistantPage() {
                             { id: 'gpt-5.4', label: 'GPT-5.4', rate: '50x' },
                             { id: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6', rate: '60x' },
                             { id: 'claude-opus-4-6', label: 'Claude Opus 4.6', rate: '100x' },
+                            { id: 'gpt-5.5', label: 'GPT-5.5', rate: '110x' },
+                            { id: 'claude-opus-4-7', label: 'Claude Opus 4.7', rate: '120x' },
                           ].map(m => (
                             <button key={m.id} onClick={() => { setSelectedModel(m.id); setModelPopoverOpen(false) }}
                               className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs transition-colors ${selectedModel === m.id ? 'bg-accent font-medium text-foreground' : 'text-muted-foreground hover:bg-accent hover:text-foreground'}`}>
@@ -1301,6 +1354,11 @@ export default function AssistantPage() {
                     <PopoverContent side="top" className="w-64 p-0">
                       <div className="p-2.5 border-b border-border">
                         <span className="text-xs font-medium text-foreground">Web Search</span>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">
+                          {selectedModel.startsWith('claude-') || selectedModel === 'gpt-5.5'
+                            ? 'Live web search runs on this model.'
+                            : 'Switch to Claude or GPT-5.5 to enable live web search.'}
+                        </p>
                       </div>
                       <div className="p-1.5">
                         {[
@@ -1708,7 +1766,7 @@ export default function AssistantPage() {
                   {/* Model selector in conversation */}
                   <Popover open={modelPopoverOpen2} onOpenChange={setModelPopoverOpen2}>
                     <PopoverTrigger className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] text-muted-foreground hover:text-foreground border border-border hover:border-foreground/15 transition-colors flex-shrink-0">
-                      {({ 'gpt-5-nano': '1x', 'gpt-5.4-nano': '4x', 'gpt-5-mini': '5x', 'gpt-5.4-mini': '15x', 'claude-haiku-4-5-20251001': '20x', 'gpt-5.4': '50x', 'claude-sonnet-4-6': '60x', 'claude-opus-4-6': '100x' } as Record<string, string>)[selectedModel] || selectedModel}
+                      {({ 'gpt-5-nano': '1x', 'gpt-5.4-nano': '4x', 'gpt-5-mini': '5x', 'gpt-5.4-mini': '15x', 'claude-haiku-4-5-20251001': '20x', 'gpt-5.4': '50x', 'claude-sonnet-4-6': '60x', 'claude-opus-4-6': '100x', 'gpt-5.5': '110x', 'claude-opus-4-7': '120x' } as Record<string, string>)[selectedModel] || selectedModel}
                       <ChevronDown className="h-2.5 w-2.5" />
                     </PopoverTrigger>
                     <PopoverContent side="top" align="end" className="w-56 p-1">
@@ -1721,6 +1779,8 @@ export default function AssistantPage() {
                         { id: 'gpt-5.4', label: 'GPT-5.4', rate: '50x' },
                         { id: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6', rate: '60x' },
                         { id: 'claude-opus-4-6', label: 'Claude Opus 4.6', rate: '100x' },
+                        { id: 'gpt-5.5', label: 'GPT-5.5', rate: '110x' },
+                        { id: 'claude-opus-4-7', label: 'Claude Opus 4.7', rate: '120x' },
                       ].map(m => (
                         <button key={m.id} onClick={() => { setSelectedModel(m.id); setModelPopoverOpen2(false) }}
                           className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs transition-colors ${selectedModel === m.id ? 'bg-accent font-medium text-foreground' : 'text-muted-foreground hover:bg-accent hover:text-foreground'}`}>

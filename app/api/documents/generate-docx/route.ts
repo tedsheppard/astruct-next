@@ -5,6 +5,7 @@ import {
   Packer,
   Paragraph,
   TextRun,
+  ImageRun,
   AlignmentType,
   HeadingLevel,
   BorderStyle,
@@ -17,6 +18,24 @@ import {
 
 export const dynamic = 'force-dynamic'
 
+interface LetterheadInput {
+  logoDataUrl?: string
+  logoWidthMm?: number
+  headerLogoPosition?: 'left' | 'center' | 'right'
+}
+
+// Decode a data URL (data:image/png;base64,...) into a Buffer + mime type.
+// Returns null if the input isn't a recognisable image data URL.
+function decodeDataUrl(dataUrl: string): { buffer: Buffer; mime: string } | null {
+  const match = /^data:(image\/(?:png|jpe?g|webp|svg\+xml));base64,(.+)$/i.exec(dataUrl)
+  if (!match) return null
+  try {
+    return { mime: match[1].toLowerCase(), buffer: Buffer.from(match[2], 'base64') }
+  } catch {
+    return null
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
@@ -26,7 +45,12 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { content, metadata, title } = await request.json()
+    const { content, metadata, title, letterhead } = (await request.json()) as {
+      content?: string
+      metadata?: unknown
+      title?: string
+      letterhead?: LetterheadInput | null
+    }
 
     if (!content) {
       return Response.json({ error: 'content is required' }, { status: 400 })
@@ -42,7 +66,42 @@ export async function POST(request: NextRequest) {
     // Build document sections
     const children: (Paragraph | Table)[] = []
 
-    // Letterhead
+    // ─── Logo (from user-uploaded letterhead) ─────────────────────────────
+    // The image lives in browser localStorage as a base64 data URL; decode it
+    // server-side and embed it via docx ImageRun. Fails silently if the data
+    // URL is malformed — the rest of the document still renders.
+    if (letterhead?.logoDataUrl) {
+      const decoded = decodeDataUrl(letterhead.logoDataUrl)
+      // ImageRun expects pixels; convert mm → px at 96 DPI (1mm = 3.7795px).
+      const widthMm = Math.max(10, Math.min(120, letterhead.logoWidthMm || 40))
+      const widthPx = Math.round(widthMm * 3.7795)
+      // Aspect ratio is unknown server-side — assume 4:3 which is a safe
+      // default for company logos. Users can tune the width slider if needed.
+      const heightPx = Math.round((widthPx * 3) / 4)
+      if (decoded && decoded.mime !== 'image/svg+xml') {
+        // ImageRun.type accepts 'png' | 'jpg' | 'gif' | 'bmp'. Map our mime.
+        const imgType: 'png' | 'jpg' = decoded.mime === 'image/png' ? 'png' : 'jpg'
+        const align = letterhead.headerLogoPosition === 'right'
+          ? AlignmentType.RIGHT
+          : letterhead.headerLogoPosition === 'center'
+            ? AlignmentType.CENTER
+            : AlignmentType.LEFT
+        children.push(
+          new Paragraph({
+            alignment: align,
+            children: [
+              new ImageRun({
+                data: decoded.buffer,
+                transformation: { width: widthPx, height: heightPx },
+                type: imgType,
+              }),
+            ],
+          })
+        )
+      }
+    }
+
+    // Letterhead (text from profile)
     if (profile?.company_name) {
       children.push(
         new Paragraph({

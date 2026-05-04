@@ -61,10 +61,21 @@ export async function generate(
   tracking?: GenerateTracking,
 ): Promise<string> {
   const { model, wasUpgraded } = selectModel(query, requestedModel)
-  const useThinking = shouldUseExtendedThinking(query) && isClaudeModel(model) && model !== 'claude-haiku-4-5-20251001'
+  // Opus 4.7 uses adaptive thinking (model-driven, no API param) instead of
+  // extended thinking, so we keep it out of the explicit-thinking branch.
+  const supportsExtendedThinking = isClaudeModel(model)
+    && model !== 'claude-haiku-4-5-20251001'
+    && model !== 'claude-opus-4-7'
+  const useThinking = shouldUseExtendedThinking(query) && supportsExtendedThinking
 
   // Emit model info
-  const modelLabel = model.replace('claude-', '').replace('gpt-', 'GPT-').replace('opus-4-6', 'Opus 4.6').replace('sonnet-4-6', 'Sonnet 4.6').replace('haiku-4-5-20251001', 'Haiku 4.5')
+  const modelLabel = model
+    .replace('claude-', '')
+    .replace('gpt-', 'GPT-')
+    .replace('opus-4-7', 'Opus 4.7')
+    .replace('opus-4-6', 'Opus 4.6')
+    .replace('sonnet-4-6', 'Sonnet 4.6')
+    .replace('haiku-4-5-20251001', 'Haiku 4.5')
   if (wasUpgraded) {
     callbacks.onThinkingState(`Upgraded to ${modelLabel} for better quality`)
   }

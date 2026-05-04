@@ -76,6 +76,7 @@ function NavItem({
   cue,
   cueLabel,
   onCueDismiss,
+  beta,
 }: {
   icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
   label: string
@@ -89,6 +90,7 @@ function NavItem({
   cue?: boolean
   cueLabel?: string
   onCueDismiss?: () => void
+  beta?: boolean
 }) {
   const content = (
     <Link
@@ -138,6 +140,11 @@ function NavItem({
           Sign up
         </span>
       )}
+      {beta && !locked && !collapsed && (
+        <span className="ml-auto text-[9px] uppercase tracking-wider text-violet-600 bg-violet-500/10 border border-violet-500/30 rounded px-1.5 py-0.5">
+          Beta
+        </span>
+      )}
     </Link>
   )
 
@@ -145,7 +152,7 @@ function NavItem({
     return (
       <Tooltip>
         <TooltipTrigger render={<div />}>{content}</TooltipTrigger>
-        <TooltipContent side="right"><p>{label}</p></TooltipContent>
+        <TooltipContent side="right"><p>{label}{beta ? ' (beta)' : ''}</p></TooltipContent>
       </Tooltip>
     )
   }
@@ -363,13 +370,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const hasContracts = contracts.length > 0
   const isOnContractPage = pathname.startsWith('/contracts/') && !pathname.endsWith('/new')
 
-  const contractNavItems = [
+  const contractNavItems: Array<{
+    icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
+    label: string
+    subpath: string
+    beta?: boolean
+  }> = [
     { icon: MessageSquare, label: 'Assistant', subpath: 'assistant' },
     { icon: Clock, label: 'History', subpath: 'history' },
     { icon: FolderOpen, label: 'Library', subpath: 'library' },
-    { icon: Mail, label: 'Correspondence', subpath: 'correspondence' },
     { icon: FileText, label: 'Templates', subpath: 'templates' },
-    { icon: CalendarDays, label: 'Calendar', subpath: 'calendar' },
+    { icon: Mail, label: 'Correspondence', subpath: 'correspondence', beta: true },
+    { icon: CalendarDays, label: 'Calendar', subpath: 'calendar', beta: true },
     { icon: Settings, label: 'Project Settings', subpath: 'settings' },
   ]
 
@@ -469,7 +481,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
               {selectedContractId && (
                 <div className="space-y-0.5">
-                  {contractNavItems.map(({ icon, label, subpath }) => {
+                  {contractNavItems.map(({ icon, label, subpath, beta }) => {
                     const href = `/contracts/${selectedContractId}/${subpath}`
                     const isActive = pathname === href || pathname.startsWith(href + '/')
                     const lockedForAnon = subpath === 'calendar' || subpath === 'templates'
@@ -482,6 +494,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                           href={href}
                           isActive={isActive}
                           collapsed={collapsed}
+                          beta={beta}
                         />
                       )
                     }
@@ -497,6 +510,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         cue={showCue}
                         cueLabel={showCue ? 'Upload Project Documents Here' : undefined}
                         onCueDismiss={dismissLibraryCue}
+                        beta={beta}
                       />
                     )
                   })}

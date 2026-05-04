@@ -15,12 +15,14 @@ export function AnonLockedNavItem({
   href,
   isActive,
   collapsed,
+  beta,
 }: {
   icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
   label: string
   href: string
   isActive: boolean
   collapsed: boolean
+  beta?: boolean
 }) {
   const { isAnon, triggerHardWall } = useAnon()
   const locked = isAnon
@@ -63,6 +65,11 @@ export function AnonLockedNavItem({
           Sign up
         </span>
       )}
+      {beta && !locked && !collapsed && (
+        <span className="ml-auto text-[9px] uppercase tracking-wider text-violet-600 bg-violet-500/10 border border-violet-500/30 rounded px-1.5 py-0.5">
+          Beta
+        </span>
+      )}
     </Link>
   )
 
@@ -71,7 +78,7 @@ export function AnonLockedNavItem({
       <Tooltip>
         <TooltipTrigger render={<div />}>{content}</TooltipTrigger>
         <TooltipContent side="right">
-          <p>{label}{locked ? ' (sign up to unlock)' : ''}</p>
+          <p>{label}{locked ? ' (sign up to unlock)' : beta ? ' (beta)' : ''}</p>
         </TooltipContent>
       </Tooltip>
     )

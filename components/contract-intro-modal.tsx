@@ -195,6 +195,9 @@ export function ContractIntroModal({
   const [party2Role, setParty2Role] = useState('Contractor')
   const [administratorName, setAdministratorName] = useState('')
   const [administratorRole, setAdministratorRole] = useState('Superintendent')
+  // User can explicitly say "no administrator on this contract". Construct-only
+  // small subcontracts often have none — the modal must let people opt out.
+  const [noAdministrator, setNoAdministrator] = useState(false)
   const [userIsParty, setUserIsParty] = useState<'party1' | 'party2'>('party2')
 
   // Decide on mount whether to show.
@@ -380,8 +383,8 @@ export function ContractIntroModal({
           party1_role: party1Role,
           party2_name: party2Name.trim(),
           party2_role: party2Role,
-          administrator_name: administratorName.trim() || null,
-          administrator_role: administratorName.trim() ? administratorRole : null,
+          administrator_name: noAdministrator ? null : (administratorName.trim() || null),
+          administrator_role: noAdministrator ? null : (administratorName.trim() ? administratorRole : null),
           user_is_party: userIsParty,
           facts_verified_by_user: true,
         }),
@@ -470,6 +473,8 @@ export function ContractIntroModal({
             setAdministratorName={setAdministratorName}
             administratorRole={administratorRole}
             setAdministratorRole={setAdministratorRole}
+            noAdministrator={noAdministrator}
+            setNoAdministrator={setNoAdministrator}
             userIsParty={userIsParty}
             setUserIsParty={setUserIsParty}
             saving={phase === 'saving'}
@@ -589,6 +594,8 @@ function ReviewStep(props: {
   setAdministratorName: (v: string) => void
   administratorRole: string
   setAdministratorRole: (v: string) => void
+  noAdministrator: boolean
+  setNoAdministrator: (v: boolean) => void
   userIsParty: 'party1' | 'party2'
   setUserIsParty: (v: 'party1' | 'party2') => void
   saving: boolean
@@ -601,6 +608,7 @@ function ReviewStep(props: {
     party1Name, setParty1Name, party1Role, setParty1Role,
     party2Name, setParty2Name, party2Role, setParty2Role,
     administratorName, setAdministratorName, administratorRole, setAdministratorRole,
+    noAdministrator, setNoAdministrator,
     userIsParty, setUserIsParty,
     saving, onSave, error,
   } = props
@@ -736,15 +744,26 @@ function ReviewStep(props: {
           </div>
         </div>
 
-        {administratorName && (
-          <div className="rounded-lg border border-border p-4 space-y-3">
+        <div className="rounded-lg border border-border p-4 space-y-3">
+          <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Contract administrator
             </span>
+            <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={noAdministrator}
+                onChange={(e) => setNoAdministrator(e.target.checked)}
+                className="h-3.5 w-3.5 rounded border-border accent-foreground"
+              />
+              No administrator on this contract
+            </label>
+          </div>
+          {!noAdministrator && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Name</Label>
-                <Input value={administratorName} onChange={(e) => setAdministratorName(e.target.value)} />
+                <Input value={administratorName} onChange={(e) => setAdministratorName(e.target.value)} placeholder="e.g. Jane Smith" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Role</Label>
@@ -767,8 +786,8 @@ function ReviewStep(props: {
                 </Select>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Which party is the user */}
         <div className="rounded-lg border-2 border-foreground/15 bg-foreground/[0.02] p-4 space-y-3">

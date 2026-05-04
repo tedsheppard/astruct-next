@@ -97,52 +97,92 @@ export default function AdminSettingsPage() {
     )
   }
 
+  const noAdministrator = !((form.administrator_role as string) || '').trim()
+    && !((form.administrator_name as string) || '').trim()
+    && !((form.administrator_address as string) || '').trim()
+
+  const clearAdministrator = () => {
+    setForm(prev => ({
+      ...prev,
+      administrator_role: null,
+      administrator_name: null,
+      administrator_address: null,
+    }))
+    setCustomRole('')
+  }
+
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold text-foreground">Contract Administrator</h2>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <Label className="text-xs text-muted-foreground">Role</Label>
-          <Select value={selectValue} onValueChange={handleRoleChange}>
-            <SelectTrigger className="bg-main-panel border-border text-foreground">
-              <SelectValue placeholder="Select a role">
-                {() => isCustom ? (customRole || 'Other (specify)') : (currentRole || 'Select a role')}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {ADMIN_ROLES.map(r => (
-                <SelectItem key={r} value={r}>{r}</SelectItem>
-              ))}
-              <SelectItem value="__custom__">Other (specify)…</SelectItem>
-            </SelectContent>
-          </Select>
-          {isCustom && (
-            <Input
-              value={customRole}
-              onChange={e => handleCustomChange(e.target.value)}
-              placeholder="Type the role as it appears in the contract"
-              className="bg-main-panel border-border text-foreground placeholder:text-muted-foreground mt-2"
-            />
-          )}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-lg font-semibold text-foreground">Contract Administrator</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Most head contracts have one (Superintendent, Principal&apos;s Rep, etc).
+            Many small subcontracts don&apos;t — leave it empty if so.
+          </p>
         </div>
-        <div className="space-y-1.5">
-          <Label className="text-xs text-muted-foreground">Name</Label>
-          <Input
-            value={(form.administrator_name as string) || ''}
-            onChange={e => update('administrator_name', e.target.value)}
-            className="bg-main-panel border-border text-foreground"
-          />
-        </div>
-        <div className="sm:col-span-2 space-y-1.5">
-          <Label className="text-xs text-muted-foreground">Address</Label>
-          <Input
-            value={(form.administrator_address as string) || ''}
-            onChange={e => update('administrator_address', e.target.value)}
-            className="bg-main-panel border-border text-foreground"
-          />
-        </div>
+        {!noAdministrator && (
+          <Button onClick={clearAdministrator} variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground">
+            Set to none
+          </Button>
+        )}
       </div>
+
+      {noAdministrator ? (
+        <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground space-y-3">
+          <p>No contract administrator on this project.</p>
+          <Button
+            onClick={() => update('administrator_role', 'Superintendent')}
+            variant="outline"
+            size="sm"
+          >
+            Add an administrator
+          </Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Role</Label>
+            <Select value={selectValue} onValueChange={handleRoleChange}>
+              <SelectTrigger className="bg-main-panel border-border text-foreground">
+                <SelectValue placeholder="Select a role">
+                  {() => isCustom ? (customRole || 'Other (specify)') : (currentRole || 'Select a role')}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {ADMIN_ROLES.map(r => (
+                  <SelectItem key={r} value={r}>{r}</SelectItem>
+                ))}
+                <SelectItem value="__custom__">Other (specify)…</SelectItem>
+              </SelectContent>
+            </Select>
+            {isCustom && (
+              <Input
+                value={customRole}
+                onChange={e => handleCustomChange(e.target.value)}
+                placeholder="Type the role as it appears in the contract"
+                className="bg-main-panel border-border text-foreground placeholder:text-muted-foreground mt-2"
+              />
+            )}
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Name</Label>
+            <Input
+              value={(form.administrator_name as string) || ''}
+              onChange={e => update('administrator_name', e.target.value)}
+              className="bg-main-panel border-border text-foreground"
+            />
+          </div>
+          <div className="sm:col-span-2 space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Address</Label>
+            <Input
+              value={(form.administrator_address as string) || ''}
+              onChange={e => update('administrator_address', e.target.value)}
+              className="bg-main-panel border-border text-foreground"
+            />
+          </div>
+        </div>
+      )}
 
       <div className="pt-4">
         <Button onClick={handleSave} disabled={saving} size="sm">

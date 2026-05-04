@@ -26,7 +26,10 @@ import {
   AlignLeft,
   ArrowLeft,
   Check,
+  Upload,
+  X,
 } from 'lucide-react'
+import { toast } from 'sonner'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -45,9 +48,17 @@ interface Letterhead {
   headerShowOn: 'all' | 'first'
   footerPagination: 'page-x-of-y' | 'page-x' | 'none'
   footerPosition: 'left' | 'center' | 'right'
+  // PNG/JPG encoded as a base64 data URL. Capped at ~500KB so a few logos
+  // still fit inside the localStorage budget alongside other Astruct state.
+  logoDataUrl?: string
+  // Render width in millimetres (height is derived to preserve aspect ratio).
+  logoWidthMm?: number
   createdAt: string
   updatedAt: string
 }
+
+const LOGO_MAX_BYTES = 500_000
+const LOGO_DEFAULT_WIDTH_MM = 40
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -195,11 +206,24 @@ function LetterheadPreview({ letterhead }: { letterhead: Letterhead }) {
             className="flex items-center gap-1.5 pb-2 border-b border-gray-200 mb-2 shrink-0"
             style={{ justifyContent: logoJustify }}
           >
-            <div className="bg-gray-300 rounded flex items-center justify-center text-gray-500"
-              style={{ width: baseFontPx * 3.5, height: baseFontPx * 3.5, fontSize: baseFontPx * 0.6 }}
-            >
-              LOGO
-            </div>
+            {letterhead.logoDataUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={letterhead.logoDataUrl}
+                alt="Logo"
+                style={{
+                  width: (letterhead.logoWidthMm || LOGO_DEFAULT_WIDTH_MM) * scale,
+                  height: 'auto',
+                  objectFit: 'contain',
+                }}
+              />
+            ) : (
+              <div className="bg-gray-300 rounded flex items-center justify-center text-gray-500"
+                style={{ width: baseFontPx * 3.5, height: baseFontPx * 3.5, fontSize: baseFontPx * 0.6 }}
+              >
+                LOGO
+              </div>
+            )}
             <div className="flex flex-col gap-0.5">
               <div className="bg-gray-400 rounded-sm" style={{ width: baseFontPx * 8, height: baseFontPx * 0.9 }} />
               <div className="bg-gray-300 rounded-sm" style={{ width: baseFontPx * 5, height: baseFontPx * 0.6 }} />
@@ -459,6 +483,64 @@ function LetterheadEditor({
             <AlignLeft className="size-3.5" />
             Header
           </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Logo</Label>
+            {letterhead.logoDataUrl ? (
+              <div className="flex items-center gap-3 rounded-md border border-border bg-muted/30 p-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={letterhead.logoDataUrl} alt="Logo preview" className="h-12 w-auto max-w-[120px] object-contain rounded bg-white border border-border p-1" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-muted-foreground">Used in the header of generated documents.</p>
+                </div>
+                <Button variant="ghost" size="icon-sm" onClick={() => update({ logoDataUrl: undefined })} title="Remove logo">
+                  <X className="size-3.5" />
+                </Button>
+              </div>
+            ) : (
+              <label className="flex items-center justify-center gap-2 h-16 rounded-md border border-dashed border-border bg-muted/20 hover:bg-muted/40 cursor-pointer text-xs text-muted-foreground transition-colors">
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    e.target.value = ''
+                    if (!file) return
+                    if (file.size > LOGO_MAX_BYTES) {
+                      toast.error(`Logo too large — keep it under ${Math.round(LOGO_MAX_BYTES / 1000)}KB.`)
+                      return
+                    }
+                    const reader = new FileReader()
+                    reader.onload = () => {
+                      const result = reader.result
+                      if (typeof result === 'string') {
+                        update({
+                          logoDataUrl: result,
+                          logoWidthMm: letterhead.logoWidthMm || LOGO_DEFAULT_WIDTH_MM,
+                        })
+                      }
+                    }
+                    reader.onerror = () => toast.error('Could not read that image.')
+                    reader.readAsDataURL(file)
+                  }}
+                />
+                <Upload className="size-3.5" />
+                <span>Upload logo (PNG, JPG, SVG — under {Math.round(LOGO_MAX_BYTES / 1000)}KB)</span>
+              </label>
+            )}
+          </div>
+          {letterhead.logoDataUrl && (
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Logo Width (mm)</Label>
+              <Input
+                type="number"
+                min={10}
+                max={120}
+                value={letterhead.logoWidthMm || LOGO_DEFAULT_WIDTH_MM}
+                onChange={(e) => update({ logoWidthMm: Math.min(120, Math.max(10, Number(e.target.value) || LOGO_DEFAULT_WIDTH_MM)) })}
+              />
+            </div>
+          )}
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Logo Position</Label>
             <Select
