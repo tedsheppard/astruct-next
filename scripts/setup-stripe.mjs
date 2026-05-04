@@ -24,7 +24,8 @@ if (!SECRET) {
   process.exit(1)
 }
 
-const isLive = SECRET.startsWith('sk_live_')
+// Live keys can be sk_live_ (full secret) or rk_live_ (restricted)
+const isLive = SECRET.startsWith('sk_live_') || SECRET.startsWith('rk_live_')
 console.log(`\nProvisioning Stripe in ${isLive ? 'LIVE' : 'TEST'} mode...\n`)
 
 const stripe = new Stripe(SECRET, { apiVersion: '2025-09-30.clover' })

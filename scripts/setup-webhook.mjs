@@ -10,6 +10,7 @@ import Stripe from 'stripe'
 
 const SECRET = process.env.STRIPE_SECRET_KEY
 if (!SECRET) { console.error('STRIPE_SECRET_KEY required'); process.exit(1) }
+const isLive = SECRET.startsWith('sk_live_') || SECRET.startsWith('rk_live_')
 
 const APP_ORIGIN = process.env.NEXT_PUBLIC_APP_ORIGIN || 'https://app.astruct.io'
 const URL = `${APP_ORIGIN}/api/stripe/webhook`
