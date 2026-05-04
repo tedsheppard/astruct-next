@@ -5,6 +5,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 export const dynamic = 'force-dynamic'
 
 const ANON_CONTRACT_LIMIT = 1
+const FREE_CONTRACT_LIMIT = 1
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient()
@@ -13,16 +14,47 @@ export async function POST(request: NextRequest) {
 
   const admin = createAdminClient()
 
+  // ─── Contract-quota gate ────────────────────────────────────────────
+  // Both anon and Free authed users are capped. Pro subscribers get the
+  // contract_quantity from their active subscription. Anything else
+  // (canceled, past_due, no row) defaults to Free tier limits.
+  const { count: existing } = await admin
+    .from('contracts')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+  const currentCount = existing || 0
+
   if (user.is_anonymous) {
-    const { count } = await admin
-      .from('contracts')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-    if ((count || 0) >= ANON_CONTRACT_LIMIT) {
+    if (currentCount >= ANON_CONTRACT_LIMIT) {
       return Response.json(
         {
           error: 'Guest accounts can have one project at a time. Sign up free to add more.',
           code: 'ANON_CONTRACT_LIMIT',
+        },
+        { status: 403 },
+      )
+    }
+  } else {
+    // Authed: check active subscription for paid quota
+    const { data: sub } = await admin
+      .from('subscriptions')
+      .select('contract_quantity, status')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    const isPaid = sub?.status === 'active'
+    const quota = isPaid ? (sub.contract_quantity || 1) : FREE_CONTRACT_LIMIT
+
+    if (currentCount >= quota) {
+      return Response.json(
+        {
+          error: isPaid
+            ? `You've reached your subscription quota of ${quota} project${quota === 1 ? '' : 's'}. Add more from Settings → Billing.`
+            : `Free accounts include 1 project. Upgrade to Pro Contract to add more.`,
+          code: isPaid ? 'PAID_CONTRACT_LIMIT' : 'FREE_CONTRACT_LIMIT',
+          upgrade_url: '/settings/billing',
         },
         { status: 403 },
       )

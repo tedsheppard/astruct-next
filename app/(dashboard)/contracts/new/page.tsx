@@ -25,6 +25,8 @@ export default function NewProjectPage() {
   const { selectContractAndNavigate } = useContract()
   const [error, setError] = useState<string | null>(null)
   const [anonBlocked, setAnonBlocked] = useState<{ existingId: string } | null>(null)
+  const [freeBlocked, setFreeBlocked] = useState<{ existingId: string | null } | null>(null)
+  const [paidBlocked, setPaidBlocked] = useState<{ message: string; existingId: string | null } | null>(null)
   const ranOnceRef = useRef(false)
 
   useEffect(() => {
@@ -66,12 +68,21 @@ export default function NewProjectPage() {
       const d = await r.json().catch(() => ({}))
       if (cancelled) return
 
-      if (r.status === 403 && d?.code === 'ANON_CONTRACT_LIMIT') {
+      if (r.status === 403) {
         const { data: existing } = await supabase
           .from('contracts')
           .select('id').eq('user_id', user.id)
           .order('created_at', { ascending: false }).limit(1)
-        if (existing?.[0]) setAnonBlocked({ existingId: existing[0].id })
+        const existingId = existing?.[0]?.id || null
+        if (d?.code === 'ANON_CONTRACT_LIMIT') {
+          if (existingId) setAnonBlocked({ existingId })
+        } else if (d?.code === 'FREE_CONTRACT_LIMIT') {
+          setFreeBlocked({ existingId })
+        } else if (d?.code === 'PAID_CONTRACT_LIMIT') {
+          setPaidBlocked({ message: d?.error || 'You\'ve reached your subscription quota.', existingId })
+        } else {
+          setError(d?.error || 'Could not start a new project.')
+        }
         return
       }
 
@@ -99,6 +110,50 @@ export default function NewProjectPage() {
                 Back to project
               </Button>
               <Button onClick={() => router.push('/register')}>Sign up free</Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (freeBlocked) {
+    return (
+      <div className="p-6 h-[calc(100vh-3.5rem)] flex items-center justify-center">
+        <Card className="max-w-md w-full">
+          <CardContent className="p-8 text-center space-y-4">
+            <h2 className="text-xl font-semibold tracking-tight">Upgrade to add another project</h2>
+            <p className="text-sm text-muted-foreground">
+              Free accounts include one project. Upgrade to Pro Contract — $29.95 AUD per project per month, GST inclusive — to add more.
+            </p>
+            <div className="flex gap-2 justify-center pt-2">
+              {freeBlocked.existingId && (
+                <Button onClick={() => router.push(`/contracts/${freeBlocked.existingId}/assistant`)} variant="outline">
+                  Back to project
+                </Button>
+              )}
+              <Button onClick={() => router.push('/settings/billing')}>Upgrade to Pro</Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (paidBlocked) {
+    return (
+      <div className="p-6 h-[calc(100vh-3.5rem)] flex items-center justify-center">
+        <Card className="max-w-md w-full">
+          <CardContent className="p-8 text-center space-y-4">
+            <h2 className="text-xl font-semibold tracking-tight">Add another contract slot</h2>
+            <p className="text-sm text-muted-foreground">{paidBlocked.message}</p>
+            <div className="flex gap-2 justify-center pt-2">
+              {paidBlocked.existingId && (
+                <Button onClick={() => router.push(`/contracts/${paidBlocked.existingId}/assistant`)} variant="outline">
+                  Back to project
+                </Button>
+              )}
+              <Button onClick={() => router.push('/settings/billing')}>Manage billing</Button>
             </div>
           </CardContent>
         </Card>

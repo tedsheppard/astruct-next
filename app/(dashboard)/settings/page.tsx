@@ -166,25 +166,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="p-6 overflow-y-auto h-[calc(100vh-3.5rem)]">
-      <div className="max-w-5xl mx-auto space-y-8 animate-fade-in">
-      <div>
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          Settings
-        </h1>
-        <p className="text-sm mt-1 text-muted-foreground">
-          Manage your profile and company details.
-        </p>
-      </div>
-
-      <div className="flex items-center gap-1 border-b border-border -mt-4">
-        <a href="/settings" className="px-3 py-2 text-sm font-medium border-b-2 border-foreground -mb-px">
-          Profile
-        </a>
-        <a href="/settings/billing" className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-          Billing
-        </a>
-      </div>
+    <div className="space-y-8 animate-fade-in">
 
       {/* Profile Section */}
       <Card className="bg-card border-border">
@@ -409,30 +391,6 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Help */}
-      <Card className="bg-card border-border">
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-foreground">Product walkthrough</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Replay the onboarding guide</p>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={async () => {
-                const supabase = createClient()
-                const { data: { user: u } } = await supabase.auth.getUser()
-                if (u) await supabase.from('profiles').update({ walkthrough_completed: false }).eq('id', u.id)
-                window.location.href = '/contracts?walkthrough=1'
-              }}
-            >
-              Replay
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Save Button */}
       <div className="flex justify-end">
         <Button
@@ -443,7 +401,6 @@ export default function SettingsPage() {
           <Save className="mr-2 h-4 w-4" />
           {saving ? 'Saving...' : 'Save Changes'}
         </Button>
-      </div>
       </div>
     </div>
   )

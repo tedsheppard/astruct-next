@@ -55,8 +55,20 @@ export async function getUserPlan(userId: string): Promise<UserPlan> {
   const sb = admin()
   const { data: profile } = await sb
     .from('profiles')
-    .select('subscription_tier, is_anonymous, messages_sent, bytes_uploaded, trial_queries_used, trial_contracts_created, trial_ends_at')
+    .select('is_anonymous, messages_sent, bytes_uploaded, trial_queries_used, trial_contracts_created, trial_ends_at')
     .eq('id', userId)
+    .maybeSingle()
+
+  // Authoritative subscription state lives in the `subscriptions` table now
+  // (populated by the Stripe webhook on checkout.session.completed). The
+  // legacy `profiles.subscription_tier` is no longer trusted — it only got
+  // updated by the old usage tracker, never the Stripe path.
+  const { data: sub } = await sb
+    .from('subscriptions')
+    .select('status, contract_quantity')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1)
     .maybeSingle()
 
   // Count actual contracts owned by the user — authoritative.
@@ -65,17 +77,12 @@ export async function getUserPlan(userId: string): Promise<UserPlan> {
     .select('id', { count: 'exact', head: true })
     .eq('user_id', userId)
 
-  const rawTier = profile?.subscription_tier || 'free'
-  // Map legacy values to the new vocabulary for entitlement checks.
-  const tier =
-    rawTier === 'paid' || rawTier === 'paid_past_due'
-      ? 'paid'
-      : 'free'
-  const isPaid = tier === 'paid'
+  const isPaid = sub?.status === 'active'
+  const tier = isPaid ? 'paid' : 'free'
   const isAnonymous = profile?.is_anonymous === true
   const totalProjects = projectsCreated || 0
-  const projectLimit = isPaid ? Infinity : FREE_PROJECT_LIMIT
-  const canCreateProject = isPaid || totalProjects < projectLimit
+  const projectLimit = isPaid ? (sub.contract_quantity || 1) : FREE_PROJECT_LIMIT
+  const canCreateProject = totalProjects < projectLimit
 
   return {
     tier,

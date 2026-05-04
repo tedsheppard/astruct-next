@@ -36,19 +36,11 @@ export function UsageMeter({ collapsed }: { collapsed?: boolean }) {
   if (usage.isAnonymous) return null
   if (collapsed) return null
 
-  if (usage.tier === 'paid') {
-    return (
-      <div className="px-3 py-2 text-[10px] text-muted-foreground/50">
-        Pro plan
-      </div>
-    )
-  }
-
-  // Free tier — show project usage (the only limit that matters under the new model)
   const used = usage.projectsCreated ?? 0
   const limit = usage.projectLimit ?? 1
   const limitText = Number.isFinite(limit) ? limit : '∞'
   const atCap = !usage.canCreateProject
+  const isPaid = usage.tier === 'paid'
 
   return (
     <div
@@ -57,19 +49,21 @@ export function UsageMeter({ collapsed }: { collapsed?: boolean }) {
       }`}
     >
       <div className="flex items-center justify-between">
-        <span className="text-muted-foreground">Free plan</span>
+        <span className="text-muted-foreground">{isPaid ? 'Pro plan' : 'Free plan'}</span>
         <span className={`font-medium ${atCap ? 'text-amber-600' : 'text-foreground'}`}>
-          {used} / {limitText} project{limit === 1 ? '' : 's'}
+          {used} / {limitText} {isPaid ? 'contract' : 'project'}{limit === 1 ? '' : 's'}
         </span>
       </div>
       {atCap && (
         <div className="mt-2 flex items-center justify-between">
-          <span className="text-amber-600 text-[11px]">Project limit reached</span>
+          <span className="text-amber-600 text-[11px]">
+            {isPaid ? 'Contract slots full' : 'Project limit reached'}
+          </span>
           <Link
-            href="/settings?tab=billing"
+            href="/settings/billing"
             className="text-[10px] font-medium text-foreground hover:underline"
           >
-            Upgrade
+            {isPaid ? 'Add more' : 'Upgrade'}
           </Link>
         </div>
       )}

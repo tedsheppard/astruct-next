@@ -12,6 +12,7 @@ import {
   ArrowRight,
   CheckCircle2,
   Pencil,
+  X,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -415,8 +416,17 @@ export function ContractIntroModal({
       aria-modal="true"
       aria-labelledby="intro-title"
     >
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => { if (phase === 'upload' || phase === 'review') close() }} />
       <div className="relative w-full sm:max-w-2xl max-h-screen sm:max-h-[90vh] overflow-y-auto bg-card sm:rounded-2xl shadow-2xl border border-border">
+        {(phase === 'upload' || phase === 'review') && (
+          <button
+            onClick={close}
+            aria-label="Close"
+            className="absolute top-3 right-3 z-10 h-8 w-8 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
         {phase === 'upload' && (
           <UploadStep
             dragOver={dragOver}

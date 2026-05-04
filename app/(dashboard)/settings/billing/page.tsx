@@ -154,74 +154,76 @@ export default function BillingPage() {
   const projectedTotal = (t.contractQuantity * 2995) + t.overageCents
 
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Billing</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {hasSub
-            ? `Pro Contract — ${t.contractQuantity} active contract${t.contractQuantity === 1 ? '' : 's'}.`
-            : 'Free tier — 1 project, generous limits, forever.'}
-        </p>
-      </div>
-
+    <div className="space-y-6 max-w-3xl">
       {/* Plan card */}
       <Card>
         <CardContent className="p-6 space-y-4">
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between gap-4">
             <div>
               <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Plan</div>
               <div className="text-lg font-medium flex items-center gap-2">
                 {hasSub ? 'Pro Contract' : 'Free'}
                 {hasSub && <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">Active</span>}
               </div>
-              {hasSub && (
-                <div className="text-sm text-muted-foreground mt-1">
-                  Renews {fmtDate(t.periodEnd)} · {fmtCents(projectedTotal)} projected this cycle
-                </div>
-              )}
+              <div className="text-sm text-muted-foreground mt-1">
+                {hasSub
+                  ? `${t.contractQuantity} contract slot${t.contractQuantity === 1 ? '' : 's'} · Renews ${fmtDate(t.periodEnd)} · ${fmtCents(projectedTotal)} projected this cycle`
+                  : 'One project, full features, forever. Upgrade to Pro Contract to add more projects.'}
+              </div>
             </div>
             {hasSub ? (
               <Button onClick={openPortal} disabled={busy === 'portal'} variant="outline">
                 {busy === 'portal' ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <ExternalLink className="h-3.5 w-3.5 mr-1.5" />}
                 Manage in Stripe
               </Button>
-            ) : (
-              <Button onClick={() => startCheckout(quantity)} disabled={busy === 'checkout'}>
-                {busy === 'checkout' ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : null}
-                Upgrade to Pro
-              </Button>
-            )}
+            ) : null}
           </div>
 
-          {/* Contract stepper — visible always so the user can pick a quantity */}
-          <div className="rounded-md border border-border p-4 bg-muted/20">
-            <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Contract slots</div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                className="h-9 w-9 rounded-md border border-border flex items-center justify-center hover:bg-muted"
-                aria-label="Decrease quantity"
-              >
-                <Minus className="h-4 w-4" />
-              </button>
-              <div className="text-2xl font-semibold w-12 text-center tabular-nums">{quantity}</div>
-              <button
-                onClick={() => setQuantity(q => Math.min(50, q + 1))}
-                className="h-9 w-9 rounded-md border border-border flex items-center justify-center hover:bg-muted"
-                aria-label="Increase quantity"
-              >
-                <Plus className="h-4 w-4" />
-              </button>
-              <div className="ml-3 text-sm text-muted-foreground">
-                = {fmtCents(quantity * 2995)} / month, GST included
+          {/* For Free users: clear CTA — choose how many slots, then upgrade.
+              For Pro users: show quantity + portal hint. */}
+          {!hasSub ? (
+            <div className="rounded-md border border-border p-4 bg-muted/20">
+              <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
+                Add Pro Contract slots
               </div>
+              <div className="flex items-center gap-3 flex-wrap">
+                <button
+                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                  className="h-9 w-9 rounded-md border border-border flex items-center justify-center hover:bg-muted"
+                  aria-label="Decrease quantity"
+                >
+                  <Minus className="h-4 w-4" />
+                </button>
+                <div className="text-2xl font-semibold w-12 text-center tabular-nums">{quantity}</div>
+                <button
+                  onClick={() => setQuantity(q => Math.min(50, q + 1))}
+                  className="h-9 w-9 rounded-md border border-border flex items-center justify-center hover:bg-muted"
+                  aria-label="Increase quantity"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+                <div className="text-sm text-muted-foreground">
+                  = {fmtCents(quantity * 2995)} / month, GST included
+                </div>
+                <Button
+                  onClick={() => startCheckout(quantity)}
+                  disabled={busy === 'checkout'}
+                  className="ml-auto"
+                >
+                  {busy === 'checkout' ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : null}
+                  Upgrade to Pro
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-3">
+                Each slot lets you add one project. Cancel any time from the Stripe portal.
+              </p>
             </div>
-            {hasSub && quantity !== t.contractQuantity && (
-              <div className="mt-3 text-xs text-muted-foreground">
-                Use the Stripe portal to change quantity; proration applies automatically.
-              </div>
-            )}
-          </div>
+          ) : (
+            <div className="rounded-md border border-border p-4 bg-muted/20 text-sm text-muted-foreground">
+              You currently have <strong className="text-foreground">{t.contractQuantity}</strong> contract slot{t.contractQuantity === 1 ? '' : 's'}.
+              To add or remove slots, click <strong className="text-foreground">Manage in Stripe</strong> above — proration is applied automatically.
+            </div>
+          )}
         </CardContent>
       </Card>
 
