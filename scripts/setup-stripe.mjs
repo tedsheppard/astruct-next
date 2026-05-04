@@ -166,7 +166,9 @@ if (portalConfig) {
   portalConfig = await stripe.billingPortal.configurations.update(portalConfig.id, portalParams)
   console.log(`✓ Updated portal config: ${portalConfig.id}`)
 } else {
-  portalConfig = await stripe.billingPortal.configurations.create({ ...portalParams, default: true })
+  // Stripe API: `default: true` is not a valid create-time parameter (only set
+  // via update). Fresh accounts get the first config as default automatically.
+  portalConfig = await stripe.billingPortal.configurations.create(portalParams)
   console.log(`+ Created portal config: ${portalConfig.id}`)
 }
 

@@ -93,7 +93,11 @@ export async function POST(request: NextRequest) {
       { price: STRIPE_PRICE_BASE, quantity },
       { price: STRIPE_PRICE_OVERAGE }, // metered — no quantity
     ],
-    automatic_tax: { enabled: true },
+    // automatic_tax disabled: requires Stripe Tax + AU GST registration,
+    // which isn't required until $75k AUD turnover. Re-enable once
+    // registered. The base price already has tax_behavior: 'inclusive',
+    // so the displayed amount is what the customer pays.
+    automatic_tax: { enabled: false },
     customer_update: { name: 'auto', address: 'auto' },
     tax_id_collection: { enabled: true },
     allow_promotion_codes: true,
