@@ -76,6 +76,19 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  // Bare app subdomain visit by an unauthenticated user (no real session,
+  // no anon Supabase session yet) → render the marketing landing page in
+  // place. Without this, the dashboard layout loads, calls getUser(), sees
+  // nothing, and short-circuits — leaving a blank shell. We rewrite (not
+  // redirect) so the URL stays app.astruct.io/. The marketing landing's
+  // CTAs already point to /register and /assistant on the app subdomain,
+  // so the funnel keeps working.
+  if (!user && request.nextUrl.pathname === '/') {
+    const url = request.nextUrl.clone()
+    url.pathname = '/landing'
+    return NextResponse.rewrite(url)
+  }
+
   // Public paths on app domain
   const publicPaths = ['/login', '/register', '/forgot-password', '/auth', '/api', '/landing', '/platform', '/solutions', '/pricing', '/security', '/company', '/privacy', '/terms', '/contact', '/verify-email', '/verify-phone']
   // Anon-first mode opens up the assistant entry shim and contract pages so
