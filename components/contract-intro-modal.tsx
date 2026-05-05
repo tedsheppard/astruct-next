@@ -264,6 +264,15 @@ export function ContractIntroModal({
     onDone?.()
   }, [onDone, searchParams])
 
+  // Explicit user-initiated cancel: close the modal AND bounce to the
+  // projects list so the user isn't dropped into a half-set-up assistant
+  // page for a contract they just rejected. The orphan contract row stays
+  // in their dashboard until they delete it from there.
+  const cancelAndExit = useCallback(() => {
+    close()
+    router.push('/contracts')
+  }, [close, router])
+
   const handleFile = async (file: File) => {
     if (!file) return
     if (file.size > 50 * 1024 * 1024) {
@@ -438,6 +447,7 @@ export function ContractIntroModal({
             handleFile={handleFile}
             error={error}
             isAnon={isAnon}
+            onCancel={cancelAndExit}
           />
         )}
 
@@ -479,6 +489,8 @@ export function ContractIntroModal({
             setUserIsParty={setUserIsParty}
             saving={phase === 'saving'}
             onSave={handleSave}
+            onBack={() => { setPhase('upload'); setError(null) }}
+            onCancel={cancelAndExit}
             error={error}
           />
         )}
@@ -495,6 +507,7 @@ function UploadStep({
   handleFile,
   error,
   isAnon,
+  onCancel,
 }: {
   dragOver: boolean
   setDragOver: (b: boolean) => void
@@ -502,6 +515,7 @@ function UploadStep({
   handleFile: (f: File) => void
   error: string | null
   isAnon: boolean
+  onCancel: () => void
 }) {
   return (
     <div className="p-6 sm:p-10">
@@ -568,6 +582,12 @@ function UploadStep({
           ? 'No signup, no credit card. Free forever for your first project.'
           : 'Astruct will read the contract and pre-fill the project details so you can start in seconds.'}
       </p>
+
+      <div className="mt-4 flex justify-center">
+        <Button onClick={onCancel} variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+          Cancel
+        </Button>
+      </div>
     </div>
   )
 }
@@ -600,6 +620,8 @@ function ReviewStep(props: {
   setUserIsParty: (v: 'party1' | 'party2') => void
   saving: boolean
   onSave: () => void
+  onBack: () => void
+  onCancel: () => void
   error: string | null
 }) {
   const {
@@ -610,7 +632,7 @@ function ReviewStep(props: {
     administratorName, setAdministratorName, administratorRole, setAdministratorRole,
     noAdministrator, setNoAdministrator,
     userIsParty, setUserIsParty,
-    saving, onSave, error,
+    saving, onSave, onBack, onCancel, error,
   } = props
 
   return (
@@ -837,7 +859,27 @@ function ReviewStep(props: {
           </div>
         )}
 
-        <div className="flex items-center justify-end gap-2 pt-2 border-t border-border sticky bottom-0 bg-background pb-2">
+        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-2 pt-3 border-t border-border sticky bottom-0 bg-background pb-2">
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={onBack}
+              disabled={saving}
+              variant="ghost"
+              size="lg"
+              className="min-h-[44px]"
+            >
+              ← Upload a different file
+            </Button>
+            <Button
+              onClick={onCancel}
+              disabled={saving}
+              variant="outline"
+              size="lg"
+              className="min-h-[44px]"
+            >
+              Cancel
+            </Button>
+          </div>
           <Button onClick={onSave} disabled={saving} size="lg" className="w-full sm:w-auto min-h-[44px]">
             {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ArrowRight className="h-4 w-4 mr-2" />}
             Continue to assistant
