@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { Lock } from 'lucide-react'
 import { useAnon } from '@/lib/anon-context'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
@@ -61,9 +62,7 @@ export function AnonLockedNavItem({
         {label}
       </span>
       {locked && !collapsed && (
-        <span className="ml-auto text-[9px] uppercase tracking-wider text-amber-600 bg-amber-500/10 border border-amber-500/30 rounded px-1.5 py-0.5">
-          Sign up
-        </span>
+        <Lock className="ml-auto h-3 w-3 text-muted-foreground/50" strokeWidth={2} />
       )}
       {beta && !locked && !collapsed && (
         <span className="ml-auto text-[9px] uppercase tracking-wider text-violet-600 bg-violet-500/10 border border-violet-500/30 rounded px-1.5 py-0.5">

@@ -484,7 +484,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   {contractNavItems.map(({ icon, label, subpath, beta }) => {
                     const href = `/contracts/${selectedContractId}/${subpath}`
                     const isActive = pathname === href || pathname.startsWith(href + '/')
-                    const lockedForAnon = subpath === 'calendar' || subpath === 'templates'
+                    // Templates are intentionally unlocked for anon users —
+                    // creating a notice template needs no account.
+                    // Only Calendar stays locked among the per-contract nav.
+                    const lockedForAnon = subpath === 'calendar'
                     if (lockedForAnon) {
                       return (
                         <AnonLockedNavItem
@@ -530,7 +533,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             {/* ═══ BOTTOM: Global Items ═══ */}
             <div className="border-t border-sidebar-fg/8 pt-3 space-y-0.5">
-              <NavItem icon={LayoutGrid} label="Your Projects" href="/contracts" isActive={pathname === '/contracts'} collapsed={collapsed} />
+              <AnonLockedNavItem icon={LayoutGrid} label="Your Projects" href="/contracts" isActive={pathname === '/contracts'} collapsed={collapsed} />
               <AnonLockedNavItem icon={FileText} label="Letterheads" href="/letterheads" isActive={pathname.startsWith('/letterheads') || pathname.startsWith('/templates')} collapsed={collapsed} />
               <AnonLockedNavItem icon={BookOpen} label="Knowledge Base" href="/knowledge-base" isActive={pathname.startsWith('/knowledge-base')} collapsed={collapsed} />
               <AnonLockedNavItem icon={Settings} label="Settings" href="/settings" isActive={pathname === '/settings'} collapsed={collapsed} />

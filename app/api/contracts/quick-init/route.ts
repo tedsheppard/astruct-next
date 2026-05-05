@@ -194,7 +194,15 @@ export async function POST(request: NextRequest) {
       extractedText = buffer.toString('utf-8')
     }
 
-    const { category, summary } = await classifyDocument(extractedText, filename)
+    // The intro modal is the explicit "Upload your contract" flow — the user
+    // told us this IS the contract. Don't second-guess them with an AI
+    // classifier that mis-routes things like "Pensar-RFI-000112" into the
+    // RFI bucket. Library uploads later still go through the classifier.
+    const category = '01_contract'
+    const summary = 'Contract uploaded.'
+    // Suppress the unused classifyDocument warning — we keep the helper
+    // around in case we re-enable a "force classify" branch in future.
+    void classifyDocument
 
     const { data: doc, error: docErr } = await admin
       .from('documents')
