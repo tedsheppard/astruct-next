@@ -44,8 +44,10 @@
   font-family: var(--font-heading), sans-serif;
   letter-spacing: -0.025em;
   line-height: 1.05;
-  color: inherit; /* inherit so text-white wins on dark sections; body default is --site-text */
   font-weight: 700;
+  /* No color here: headings inherit --site-text by default, and text-white /
+     text-[...] utilities win on dark sections (this rule would otherwise
+     out-specify them and force dark text on dark backgrounds). */
 }
 .astruct-site .font-display { font-family: var(--font-heading), sans-serif; letter-spacing: -0.025em; }
 .astruct-site .font-mono { font-family: var(--font-mono), ui-monospace, monospace; }

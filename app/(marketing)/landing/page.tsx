@@ -29,7 +29,7 @@ export default function HomePage() {
               Security of Payment, done properly
             </Pill>
             <h1 className="text-[44px] font-bold leading-[1.02] tracking-tight text-[var(--site-text)] sm:text-[56px]">
-              Get paid under the Act,<br className="hidden sm:block" /> without the paperwork war.
+              Get paid what you&apos;re owed,<br className="hidden sm:block" /> without the paperwork war.
             </h1>
             <p className="mt-6 max-w-xl text-[18px] leading-relaxed text-[var(--site-body)]">
               Astruct turns progress claims, payment schedules, variations and retention into compliant documents in
