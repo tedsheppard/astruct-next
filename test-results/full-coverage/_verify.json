@@ -1,0 +1,8 @@
+{
+  "findings": [
+    {
+      "severity": "Critical",
+      "label": "Contract slot stepper present"
+    }
+  ]
+}

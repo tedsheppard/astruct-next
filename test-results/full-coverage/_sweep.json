@@ -1,0 +1,135 @@
+{
+  "email": "qa+sweep-1777712063737@gmail.com",
+  "cid": "e8e20866-3a69-4486-9268-3325cf9341eb",
+  "observations": [
+    {
+      "route": "/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/assistant",
+      "finalUrl": "https://app.astruct.io/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/assistant",
+      "screenshot": "/Users/tedsheppard/Desktop/Projects/astruct/astruct-next/test-results/full-coverage/screenshots/503_sw_assistant_load.png",
+      "elements": 37,
+      "didLoad": true,
+      "consoleErrors": 0
+    },
+    {
+      "route": "/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/library",
+      "finalUrl": "https://app.astruct.io/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/library",
+      "screenshot": "/Users/tedsheppard/Desktop/Projects/astruct/astruct-next/test-results/full-coverage/screenshots/504_sw_library_load.png",
+      "elements": 36,
+      "didLoad": true,
+      "consoleErrors": 0
+    },
+    {
+      "route": "/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/calendar",
+      "finalUrl": "https://app.astruct.io/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/calendar",
+      "screenshot": "/Users/tedsheppard/Desktop/Projects/astruct/astruct-next/test-results/full-coverage/screenshots/505_sw_calendar_load.png",
+      "elements": 23,
+      "didLoad": true,
+      "consoleErrors": 0
+    },
+    {
+      "route": "/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/correspondence",
+      "finalUrl": "https://app.astruct.io/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/correspondence",
+      "screenshot": "/Users/tedsheppard/Desktop/Projects/astruct/astruct-next/test-results/full-coverage/screenshots/506_sw_correspondence_load.png",
+      "elements": 20,
+      "didLoad": true,
+      "consoleErrors": 0
+    },
+    {
+      "route": "/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/templates",
+      "finalUrl": "https://app.astruct.io/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/templates",
+      "screenshot": "/Users/tedsheppard/Desktop/Projects/astruct/astruct-next/test-results/full-coverage/screenshots/507_sw_templates_load.png",
+      "elements": 21,
+      "didLoad": true,
+      "consoleErrors": 0
+    },
+    {
+      "route": "/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/history",
+      "finalUrl": "https://app.astruct.io/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/history",
+      "screenshot": "/Users/tedsheppard/Desktop/Projects/astruct/astruct-next/test-results/full-coverage/screenshots/508_sw_history_load.png",
+      "elements": 19,
+      "didLoad": true,
+      "consoleErrors": 0
+    },
+    {
+      "route": "/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/settings",
+      "finalUrl": "https://app.astruct.io/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/settings",
+      "screenshot": "/Users/tedsheppard/Desktop/Projects/astruct/astruct-next/test-results/full-coverage/screenshots/509_sw_settings-general_load.png",
+      "elements": 30,
+      "didLoad": true,
+      "consoleErrors": 0
+    },
+    {
+      "route": "/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/settings/parties",
+      "finalUrl": "https://app.astruct.io/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/settings/parties",
+      "screenshot": "/Users/tedsheppard/Desktop/Projects/astruct/astruct-next/test-results/full-coverage/screenshots/510_sw_settings-parties_load.png",
+      "elements": 45,
+      "didLoad": true,
+      "consoleErrors": 0
+    },
+    {
+      "route": "/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/settings/administrator",
+      "finalUrl": "https://app.astruct.io/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/settings/administrator",
+      "screenshot": "/Users/tedsheppard/Desktop/Projects/astruct/astruct-next/test-results/full-coverage/screenshots/511_sw_settings-administrator_load.png",
+      "elements": 27,
+      "didLoad": true,
+      "consoleErrors": 0
+    },
+    {
+      "route": "/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/settings/dates",
+      "finalUrl": "https://app.astruct.io/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/settings/dates",
+      "screenshot": "/Users/tedsheppard/Desktop/Projects/astruct/astruct-next/test-results/full-coverage/screenshots/512_sw_settings-dates_load.png",
+      "elements": 25,
+      "didLoad": true,
+      "consoleErrors": 0
+    },
+    {
+      "route": "/letterheads",
+      "finalUrl": "https://app.astruct.io/letterheads",
+      "screenshot": "/Users/tedsheppard/Desktop/Projects/astruct/astruct-next/test-results/full-coverage/screenshots/513_sw_letterheads_load.png",
+      "elements": 21,
+      "didLoad": true,
+      "consoleErrors": 0
+    },
+    {
+      "route": "/knowledge-base",
+      "finalUrl": "https://app.astruct.io/knowledge-base",
+      "screenshot": "/Users/tedsheppard/Desktop/Projects/astruct/astruct-next/test-results/full-coverage/screenshots/514_sw_knowledge-base_load.png",
+      "elements": 17,
+      "didLoad": true,
+      "consoleErrors": 0
+    },
+    {
+      "route": "/settings",
+      "finalUrl": "https://app.astruct.io/settings",
+      "screenshot": "/Users/tedsheppard/Desktop/Projects/astruct/astruct-next/test-results/full-coverage/screenshots/515_sw_settings_load.png",
+      "elements": 31,
+      "didLoad": true,
+      "consoleErrors": 0
+    },
+    {
+      "route": "/settings/billing",
+      "finalUrl": "https://app.astruct.io/settings/billing",
+      "screenshot": "/Users/tedsheppard/Desktop/Projects/astruct/astruct-next/test-results/full-coverage/screenshots/516_sw_settings-billing_load.png",
+      "elements": 20,
+      "didLoad": true,
+      "consoleErrors": 0
+    },
+    {
+      "route": "/contracts",
+      "finalUrl": "https://app.astruct.io/contracts",
+      "screenshot": "/Users/tedsheppard/Desktop/Projects/astruct/astruct-next/test-results/full-coverage/screenshots/517_sw_browse-contracts_load.png",
+      "elements": 20,
+      "didLoad": true,
+      "consoleErrors": 0
+    }
+  ],
+  "findings": [],
+  "consoleErrorsByRoute": {
+    "pre-login": [
+      "Failed to load resource: the server responded with a status of 403 ()"
+    ],
+    "/contracts/e8e20866-3a69-4486-9268-3325cf9341eb/calendar": [
+      "[Upload] Error for sample-contract.pdf: TypeError: Failed to fetch\n    at L (https://app.astruct.io/_next/static/chunks/0t793qrcngtnt.js:1:5053)"
+    ]
+  }
+}

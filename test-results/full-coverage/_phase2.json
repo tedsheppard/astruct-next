@@ -1,0 +1,9 @@
+{
+  "findings": [
+    {
+      "severity": "Info",
+      "msg": "Pensar 14MB extraction took 98s"
+    }
+  ],
+  "consoleErrors": []
+}

@@ -1,0 +1,20 @@
+{
+  "project_slug": "riverside-towers-suite",
+  "total_documents": 220,
+  "category_counts": {
+    "01_contract": 1,
+    "02_tender": 15,
+    "03_drawings": 36,
+    "04_specifications": 18,
+    "05_project_letters": 32,
+    "06_rfi": 24,
+    "07_variations": 18,
+    "08_nod": 12,
+    "09_eot": 10,
+    "10_payment_claims": 12,
+    "11_payment_schedules": 12,
+    "12_third_party_invoices": 12,
+    "13_other": 18
+  },
+  "contract_bundle_pages": 380
+}

@@ -1,12 +1,12 @@
 {
   "mode": "test",
-  "generated_at": "2026-05-04T00:58:21.203Z",
-  "product_id": "prod_US4zA5iFS1S7NN",
-  "base_price_id": "price_1TTApBAIOAykxV509a0j6YPn",
+  "generated_at": "2026-05-04T01:35:14.739Z",
+  "product_id": "prod_US5abeoAtaxuYE",
+  "base_price_id": "price_1TTBPgEoBe6CpJGu7WxsOq3e",
   "base_price_lookup_key": "pro_contract_monthly_aud",
-  "overage_price_id": "price_1TTApCAIOAykxV50KhFEcfcu",
+  "overage_price_id": "price_1TTBPhEoBe6CpJGuilXo4nIr",
   "overage_price_lookup_key": "pro_contract_overage_aud",
-  "meter_id": "mtr_test_61UcYmYGg9B3PVZj341AIOAykxV50VLM",
+  "meter_id": "mtr_61UcZN3xPdZDWOvZ641EoBe6CpJGu29Y",
   "meter_event_name": "astruct_token_units",
-  "portal_config_id": "bpc_1TTAq0AIOAykxV50BhU4XSMf"
+  "portal_config_id": "bpc_1TTBPiEoBe6CpJGuMiWuGLhy"
 }

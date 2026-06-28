@@ -1,0 +1,145 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   Astruct marketing site — "engineered trust" design system.
+   Scoped under .astruct-site so it never touches the app dashboard theme or
+   the dark-mode tokens. The marketing site is always light.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.astruct-site {
+  /* Brand */
+  --site-brand: #1b3be0;        /* Astruct cobalt */
+  --site-brand-600: #1731c2;
+  --site-brand-700: #122a9e;
+  --site-brand-tint: #eef1fe;   /* faint blue wash */
+  --site-amber: #f5a524;        /* structural / hi-vis accent (sparing) */
+  --site-green: #12a06a;        /* compliance ticks */
+  --site-red: #e5484d;
+
+  /* Neutrals */
+  --site-ink: #0a1124;          /* near-black navy — dark sections + display */
+  --site-ink-2: #111a33;
+  --site-text: #14181f;         /* primary text */
+  --site-body: #444c59;         /* body copy */
+  --site-muted: #6b7480;        /* muted/labels */
+  --site-line: #e6e9ef;         /* hairline borders */
+  --site-line-2: #d7dbe3;
+  --site-paper: #f5f7fa;        /* section band */
+  --site-paper-2: #eef1f6;
+  --site-white: #ffffff;
+
+  color: var(--site-text);
+  background: var(--site-white);
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.astruct-site ::selection { background: rgba(27, 59, 224, 0.16); }
+
+/* Display headings — tight Manrope */
+.astruct-site h1,
+.astruct-site h2,
+.astruct-site h3,
+.astruct-site h4 {
+  font-family: var(--font-heading), sans-serif;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  color: inherit; /* inherit so text-white wins on dark sections; body default is --site-text */
+  font-weight: 700;
+}
+.astruct-site .font-display { font-family: var(--font-heading), sans-serif; letter-spacing: -0.025em; }
+.astruct-site .font-mono { font-family: var(--font-mono), ui-monospace, monospace; }
+
+/* Eyebrow / kicker label */
+.astruct-site .site-eyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--site-brand);
+}
+
+/* Layout helpers */
+.astruct-site .site-container { max-width: 1200px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+.astruct-site .site-container-wide { max-width: 1320px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+
+/* Buttons */
+.astruct-site .site-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 46px; padding: 0 22px; border-radius: 10px;
+  font-family: var(--font-heading), sans-serif; font-weight: 600; font-size: 15px;
+  letter-spacing: -0.01em; cursor: pointer; white-space: nowrap;
+  transition: transform .12s ease, background .15s ease, box-shadow .15s ease, border-color .15s ease;
+  border: 1px solid transparent;
+}
+.astruct-site .site-btn:active { transform: translateY(1px); }
+.astruct-site .site-btn-primary { background: var(--site-brand); color: #fff; box-shadow: 0 1px 2px rgba(10,17,36,.18), 0 6px 18px -8px rgba(27,59,224,.55); }
+.astruct-site .site-btn-primary:hover { background: var(--site-brand-600); }
+.astruct-site .site-btn-dark { background: var(--site-ink); color: #fff; }
+.astruct-site .site-btn-dark:hover { background: var(--site-ink-2); }
+.astruct-site .site-btn-ghost { background: #fff; color: var(--site-text); border-color: var(--site-line-2); }
+.astruct-site .site-btn-ghost:hover { border-color: #b9c0cd; background: #fafbfc; }
+.astruct-site .site-btn-on-dark { background: #fff; color: var(--site-ink); }
+.astruct-site .site-btn-on-dark:hover { background: #eef1f6; }
+.astruct-site .site-btn-sm { height: 38px; padding: 0 16px; font-size: 14px; border-radius: 9px; }
+.astruct-site .site-btn-lg { height: 52px; padding: 0 26px; font-size: 16px; }
+
+/* Pills / chips */
+.astruct-site .site-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 30px; padding: 0 12px; border-radius: 999px;
+  font-size: 13px; font-weight: 500; color: var(--site-body);
+  border: 1px solid var(--site-line); background: #fff;
+}
+.astruct-site .site-pill-tint { background: var(--site-brand-tint); border-color: #dbe1fb; color: var(--site-brand-700); }
+
+/* Cards */
+.astruct-site .site-card {
+  background: #fff; border: 1px solid var(--site-line); border-radius: 16px;
+  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+.astruct-site .site-card-hover:hover {
+  border-color: #cfd6e4; box-shadow: 0 1px 2px rgba(10,17,36,.04), 0 18px 40px -24px rgba(10,17,36,.22);
+  transform: translateY(-2px);
+}
+
+/* Hairline grid background for hero / dark panels */
+.astruct-site .site-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(10,17,36,.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(10,17,36,.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+.astruct-site .site-grid-bg-dark {
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+/* Section rhythm */
+.astruct-site .site-section { padding-top: 96px; padding-bottom: 96px; }
+.astruct-site .site-section-sm { padding-top: 64px; padding-bottom: 64px; }
+@media (max-width: 768px) {
+  .astruct-site .site-section { padding-top: 64px; padding-bottom: 64px; }
+  .astruct-site h1 { letter-spacing: -0.03em; }
+}
+
+/* Fade-in on mount (defaults visible so long pages never stay blank) */
+@keyframes siteFadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.astruct-site .site-fade { animation: siteFadeUp .5s cubic-bezier(.2,.7,.2,1) both; }
+
+/* Long-form legal / prose */
+.astruct-site .site-prose { color: var(--site-body); font-size: 15.5px; line-height: 1.75; }
+.astruct-site .site-prose h2 { font-size: 22px; font-weight: 700; color: var(--site-text); margin: 36px 0 12px; }
+.astruct-site .site-prose h3 { font-size: 17px; font-weight: 700; color: var(--site-text); margin: 24px 0 8px; }
+.astruct-site .site-prose p { margin: 0 0 14px; }
+.astruct-site .site-prose ul { margin: 0 0 14px; padding-left: 22px; list-style: disc; }
+.astruct-site .site-prose li { margin-bottom: 7px; }
+.astruct-site .site-prose a { color: var(--site-brand); text-decoration: underline; }
+.astruct-site .site-prose strong { color: var(--site-text); font-weight: 600; }
+
+/* Marquee for logo strip */
+@keyframes siteMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.astruct-site .site-marquee { animation: siteMarquee 32s linear infinite; }

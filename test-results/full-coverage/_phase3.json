@@ -1,0 +1,16 @@
+{
+  "findings": [
+    {
+      "severity": "Major",
+      "msg": "Contract stepper buttons missing on Billing page"
+    },
+    {
+      "severity": "Critical",
+      "msg": "Upgrade to Pro button missing on billing page for new account"
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 403 ()"
+  ],
+  "email": "qa+coverage-1777709569303@gmail.com"
+}

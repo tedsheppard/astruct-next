@@ -1,0 +1,23 @@
+[
+  {
+    "id": "bug-001",
+    "found_at": "2026-05-02T11:23:18Z",
+    "title": "No 'Forgot password?' link visible on login page",
+    "severity": "major",
+    "category": "frontend",
+    "phase": "phase_2",
+    "route": "/login",
+    "screenshot_evidence": "test-results/walk-and-fix/screenshots/p02_001_login.png",
+    "reproduction": "Visit /login \u2014 no a[href='/forgot-password']",
+    "sarah_reaction": "Every other SaaS has this. I forget passwords often. Missing this is a hard frustration.",
+    "status": "open",
+    "assigned_to": null,
+    "fix_started_at": null,
+    "fix_completed_at": null,
+    "fix_notes": null,
+    "before_screenshot": null,
+    "after_screenshot": null,
+    "verified_at": null,
+    "verifier_notes": null
+  }
+]

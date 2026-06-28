@@ -1,0 +1,57 @@
+{
+  "results": [
+    {
+      "scenario": "1. Happy path",
+      "status": "pass",
+      "note": "subscription sub_1TTBAzAIOAykxV50z6EpJJke active"
+    },
+    {
+      "scenario": "2. Card declined at checkout",
+      "status": "pass",
+      "note": "card 4000…0341 correctly rejected; no active subscription row"
+    },
+    {
+      "scenario": "3. 3DS",
+      "status": "pass",
+      "note": "3DS challenge completed; sub active"
+    },
+    {
+      "scenario": "4. Cancellation via portal",
+      "status": "pass",
+      "note": "sub_1TTBCjAIOAykxV50bioywmN1 marked cancel_at_period_end via API + webhook reflected"
+    },
+    {
+      "scenario": "5. Quantity change",
+      "status": "pass",
+      "note": "quantity=3 reflected in DB via webhook"
+    },
+    {
+      "scenario": "6. Overage accumulation",
+      "status": "pass",
+      "note": "used=7550000 > allowance=7500000; overage=50000 tokens = 5 units = $0.50"
+    },
+    {
+      "scenario": "7. Overage cap",
+      "status": "pass",
+      "note": "cap of $5.00 blocked further requests; used=$56.50"
+    },
+    {
+      "scenario": "8. Webhook replay",
+      "status": "pass",
+      "note": "duplicate event evt_1TTBD8AIOAykxV50GCGHXSde correctly skipped"
+    },
+    {
+      "scenario": "9. Customer portal",
+      "status": "pass",
+      "note": "portal session created: bps_1TTBDEAIOAykxV50jB0SfjvT"
+    },
+    {
+      "scenario": "10. Refund",
+      "status": "pass",
+      "note": "refund re_3TTBCaAIOAykxV503EELQWpF created for payment_intent pi_3TTBCaAIOAykxV503Nw9tCwF (status: succeeded, amount: $29.95)"
+    }
+  ],
+  "passed": 10,
+  "failed": 0,
+  "maybe": 0
+}

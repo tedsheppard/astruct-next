@@ -1,0 +1,129 @@
+{
+  "project_slug": "riverside-towers-suite",
+  "project_name": "Riverside Towers - Mixed Use Development",
+  "project_reference": "RDG-2025-001",
+  "location": {
+    "site_address": "18 Skyring Terrace, Newstead QLD 4006",
+    "city": "Brisbane",
+    "state": "QLD",
+    "country": "Australia"
+  },
+  "contract": {
+    "contract_form": "AS4000-2025",
+    "principal": "Riverside Development Group Pty Ltd",
+    "contractor": "Apex Construction Pty Ltd",
+    "superintendent": "Marshall & Associates Pty Ltd",
+    "superintendent_representative": "James Marshall",
+    "contract_sum_aud": 47850000,
+    "date_of_contract": "2025-08-29",
+    "date_for_site_possession": "2025-09-15",
+    "date_for_practical_completion": "2027-04-30",
+    "defects_liability_period": "24 months",
+    "liquidated_damages_per_day_aud": 18500,
+    "security_percent": 5,
+    "retention_percent": 5
+  },
+  "contract_bundle": {
+    "filename": "Head Contract Bundle - Riverside Towers.pdf",
+    "category": "01_contract",
+    "estimated_pages": 380,
+    "sections": [
+      "Formal Instrument of Agreement",
+      "Contract Particulars / Annexure Part A",
+      "Special Conditions / Annexure Part B",
+      "General Conditions of Contract",
+      "Scope and Principal's Project Requirements",
+      "Contractor's Tender and Post-Tender Clarifications",
+      "Schedules and Price Tables",
+      "Programme Appendix",
+      "Insurance and Security Schedules"
+    ]
+  },
+  "project_profile": {
+    "asset_class": "Mixed-use residential tower with retail podium and three-level basement",
+    "building_storeys": 17,
+    "basement_levels": 3,
+    "apartments": 132,
+    "retail_tenancies": 4,
+    "gross_floor_area_sqm": 22150,
+    "separable_portions": [
+      "Basement and structure to roof",
+      "Residential fitout and common areas",
+      "Ground floor retail shell and core",
+      "External works and public realm"
+    ]
+  },
+  "key_trade_packages": [
+    "Demolition and bulk excavation",
+    "Piling and foundations",
+    "Structural concrete",
+    "Façade and balustrades",
+    "Mechanical services",
+    "Hydraulic and fire services",
+    "Electrical, security, and communications",
+    "Lifts",
+    "Internal fitout and joinery",
+    "Waterproofing and roofing",
+    "External works and landscaping"
+  ],
+  "commercial_rules": {
+    "variation_quote_period_days": 14,
+    "delay_notice_period_days": 21,
+    "progress_claim_frequency": "monthly",
+    "payment_schedule_period_business_days": 15,
+    "cost_plus_margin_contractor_percent": 15,
+    "cost_plus_margin_subcontract_percent": 5
+  },
+  "core_events": [
+    {
+      "event_code": "EV-01",
+      "title": "Tender clarification and façade fire-compliance qualification",
+      "window": "2025-06 to 2025-07"
+    },
+    {
+      "event_code": "EV-02",
+      "title": "Additional piling triggered by revised geotechnical interpretation",
+      "window": "2025-10 to 2025-11"
+    },
+    {
+      "event_code": "EV-03",
+      "title": "December stormwater and bulk excavation interface RFIs",
+      "window": "2025-12"
+    },
+    {
+      "event_code": "EV-04",
+      "title": "January 2026 inclement weather impacts",
+      "window": "2026-01"
+    },
+    {
+      "event_code": "EV-05",
+      "title": "Laneway B access restriction and traffic-management redesign",
+      "window": "2026-01 to 2026-02"
+    },
+    {
+      "event_code": "EV-06",
+      "title": "Groundwater and basalt latent conditions in B3 excavation",
+      "window": "2026-02 to 2026-03"
+    },
+    {
+      "event_code": "EV-07",
+      "title": "Façade panel specification change to A2-compliant system",
+      "window": "2026-02 to 2026-04"
+    },
+    {
+      "event_code": "EV-08",
+      "title": "Basement waterproofing upgrade and redesigned details",
+      "window": "2026-03 to 2026-04"
+    },
+    {
+      "event_code": "EV-09",
+      "title": "Electrical substation authority approvals and riser clashes",
+      "window": "2026-04 to 2026-06"
+    },
+    {
+      "event_code": "EV-10",
+      "title": "Lift procurement and acoustic redesign impacts",
+      "window": "2026-06 to 2026-08"
+    }
+  ]
+}

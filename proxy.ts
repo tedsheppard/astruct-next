@@ -7,7 +7,8 @@ export async function proxy(request: NextRequest) {
   // Skip proxy for file upload routes — the body must not be consumed by middleware
   if (request.nextUrl.pathname.startsWith('/api/documents/upload') ||
       request.nextUrl.pathname.startsWith('/api/correspondence/upload') ||
-      request.nextUrl.pathname.startsWith('/api/waitlist')) {
+      request.nextUrl.pathname.startsWith('/api/waitlist') ||
+      request.nextUrl.pathname.startsWith('/api/leads')) {
     return NextResponse.next()
   }
 
@@ -19,14 +20,34 @@ export async function proxy(request: NextRequest) {
   if (isMainDomain) {
     const path = request.nextUrl.pathname
 
-    // Marketing public paths
-    const marketingPaths = ['/', '/landing', '/platform', '/solutions', '/pricing', '/security', '/company', '/privacy', '/terms', '/contact', '/features', '/product', '/about']
-    const isMarketingPath = marketingPaths.some(p => path === p || path.startsWith(p + '/'))
-
     // API routes are shared
     if (path.startsWith('/api')) {
       return NextResponse.next()
     }
+
+    // Legacy URL redirects (old marketing IA → new). Exact match first, then prefix.
+    const legacyRedirects: Record<string, string> = {
+      '/platform': '/features',
+      '/product': '/features',
+      '/solutions': '/main-contractors',
+      '/solutions/contractors': '/main-contractors',
+      '/solutions/developers': '/main-contractors',
+      '/solutions/subcontractors': '/subcontractors',
+      '/solutions/contract-administrators': '/main-contractors',
+      '/solutions/construction-lawyers': '/main-contractors',
+      '/company': '/about',
+      '/security': '/features/security-of-payment-compliance',
+      '/privacy': '/legal/privacy',
+      '/terms': '/legal/terms',
+    }
+    if (legacyRedirects[path]) {
+      return NextResponse.redirect(new URL(legacyRedirects[path], request.url), 308)
+    }
+    if (path.startsWith('/platform/')) return NextResponse.redirect(new URL('/features', request.url), 308)
+
+    // Marketing public paths
+    const marketingPaths = ['/', '/landing', '/pricing', '/contact', '/features', '/about', '/main-contractors', '/subcontractors', '/resources', '/book-a-demo', '/support', '/legal', '/sitemap.xml', '/robots.txt']
+    const isMarketingPath = marketingPaths.some(p => path === p || path.startsWith(p + '/'))
 
     // Root on main domain → landing page
     if (path === '/') {
