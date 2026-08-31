@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { ChevronDown, Menu, X, ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { NAV, DEMO_HREF, startFreeHref, loginHref, type NavGroup } from '@/lib/site/brand'
+import { AwSiteHeader } from './auswitness/header-footer'
 
 function Wordmark({ onDark }: { onDark?: boolean }) {
   return (
@@ -23,9 +25,15 @@ function Wordmark({ onDark }: { onDark?: boolean }) {
 }
 
 export default function SiteHeader() {
+  const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState<string | null>(null)
   const [mobile, setMobile] = useState(false)
+
+  // The notice-tracker homepage is a literal port of AusWitness's own
+  // header/footer (square corners, flat navy/gold), scoped to that one
+  // route so /pricing, /features etc keep the existing Astruct header.
+  const isHome = pathname === '/landing'
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -40,6 +48,8 @@ export default function SiteHeader() {
       document.body.style.overflow = ''
     }
   }, [mobile])
+
+  if (isHome) return <AwSiteHeader />
 
   return (
     <header

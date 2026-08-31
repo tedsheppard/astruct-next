@@ -147,63 +147,74 @@
 .astruct-site .site-marquee { animation: siteMarquee 32s linear infinite; }
 
 /* ───────────────────────────────────────────────────────────────────────────
-   Flat / square variant — scoped under .astruct-flat, used only by the
-   notice-tracker homepage. Overrides radius + shadow + palette tokens to a
-   high-contrast, no-shadow, square-corner style (AusWitness-inspired).
-   Does not touch .site-card / .site-btn / .site-pill defaults used elsewhere.
+   AusWitness port — scoped under .aw-home, used only by the notice-tracker
+   homepage (app/(marketing)/landing/page.tsx) and its ported header/footer.
+   Token names and values are taken directly from
+   auswitness/src/app/globals.css (`:root` + `@theme inline`), prefixed
+   `--aw-*` and referenced via Tailwind arbitrary values instead of that
+   file's `@theme inline` utility mapping — registering `@theme` here would
+   generate global `bg-brand` / `text-ink` / `rounded-none` utilities that
+   would leak into every other marketing page. Values, square corners
+   (rounded-none everywhere), and no shadows are otherwise identical to the
+   source. Does not touch .site-card / .site-btn / .site-pill used elsewhere.
    ─────────────────────────────────────────────────────────────────────────── */
-.astruct-flat {
-  --flat-paper: #f8f8f4;
-  --flat-ink: #060b1c;
-  --flat-brand: #1546c7;
-  --flat-brand-dark: #0f35a0;
-  --flat-brand-soft: #e8edfa;
-  --flat-gold: #a16207;
-  --flat-gold-hover: #854d06;
-  --flat-navy-deep: #0a1330;
-  --flat-border: #dcdcd2;
-  --flat-border-dark: rgba(255, 255, 255, 0.14);
-  --flat-body: #3a3f4c;
-  --flat-muted: #6b7280;
+.aw-home {
+  --aw-background: #ffffff;
+  --aw-surface: #ffffff;
+  --aw-surface-muted: #f8f8f4;
+  --aw-border: #e6e7dd;
+  --aw-border-strong: #c7c8bc;
 
-  background: var(--flat-paper);
-  color: var(--flat-ink);
+  --aw-ink: #060b1c;
+  --aw-ink-soft: #4b5162;
+  --aw-ink-faint: #878c99;
+
+  --aw-brand: #1546c7;
+  --aw-brand-strong: #0f35a0;
+  --aw-brand-soft: #e9eefb;
+  --aw-link-muted: #5b6b8c;
+
+  --aw-navy-deep: #060b1c;
+  --aw-navy-deeper: #03060f;
+
+  --aw-sky: #4a90d9;
+  --aw-sky-soft: #dff0fd;
+
+  --aw-gold: #a16207;
+  --aw-gold-soft: #fdf6e3;
+
+  --aw-success: #17a63c;
+  --aw-success-soft: #e6f8ea;
+  --aw-danger: #c81e1e;
+  --aw-danger-soft: #fdecec;
+
+  background: var(--aw-background);
+  color: var(--aw-ink);
 }
-.astruct-flat * { border-radius: 0 !important; box-shadow: none !important; }
-.astruct-flat h1,
-.astruct-flat h2,
-.astruct-flat h3,
-.astruct-flat h4 {
+.aw-home * { border-radius: 0 !important; box-shadow: none !important; }
+
+/* Display type — semibold, tight tracking, open line-height (source: .display / .display-sm) */
+.aw-home h1,
+.aw-home h2,
+.aw-home h3,
+.aw-home h4 {
   font-family: var(--font-sans), Inter, -apple-system, sans-serif;
   font-weight: 600;
   letter-spacing: -0.0115em;
-  line-height: 1.08;
+  line-height: 1.2;
 }
-.astruct-flat .flat-btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  height: 48px; padding: 0 24px; font-weight: 600; font-size: 15px;
-  letter-spacing: -0.005em; white-space: nowrap; cursor: pointer;
-  border: 1px solid transparent; transition: background .15s ease, border-color .15s ease, color .15s ease;
+
+.aw-home input,
+.aw-home textarea {
+  background: #fff;
+  border: 1px solid var(--aw-border);
+  color: var(--aw-ink);
+  font-size: 15px;
+  padding: 0 14px;
+  height: 48px;
 }
-.astruct-flat .flat-btn-primary { background: var(--flat-brand); color: #fff; }
-.astruct-flat .flat-btn-primary:hover { background: var(--flat-brand-dark); }
-.astruct-flat .flat-btn-gold { background: var(--flat-gold); color: #fff; }
-.astruct-flat .flat-btn-gold:hover { background: var(--flat-gold-hover); }
-.astruct-flat .flat-btn-ghost { background: transparent; color: var(--flat-ink); border-color: var(--flat-border); }
-.astruct-flat .flat-btn-ghost:hover { border-color: var(--flat-ink); }
-.astruct-flat .flat-btn-ghost-dark { background: transparent; color: #fff; border-color: var(--flat-border-dark); }
-.astruct-flat .flat-btn-ghost-dark:hover { border-color: #fff; }
-.astruct-flat .flat-chip {
-  background: var(--flat-brand-soft); color: var(--flat-brand);
-  display: inline-flex; align-items: center; justify-content: center;
-}
-.astruct-flat input,
-.astruct-flat textarea {
-  background: #fff; border: 1px solid var(--flat-border); color: var(--flat-ink);
-  font-size: 15px; padding: 0 14px; height: 48px;
-}
-.astruct-flat textarea { padding: 12px 14px; height: auto; }
-.astruct-flat input::placeholder,
-.astruct-flat textarea::placeholder { color: var(--flat-muted); }
-.astruct-flat input:focus,
-.astruct-flat textarea:focus { outline: 2px solid var(--flat-brand); outline-offset: -1px; }
+.aw-home textarea { padding: 12px 14px; height: auto; }
+.aw-home input::placeholder,
+.aw-home textarea::placeholder { color: var(--aw-ink-faint); }
+.aw-home input:focus,
+.aw-home textarea:focus { outline: 2px solid var(--aw-brand); outline-offset: -1px; }

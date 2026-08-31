@@ -1,5 +1,9 @@
+'use client'
+
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { FOOTER, startFreeHref, DEMO_HREF } from '@/lib/site/brand'
+import { AwSiteFooter } from './auswitness/header-footer'
 
 function Col({ title, links }: { title: string; links: { title: string; href: string }[] }) {
   return (
@@ -19,6 +23,9 @@ function Col({ title, links }: { title: string; links: { title: string; href: st
 }
 
 export default function SiteFooter() {
+  const pathname = usePathname()
+  if (pathname === '/landing') return <AwSiteFooter />
+
   return (
     <footer className="bg-[var(--site-ink)] text-white">
       {/* CTA cap */}
