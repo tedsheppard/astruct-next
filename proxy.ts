@@ -46,7 +46,7 @@ export async function proxy(request: NextRequest) {
     if (path.startsWith('/platform/')) return NextResponse.redirect(new URL('/features', request.url), 308)
 
     // Marketing public paths
-    const marketingPaths = ['/', '/landing', '/pricing', '/contact', '/features', '/about', '/main-contractors', '/subcontractors', '/resources', '/book-a-demo', '/support', '/legal', '/sitemap.xml', '/robots.txt']
+    const marketingPaths = ['/', '/landing', '/landing-legacy', '/pricing', '/contact', '/features', '/about', '/main-contractors', '/subcontractors', '/resources', '/book-a-demo', '/support', '/legal', '/sitemap.xml', '/robots.txt']
     const isMarketingPath = marketingPaths.some(p => path === p || path.startsWith(p + '/'))
 
     // Root on main domain → landing page
