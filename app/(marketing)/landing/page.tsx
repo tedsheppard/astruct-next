@@ -118,12 +118,13 @@ export default function LandingPage() {
         .lp { --ink: #0d0d0d; --ink-2: #5d5d5d; --ink-3: #8f8f8f; --line: rgba(0,0,0,.1); --bg: #fff; --sidebar: #f0efed; --bubble: #e8f4fe;
               background: var(--bg); color: var(--ink); font-family: ui-sans-serif, -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; }
         .lp a { color: inherit; text-decoration: none; }
+        .lp h1, .lp h2 { font-family: inherit; }
         .lp-header { display: flex; align-items: center; justify-content: space-between; max-width: 1120px; margin: 0 auto; padding: 18px 24px; }
         .lp-wordmark { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
         .lp-nav { display: flex; align-items: center; gap: 18px; font-size: 14px; color: var(--ink-2); }
-        .lp-button { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 18px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 14px; font-weight: 500; }
+        .lp a.lp-button { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 18px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 14px; font-weight: 500; }
         .lp-button:hover { opacity: .9; }
-        .lp-button-quiet { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+        .lp a.lp-button-quiet { background: transparent; color: var(--ink); border: 1px solid var(--line); }
         .lp-button-quiet:hover { background: rgba(0,0,0,.04); opacity: 1; }
         .lp-orb { display: inline-block; width: 22px; height: 22px; border-radius: 8px; background: radial-gradient(circle at 30% 15%, #fff 5%, #efedff 32%, #c6c2fa 66%, #f1f0ff 100%); box-shadow: 0 2px 10px rgba(217,215,244,.5); }
         .lp-orb-large { width: 64px; height: 64px; border-radius: 24px; margin: 0 auto 26px; box-shadow: 0 6px 34px rgba(198,194,250,.45), inset 0 0 9px #fff; animation: lp-breathe 4.5s ease-in-out infinite; }

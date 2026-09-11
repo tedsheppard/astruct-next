@@ -33,7 +33,8 @@ export default function SiteHeader() {
   // The notice-tracker homepage is a literal port of AusWitness's own
   // header/footer (square corners, flat navy/gold), scoped to that one
   // route so /pricing, /features etc keep the existing Astruct header.
-  const isHome = pathname === '/landing'
+  // The root is rewritten to /landing by proxy.ts, so the browser path is '/'.
+  const isHome = pathname === '/landing' || pathname === '/'
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
