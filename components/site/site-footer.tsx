@@ -24,7 +24,7 @@ function Col({ title, links }: { title: string; links: { title: string; href: st
 
 export default function SiteFooter() {
   const pathname = usePathname()
-  if (pathname === '/landing') return <AwSiteFooter />
+  if (pathname === '/landing') return null
 
   return (
     <footer className="bg-[var(--site-ink)] text-white">

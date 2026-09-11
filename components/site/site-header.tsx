@@ -49,7 +49,8 @@ export default function SiteHeader() {
     }
   }, [mobile])
 
-  if (isHome) return <AwSiteHeader />
+  // The landing page carries its own quiet header.
+  if (isHome) return null
 
   return (
     <header

@@ -1,321 +1,171 @@
 /**
- * Astruct homepage — a literal structural port of auswitness/src/app/page.tsx.
+ * astruct.io home: a landing page for app.astruct.io and nothing else.
  *
- * The section shapes below (Hero two-column with a right-side proof panel,
- * HowItWorks icon-chip grid, the FAQ two-column grid, the dark navy+gold
- * ClosingCta) are copied from that file's actual JSX and Tailwind classes —
- * only copy, icons, hrefs and the AusWitness design-token names (now
- * `--aw-*`, see app/(marketing)/site.css `.aw-home`) changed. SiteHeader and
- * SiteFooter are also ported (components/site/auswitness/header-footer.tsx)
- * and swapped in for this one route by components/site/site-header.tsx and
- * site-footer.tsx. AusWitness's Pricing, Audiences, Documents and LegalBasis
- * sections are dropped — this page is deliberately one workflow, not a
- * feature/pricing grid — as is TrustedBy (no customer logos to show yet).
- * The 8-step loop, worked example and event-type content are unchanged from
- * the prior pass, just re-hosted in AusWitness's real markup.
+ * One headline, one line under it, two buttons, a still of the product, three
+ * short reasons and a footer. The old marketing site is parked at
+ * /landing-legacy; the header and footer stay out of this route so the page
+ * is as quiet as the app it points to.
  */
-import {
-  Mail,
-  FileSearch,
-  Gavel,
-  CalendarClock,
-  BellRing,
-  FileEdit,
-  ListChecks,
-  RefreshCcw,
-  AlertTriangle,
-  CheckCircle2,
-  Check,
-} from 'lucide-react'
-import DemoForm from '@/components/site/demo-form'
-import { Container } from '@/components/site/auswitness/ui'
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { APP_ORIGIN, loginHref } from '@/lib/site/brand'
 
-export const metadata = {
-  title: 'Your AI notice administrator',
+export const metadata: Metadata = {
+  title: 'Astruct',
   description:
-    'Astruct watches your project emails, identifies events that trigger contractual notices, and makes sure you never miss a time bar.',
+    'Astruct reads your construction contracts, drafts notices and payment claims, watches your mail and keeps every deadline. A contracts administrator that never sleeps.',
 }
 
-const LOOP_STEPS = [
-  { icon: FileSearch, t: 'Identify the clause', d: 'Astruct matches the event against your uploaded contract and finds the clause that applies.' },
-  { icon: CalendarClock, t: 'Calculate the deadline', d: 'The notice period is calculated from the contract terms and the date of the triggering event.' },
-  { icon: ListChecks, t: 'Diarise the due date', d: 'The deadline is added to a tracked calendar so it can never quietly slip past.' },
-  { icon: BellRing, t: 'Alert the responsible person', d: 'The person accountable for the notice is alerted, with time to act before the deadline.' },
-  { icon: FileEdit, t: 'Draft the first notice', d: 'A first draft of the notice is prepared, referencing the clause and the event.' },
-  { icon: RefreshCcw, t: 'Track follow-up requirements', d: 'Astruct tracks whether further or substantiating notices are required under the contract.' },
-  { icon: Gavel, t: 'Calculate follow-up deadlines', d: 'Any follow-up notice periods are calculated and diarised the same way.' },
-  { icon: CheckCircle2, t: 'Prepare the next notice', d: 'When a follow-up notice falls due, Astruct has the next draft ready to go.' },
-]
+const OPEN = APP_ORIGIN
 
-const EVENT_TYPES = [
-  'A direction that may be a variation',
-  'A delay event',
-  'A latent condition',
-  'A disruption',
-  'An instruction',
-  'A change in scope',
-  'Another notice-triggering event',
-]
-
-const WORKED_EXAMPLE = [
-  { t: 'Site email received', d: '"Please proceed with revised footing design..."', urgent: false },
-  { t: 'Astruct detects a potential direction', d: 'Flagged as a possible variation-triggering event', urgent: false },
-  { t: 'Clause 36 — Variations', d: 'Notice required within 5 business days', urgent: false },
-  { t: 'Notice due: Thursday, 4:00pm', d: 'Diarised, alerted, and counting down', urgent: true },
-  { t: 'Draft notice ready', d: 'Referencing Clause 36 and the triggering instruction', urgent: false },
-  { t: 'Further substantiation notice required', d: 'Due in 14 days — already diarised', urgent: false },
-]
-
-const FAQS = [
+const REASONS: { title: string; body: string }[] = [
   {
-    q: 'What events does Astruct detect?',
-    a: 'Anything in a project email that may trigger a contractual right or obligation — directions that could be variations, delay events, latent conditions, disruption, instructions and changes in scope. Astruct matches what it finds against your uploaded contract, not a generic checklist.',
+    title: 'Reads the contract once, remembers it forever',
+    body: 'Attach a subcontract and Astruct files it, indexes it and pulls out the rhythm: claim dates, payment terms, notice periods, liquidated damages, defects liability. Every answer cites the page.',
   },
   {
-    q: 'Does it read every email?',
-    a: 'Yes. Once your project email is connected, every incoming message is checked for a notice-triggering event, not just the ones someone happens to flag or forward.',
+    title: 'Drafts what the contract requires',
+    body: 'Notices of delay, extension of time claims, variation notices, latent condition notices, payment claims. In your house style, with the clause, the time bar and the evidence, and never a made-up fact.',
   },
   {
-    q: 'What if I miss a notice already?',
-    a: "Astruct still helps: once it's connected it starts diarising every deadline from that point on, and flags anything already open so it doesn't quietly slip further.",
-  },
-  {
-    q: 'Which contracts does it support?',
-    a: 'Upload the contract and Astruct reads the actual clauses — notice periods, follow-up and substantiation requirements — rather than assuming a standard form. It works across the major Australian construction contract suites.',
-  },
-  {
-    q: 'How is this different from a calendar reminder?',
-    a: "A reminder only works once a human has already read the email, understood the clause, and calculated the deadline. Astruct does all three of those steps itself, then keeps tracking whatever notice comes after the first one.",
+    title: 'Watches the mail and the calendar',
+    body: 'New correspondence is filed to the project and triaged. Deadlines it creates land in your queue. Payment claims are counted by the engine, to the day, under the Act that applies.',
   },
 ]
 
-export default function HomePage() {
+export default function LandingPage() {
   return (
-    <div className="aw-home">
-      <Hero />
-      <HowItWorks />
-      <WorkedExample />
-      <EventTypes />
-      <Faq />
-      <ClosingCta />
+    <div className="lp">
+      <header className="lp-header">
+        <Link href="/" className="lp-wordmark" aria-label="Astruct">
+          <span className="lp-orb" aria-hidden="true" />
+          <span>Astruct</span>
+        </Link>
+        <nav className="lp-nav">
+          <a href={loginHref()}>Log in</a>
+          <a className="lp-button" href={OPEN}>Open Astruct</a>
+        </nav>
+      </header>
+
+      <main className="lp-main">
+        <section className="lp-hero">
+          <span className="lp-orb lp-orb-large" aria-hidden="true" />
+          <h1>The construction contracts agent</h1>
+          <p>
+            Astruct reads your contracts, drafts your notices and claims, watches your mail and keeps every deadline.
+            A contracts administrator on your team that never sleeps.
+          </p>
+          <div className="lp-cta">
+            <a className="lp-button" href={OPEN}>Open Astruct</a>
+            <a className="lp-button lp-button-quiet" href={loginHref()}>Log in</a>
+          </div>
+          <p className="lp-fine">Free to start. AU$5 of work included, then plans from AU$59 a month.</p>
+        </section>
+
+        <section className="lp-frame" aria-label="Astruct, as it looks">
+          <div className="lp-window">
+            <div className="lp-side">
+              <div className="lp-side-row lp-side-strong">New chat</div>
+              <div className="lp-side-row">Work queue</div>
+              <div className="lp-side-row">Mail</div>
+              <div className="lp-side-row">Scheduled</div>
+              <div className="lp-side-label">Projects</div>
+              <div className="lp-side-row lp-side-selected">Harbourside Residences</div>
+              <div className="lp-side-sub">Dashboard</div>
+              <div className="lp-side-sub">Document library</div>
+              <div className="lp-side-sub">Payment claims</div>
+              <div className="lp-side-sub">Delays and EOTs</div>
+            </div>
+            <div className="lp-chat">
+              <div className="lp-bubble">We hit rock at grid B2 today that the geotech report did not show. Draft the latent condition notice.</div>
+              <div className="lp-worked">Worked for 31s</div>
+              <div className="lp-answer">
+                <p>Drafted and saved the <strong>latent condition notice, rock encountered at grid B2</strong>.</p>
+                <p>It gives notice under clause 25, records the condition and the geotechnical report, and preserves the clause 34.2 delay position. The clause 25 statement, if requested, is due within 5 business days, being <strong>17 September 2026</strong>.</p>
+                <div className="lp-card">Latent condition notice, rock encountered at grid B2 <span>notice</span></div>
+              </div>
+              <div className="lp-composer">Ask Astruct to do anything</div>
+            </div>
+          </div>
+        </section>
+
+        <section className="lp-reasons">
+          {REASONS.map((r) => (
+            <div key={r.title} className="lp-reason">
+              <h2>{r.title}</h2>
+              <p>{r.body}</p>
+            </div>
+          ))}
+        </section>
+
+        <section className="lp-close">
+          <h2>Built for Australian contracts</h2>
+          <p>AS 2124, AS 4000, AS 4902, AS 4903 and bespoke forms. Security of Payment in every state. Your documents stay yours.</p>
+          <a className="lp-button" href={OPEN}>Open Astruct</a>
+        </section>
+      </main>
+
+      <footer className="lp-footer">
+        <span>Astruct Pty Ltd</span>
+        <nav>
+          <Link href="/legal/privacy">Privacy</Link>
+          <Link href="/legal/terms">Terms</Link>
+          <Link href="/contact">Contact</Link>
+        </nav>
+      </footer>
+
+      <style>{`
+        .lp { --ink: #0d0d0d; --ink-2: #5d5d5d; --ink-3: #8f8f8f; --line: rgba(0,0,0,.1); --bg: #fff; --sidebar: #f0efed; --bubble: #e8f4fe;
+              background: var(--bg); color: var(--ink); font-family: ui-sans-serif, -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+        .lp a { color: inherit; text-decoration: none; }
+        .lp-header { display: flex; align-items: center; justify-content: space-between; max-width: 1120px; margin: 0 auto; padding: 18px 24px; }
+        .lp-wordmark { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+        .lp-nav { display: flex; align-items: center; gap: 18px; font-size: 14px; color: var(--ink-2); }
+        .lp-button { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 18px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 14px; font-weight: 500; }
+        .lp-button:hover { opacity: .9; }
+        .lp-button-quiet { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+        .lp-button-quiet:hover { background: rgba(0,0,0,.04); opacity: 1; }
+        .lp-orb { display: inline-block; width: 22px; height: 22px; border-radius: 8px; background: radial-gradient(circle at 30% 15%, #fff 5%, #efedff 32%, #c6c2fa 66%, #f1f0ff 100%); box-shadow: 0 2px 10px rgba(217,215,244,.5); }
+        .lp-orb-large { width: 64px; height: 64px; border-radius: 24px; margin: 0 auto 26px; box-shadow: 0 6px 34px rgba(198,194,250,.45), inset 0 0 9px #fff; animation: lp-breathe 4.5s ease-in-out infinite; }
+        @keyframes lp-breathe { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-2px) scale(1.03); } }
+        .lp-main { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+        .lp-hero { text-align: center; padding: 84px 0 44px; }
+        .lp-hero h1 { font-size: 52px; line-height: 1.05; font-weight: 500; letter-spacing: -0.02em; margin: 0 auto 18px; max-width: 760px; }
+        .lp-hero p { font-size: 18px; line-height: 1.55; color: var(--ink-2); max-width: 640px; margin: 0 auto; }
+        .lp-cta { display: flex; justify-content: center; gap: 10px; margin-top: 28px; }
+        .lp-fine { font-size: 13px !important; color: var(--ink-3) !important; margin-top: 18px !important; }
+        .lp-frame { margin: 20px auto 0; }
+        .lp-window { display: grid; grid-template-columns: 220px 1fr; height: 520px; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 30px 80px -30px rgba(0,0,0,.25); background: var(--bg); text-align: left; }
+        .lp-side { background: var(--sidebar); padding: 14px 10px; font-size: 13.5px; }
+        .lp-side-row { padding: 7px 10px; border-radius: 9px; color: var(--ink); }
+        .lp-side-strong { font-weight: 500; }
+        .lp-side-selected { background: rgba(0,0,0,.05); }
+        .lp-side-label { margin: 14px 10px 4px; font-size: 12.5px; color: var(--ink-3); }
+        .lp-side-sub { padding: 5px 10px 5px 26px; color: var(--ink-2); font-size: 13px; }
+        .lp-chat { position: relative; display: flex; flex-direction: column; gap: 14px; padding: 28px 32px; font-size: 15px; line-height: 1.55; }
+        .lp-bubble { align-self: flex-end; max-width: 70%; padding: 10px 16px; border-radius: 22px; background: var(--bubble); }
+        .lp-worked { font-size: 13px; color: var(--ink-3); }
+        .lp-answer p { margin: 0 0 12px; }
+        .lp-card { display: inline-flex; align-items: center; gap: 12px; padding: 11px 14px; border: 1px solid var(--line); border-radius: 16px; font-size: 14px; font-weight: 500; }
+        .lp-card span { font-size: 12px; font-weight: 400; color: var(--ink-3); }
+        .lp-composer { position: absolute; left: 32px; right: 32px; bottom: 24px; height: 52px; display: flex; align-items: center; padding: 0 18px; border-radius: 28px; color: var(--ink-3); background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.04), 0 2px 8px rgba(0,0,0,.04), 0 4px 80px 8px rgba(0,0,0,.024); }
+        .lp-reasons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; padding: 96px 0 40px; }
+        .lp-reason h2 { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 10px; }
+        .lp-reason p { font-size: 15px; line-height: 1.6; color: var(--ink-2); margin: 0; }
+        .lp-close { text-align: center; padding: 72px 0 96px; }
+        .lp-close h2 { font-size: 30px; font-weight: 500; letter-spacing: -0.02em; margin: 0 0 12px; }
+        .lp-close p { font-size: 16px; color: var(--ink-2); max-width: 560px; margin: 0 auto 24px; }
+        .lp-footer { display: flex; align-items: center; justify-content: space-between; max-width: 1120px; margin: 0 auto; padding: 22px 24px 40px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-3); }
+        .lp-footer nav { display: flex; gap: 18px; }
+        @media (max-width: 860px) {
+          .lp-hero { padding: 56px 0 36px; }
+          .lp-hero h1 { font-size: 36px; }
+          .lp-window { grid-template-columns: 1fr; height: auto; }
+          .lp-side { display: none; }
+          .lp-chat { padding-bottom: 96px; }
+          .lp-reasons { grid-template-columns: 1fr; gap: 28px; padding-top: 64px; }
+        }
+      `}</style>
     </div>
-  )
-}
-
-/* ---------------------------------- Hero ---------------------------------- */
-
-function Hero() {
-  return (
-    <section className="border-b border-[var(--aw-border)]">
-      <Container className="grid gap-14 py-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:py-24">
-        <div>
-          <h1 className="max-w-4xl text-[2rem] text-[var(--aw-ink)] sm:text-5xl lg:text-[3.4rem]">
-            Don&apos;t lose your contractual rights because someone missed an email.
-          </h1>
-          <p className="mt-7 max-w-lg text-[17px] leading-relaxed text-[var(--aw-ink-soft)]">
-            Contractors lose millions every year because a variation, delay event or latent condition slipped through
-            an inbox and the notice deadline passed unanswered. AI that makes contract admin &ldquo;20% more
-            efficient&rdquo; won&apos;t save you from that. Catching one missed notice could save you $500,000.
-          </p>
-          <p className="mt-4 max-w-lg text-[15px] leading-relaxed text-[var(--aw-ink-faint)]">
-            Astruct connects to your project email and your contract, watches for events that trigger contractual
-            notices, and makes sure none of them are ever missed.
-          </p>
-        </div>
-
-        {/*
-          Proof panel: the same two-zone pattern as AusWitness's hero
-          (a demo up top, claims underneath on a different ground) — here the
-          top zone is a compact version of the worked example rather than a
-          witnessing video, since there is no equivalent asset for Astruct.
-        */}
-        <div className="rounded-none border border-[var(--aw-border)]">
-          <div className="bg-[var(--aw-surface-muted)] p-6 sm:p-8">
-            <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-[var(--aw-ink-faint)]">
-              One email, tracked automatically
-            </p>
-            <div className="mt-4 space-y-2.5">
-              {[
-                { label: 'Clause 36 — Variations', tone: 'default' as const },
-                { label: 'Notice due: Thursday, 4:00pm', tone: 'urgent' as const },
-                { label: 'Follow-up notice due in 14 days', tone: 'default' as const },
-              ].map((row) => (
-                <div
-                  key={row.label}
-                  className={
-                    row.tone === 'urgent'
-                      ? 'flex items-center gap-2 border border-[var(--aw-gold)] bg-[var(--aw-ink)] px-4 py-3 text-[14px] font-semibold text-white'
-                      : 'flex items-center gap-2 border border-[var(--aw-border)] bg-white px-4 py-3 text-[14px] text-[var(--aw-ink)]'
-                  }
-                >
-                  {row.tone === 'urgent' && <AlertTriangle className="h-4 w-4 shrink-0 text-[var(--aw-gold)]" />}
-                  {row.label}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="border-t border-[var(--aw-border)] bg-[var(--aw-surface)] px-8 py-7">
-            <ul className="space-y-3.5">
-              {[
-                { key: 'watch', text: 'Watches every project email for notice-triggering events' },
-                { key: 'match', text: 'Matches each one against the clause in your actual contract' },
-                { key: 'deadline', text: 'Calculates and diarises the notice deadline' },
-                { key: 'draft', text: 'Has a first draft of the notice ready before it falls due' },
-              ].map((item) => (
-                <li key={item.key} className="flex items-start gap-3 text-[15px] text-[var(--aw-ink)]">
-                  <Check className="mt-[3px] h-[18px] w-[18px] shrink-0 text-[var(--aw-brand)]" />
-                  <span>{item.text}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </Container>
-
-      <Container className="pb-16 lg:pb-24">
-        <div className="max-w-md">
-          <DemoForm />
-        </div>
-      </Container>
-    </section>
-  )
-}
-
-/* ------------------------------- How it works ------------------------------ */
-
-function HowItWorks() {
-  return (
-    <section id="how" className="border-b border-[var(--aw-border)] py-20">
-      <Container>
-        <h2 className="text-4xl text-[var(--aw-ink)] sm:text-5xl">How it works</h2>
-        <p className="mt-4 max-w-xl text-[17px] text-[var(--aw-ink-soft)]">
-          Set up once: connect your project email and upload the contract. From there, Astruct watches every
-          incoming message and runs the same eight-step loop every time.
-        </p>
-
-        <div className="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-10">
-          {LOOP_STEPS.map((s, i) => (
-            <div key={s.t} className="flex flex-col gap-4">
-              <div className="grid h-11 w-11 place-items-center rounded-none bg-[var(--aw-brand-soft)] text-[var(--aw-brand)]">
-                <s.icon className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-[15px] font-semibold text-[var(--aw-ink)]">Step {i + 1}</p>
-                <h3 className="mt-1.5 text-[17px] font-semibold tracking-tight text-[var(--aw-ink)]">{s.t}</h3>
-                <p className="mt-2 text-[14px] leading-relaxed text-[var(--aw-ink-soft)]">{s.d}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Container>
-    </section>
-  )
-}
-
-/* ------------------------------ Worked example ----------------------------- */
-
-function WorkedExample() {
-  return (
-    <section className="border-b border-[var(--aw-border)] bg-[var(--aw-surface-muted)] py-20">
-      <Container>
-        <h2 className="text-4xl text-[var(--aw-ink)] sm:text-5xl">One email. One missed notice avoided.</h2>
-        <p className="mt-4 max-w-xl text-[17px] text-[var(--aw-ink-soft)]">The loop, in practice.</p>
-
-        <div className="mt-12 flex max-w-2xl flex-col">
-          {WORKED_EXAMPLE.map((step, i) => (
-            <div key={step.t} className="flex gap-5">
-              <div className="flex flex-col items-center">
-                <div
-                  className={`flex h-9 w-9 flex-none items-center justify-center rounded-none text-[13px] font-semibold ${
-                    step.urgent ? 'bg-[var(--aw-gold)] text-white' : 'bg-[var(--aw-ink)] text-white'
-                  }`}
-                >
-                  {i + 1}
-                </div>
-                {i < WORKED_EXAMPLE.length - 1 && <div className="w-px flex-1 bg-[var(--aw-border-strong)]" />}
-              </div>
-              <div
-                className={`flex-1 border px-5 py-4 ${i < WORKED_EXAMPLE.length - 1 ? 'mb-4' : ''} ${
-                  step.urgent ? 'border-[var(--aw-gold)] bg-[var(--aw-ink)]' : 'border-[var(--aw-border)] bg-white'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  {step.urgent && <AlertTriangle className="h-4 w-4 text-[var(--aw-gold)]" />}
-                  <p className={`text-[15.5px] font-semibold ${step.urgent ? 'text-white' : 'text-[var(--aw-ink)]'}`}>
-                    {step.t}
-                  </p>
-                </div>
-                <p className={`mt-1 text-[13.5px] ${step.urgent ? 'text-white/70' : 'text-[var(--aw-ink-soft)]'}`}>
-                  {step.d}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Container>
-    </section>
-  )
-}
-
-/* -------------------------------- Event types ------------------------------ */
-
-function EventTypes() {
-  return (
-    <section className="border-b border-[var(--aw-border)] py-20">
-      <Container>
-        <h2 className="text-4xl text-[var(--aw-ink)] sm:text-5xl">What Astruct watches for</h2>
-        <p className="mt-4 max-w-xl text-[17px] text-[var(--aw-ink-soft)]">Any event that may trigger a notice.</p>
-        <ul className="mt-8 grid gap-3 sm:grid-cols-2">
-          {EVENT_TYPES.map((t) => (
-            <li key={t} className="flex gap-2.5 border border-[var(--aw-border)] px-4 py-3 text-[15px] text-[var(--aw-ink)]">
-              <Mail className="mt-0.5 h-[18px] w-[18px] shrink-0 text-[var(--aw-brand)]" />
-              {t}
-            </li>
-          ))}
-        </ul>
-      </Container>
-    </section>
-  )
-}
-
-/* ----------------------------------- FAQ ----------------------------------- */
-
-function Faq() {
-  return (
-    <section id="faq" className="border-b border-[var(--aw-border)] py-20">
-      <Container>
-        <h2 className="text-4xl text-[var(--aw-ink)] sm:text-5xl">Common questions</h2>
-        <div className="mt-10 grid gap-x-14 gap-y-9 lg:grid-cols-2">
-          {FAQS.map((f) => (
-            <div key={f.q}>
-              <h3 className="text-[17px] font-semibold tracking-tight text-[var(--aw-ink)]">{f.q}</h3>
-              <p className="mt-2.5 text-[15px] leading-relaxed text-[var(--aw-ink-soft)]">{f.a}</p>
-            </div>
-          ))}
-        </div>
-      </Container>
-    </section>
-  )
-}
-
-/* -------------------------------- Closing CTA ------------------------------ */
-
-function ClosingCta() {
-  return (
-    <section className="bg-[var(--aw-navy-deep)] py-20 text-white">
-      <Container className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
-        <div>
-          <h2 className="text-3xl sm:text-4xl">Never miss a time bar again.</h2>
-          <p className="mt-3 max-w-lg text-[17px] text-white/70">
-            Astruct watches your project emails, identifies events that trigger contractual notices, and makes sure
-            you never miss a deadline.
-          </p>
-        </div>
-        <div className="w-full max-w-md text-left">
-          <DemoForm dark />
-        </div>
-      </Container>
-    </section>
   )
 }
