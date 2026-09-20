@@ -86,7 +86,9 @@ function Letter() {
       if (!f || !pg) return
       const r = f.getBoundingClientRect()
       const vh = window.innerHeight
-      const prog = Math.max(0, Math.min(1, (vh - r.top) / (vh + r.height)))
+      // The page starts to turn once the frame is half in view and has read to the end by the time the frame is half out.
+      const start = vh - r.height * 0.5, end = vh * 0.5 - r.height
+      const prog = Math.max(0, Math.min(1, (start - r.top) / (start - end)))
       const travel = Math.max(0, pg.offsetHeight - r.height + 40)
       setY(-Math.round(travel * prog))
     }

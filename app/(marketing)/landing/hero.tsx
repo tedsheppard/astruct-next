@@ -49,9 +49,9 @@ export default function Hero() {
   const q = still ? 1 : p
   const arrive = seg(q, 0.04, 0.42)     // the desk comes up from depth and turns to face the reader
   const lift = seg(q, 0.24, 0.48)       // the words move up and away as the desk takes the screen
-  const typed = seg(q, 0.5, 0.6)        // the job typed into the chat
-  const letter = seg(q, 0.74, 0.86)     // the drafted claim on screen
-  const beat = q >= 0.74 ? 2 : q >= 0.5 ? 1 : 0
+  const typed = seg(q, 0.48, 0.58)      // the job typed into the chat
+  const letter = seg(q, 0.72, 0.82)     // the drafted claim on screen
+  const beat = q >= 0.77 ? 2 : q >= 0.53 ? 1 : 0
   const captionOn = arrive > 0.95 ? 1 : 0
   const sceneStyle = { transform: `translateY(${(1 - arrive) * 46}vh) perspective(1600px) rotateX(${(1 - arrive) * 24}deg) scale(${0.74 + 0.26 * arrive})`, opacity: 0.2 + 0.8 * arrive }
   const t = theme === 'light' ? 'light' : 'dark'
