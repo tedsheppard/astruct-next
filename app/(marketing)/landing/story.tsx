@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { APP_ORIGIN } from '@/lib/site/brand'
+import { APP_ORIGIN, loginHref } from '@/lib/site/brand'
 import { ConnectorGlyph } from '@/components/site/connector-glyphs'
 
 // The story after the hero. Each section comes up as it enters the view
@@ -57,7 +57,7 @@ export default function Story() {
           <p>Upload the signed contract and Astruct reads the parties and which one you are, the sum, the dates, the reference date, the payment terms and the notice rules, and sets the project up from them. Then the file: correspondence, claims, schedules, drawings and their revisions, programmes, photos. Up to 2,000 documents, every page indexed.</p>
           <p>It keeps a map of the project: the variations, RFIs, notices, people and drawings it has read, in date order, each with the page it came from. Ask what happened and it answers from the record, and tells you where the evidence disagrees with itself.</p>
         </div>
-        <figure className="ax-shot"><img src="/marketing/desk/settings-project.png" alt="The project's settings as read from the contract: the parties, the contract, the dates, the payment terms" loading="lazy" /></figure>
+        <figure className="ax-shot"><img src="/marketing/desk/settings-project.png" width={1400} height={875} alt="The project's settings as read from the contract: the parties, the contract, the dates, the payment terms" loading="lazy" /></figure>
       </section>
 
       <section className="ax-sec" data-in>
@@ -79,7 +79,7 @@ export default function Story() {
           <p>When the work needs a website, the law or a document, Astruct opens it on its computer: the browser it searches with, the viewer it reads in, the drafter it writes in. You watch the pages open, the cursor move and the words appear. Nothing happens off screen.</p>
           <p>Two ways to sit with it. <b>Computer mode</b> puts the desk in front of you with the conversation beside it. <b>Chat mode</b> gives the conversation the room, with the viewer and the browser set apart on the right.</p>
         </div>
-        <figure className="ax-shot"><img src="/marketing/desk/chat-mode.png" alt="Chat mode: the conversation on the left, the documents on the right" loading="lazy" /></figure>
+        <figure className="ax-shot"><img src="/marketing/desk/chat-mode.png" width={1400} height={875} alt="Chat mode: the conversation on the left, the documents on the right" loading="lazy" /></figure>
       </section>
 
       <section className="ax-sec ax-sec-split" data-in>
@@ -89,7 +89,7 @@ export default function Story() {
           <p>In your own house style, read from the letters you have filed: the letterhead, the numbering, the openings and the sign-offs. Numbered paragraphs where the form calls for them. Every clause cited, every date counted by the calendar, every figure computed rather than guessed.</p>
           <p>Hand it your own draft and it edits that document, not a copy: the words change inside your Word file as tracked changes, the formatting untouched. Download as Word or PDF; bundles come with numbered tabs and an index.</p>
         </div>
-        <figure className="ax-shot"><img src="/marketing/desk/win-pdf-light.png" alt="A contract open in the viewer" loading="lazy" /></figure>
+        <figure className="ax-shot"><img src="/marketing/desk/win-pdf-light.png" width={1554} height={1760} alt="A contract open in the viewer" loading="lazy" /></figure>
       </section>
 
       <section className="ax-sec ax-pip" data-in>
@@ -111,17 +111,17 @@ export default function Story() {
         </div>
         <div className="ax-three">
           <article className="ax-tile">
-            <figure><img src="/marketing/desk/win-programme.png" alt="The Programme window" loading="lazy" /></figure>
+            <figure><img src="/marketing/desk/win-programme.png" width={1400} height={1284} alt="The Programme window" loading="lazy" /></figure>
             <h3>Programme and delay</h3>
             <p>Reads Primavera, Microsoft Project and spreadsheet programmes. Schedules them by code: the critical path, the float, a baseline against an update, the effect of a delay on completion.</p>
           </article>
           <article className="ax-tile">
-            <figure><img src="/marketing/desk/win-library.png" alt="The Document library" loading="lazy" /></figure>
+            <figure><img src="/marketing/desk/win-library.png" width={1400} height={1308} alt="The Document library" loading="lazy" /></figure>
             <h3>Quantum with lineage</h3>
             <p>Contract sum, variations, claimed, certified, retention, forecast: a ledger where every figure traces back to the page or the claim it came from, and every rollup shows its formula.</p>
           </article>
           <article className="ax-tile">
-            <figure><img src="/marketing/desk/model.png" alt="The Model window" loading="lazy" /></figure>
+            <figure><img src="/marketing/desk/model.png" width={1400} height={875} alt="The Model window" loading="lazy" /></figure>
             <h3>Drawings and the model</h3>
             <p>A drawing register by number and revision, revisions compared region by region, and the plans read into a model of the levels and rooms you can walk through, each room citing its drawing.</p>
           </article>
@@ -134,7 +134,7 @@ export default function Story() {
           <h2>Talk to it like a colleague.</h2>
           <p>Ask what is happening with the waterproofing on level 17 and it answers from the project. Say show me the photos and the desk shows them. Ask for the instruction under clause 18.3 with those three attached, then make it firmer, then put it in Outlook for review. The same task, whichever way you say it.</p>
         </div>
-        <figure className="ax-shot ax-shot-phone"><img src="/marketing/desk/phone-chat.png" alt="Astruct on a phone" loading="lazy" /></figure>
+        <figure className="ax-shot ax-shot-phone"><img src="/marketing/desk/phone-chat.png" width={647} height={1400} alt="Astruct on a phone" loading="lazy" /></figure>
       </section>
 
       <section className="ax-sec ax-keep" data-in>
@@ -161,6 +161,7 @@ export default function Story() {
       <footer className="ax-foot">
         <span>Astruct Pty Ltd, Australia</span>
         <nav>
+          <a href={loginHref()}>Log in</a>
           <Link href="/pricing">Pricing</Link>
           <Link href="/support">Support</Link>
           <Link href="/contact">Contact</Link>

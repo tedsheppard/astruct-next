@@ -139,15 +139,33 @@ function Myob({ size = 21, className }: P) {
   );
 }
 
-export const CONNECTOR_GLYPHS: Record<string, (p: P) => React.JSX.Element> = { gmail: Gmail, outlook: Outlook, gcal: GoogleCalendar, gdrive: GoogleDrive, onedrive: OneDrive, slack: Slack, xero: Xero, procore: Procore, aconex: Aconex, myob: Myob };
+// A lettered tile in the brand's colour for the systems whose marks are
+// wordmarks rather than symbols: a teal SharePoint, HammerTech's navy and
+// orange, Payapps' green.
+function Tile({ size = 21, className, colour, letter, ink = "#fff" }: P & { colour: string; letter: string; ink?: string }) {
+  const k = useId();
+  return (
+    <Svg size={size} className={className}>
+      <Piece id={`${k}c`} colour={colour} d="M4.5 3h15A1.5 1.5 0 0 1 21 4.5v15a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-15A1.5 1.5 0 0 1 4.5 3Z" />
+      <text x="12" y="16.6" textAnchor="middle" fontSize="12.5" fontWeight="700" fontFamily="ui-sans-serif, system-ui, -apple-system, sans-serif" fill={ink}>{letter}</text>
+    </Svg>
+  );
+}
+function SharePoint(p: P) { return <Tile {...p} colour="#036c70" letter="S" />; }
+function HammerTech(p: P) { return <Tile {...p} colour="#1c2b4a" letter="H" ink="#f5821f" />; }
+function Payapps(p: P) { return <Tile {...p} colour="#00a76f" letter="P" />; }
+// Anything not drawn above: its initial on a grey tile, never another brand's mark.
+function Unknown({ id, ...p }: P & { id: string }) { return <Tile {...p} colour="#6b7280" letter={(id[0] || "?").toUpperCase()} />; }
+
+export const CONNECTOR_GLYPHS: Record<string, (p: P) => React.JSX.Element> = { gmail: Gmail, outlook: Outlook, gcal: GoogleCalendar, gdrive: GoogleDrive, onedrive: OneDrive, slack: Slack, xero: Xero, procore: Procore, aconex: Aconex, myob: Myob, sharepoint: SharePoint, hammertech: HammerTech, payapps: Payapps };
 
 // A picture supplied for a connector (public/connectors/<id>.png) is used
 // when one is there; the drawn glyph stands in until it loads or when it
 // is missing.
 export function ConnectorGlyph({ id, size = 21, className }: { id: string } & P) {
   const [pic, setPic] = useState<boolean>(true);
-  const G = CONNECTOR_GLYPHS[id] || Slack;
-  if (!pic) return <G size={size} className={className} />;
+  const G = CONNECTOR_GLYPHS[id];
+  if (!pic) return G ? <G size={size} className={className} /> : <Unknown id={id} size={size} className={className} />;
   // eslint-disable-next-line @next/next/no-img-element
   return <img src={`/marketing/connectors/${id}.png`} alt="" width={size} height={size} className={className} style={{ width: size, height: size, objectFit: "contain", filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.18))" }} draggable={false} onError={() => setPic(false)} />;
 }
