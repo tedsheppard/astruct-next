@@ -42,6 +42,8 @@ export default function RootLayout({
       className={`${inter.variable} ${manrope.variable} ${jetbrainsMono.variable} ${dmSerifDisplay.variable}`}
     >
       <body className="min-h-screen bg-background text-foreground antialiased">
+        {/* The stored theme goes on before first paint, so the server-rendered page never flashes the wrong one. */}
+        <script dangerouslySetInnerHTML={{ __html: "try{if(localStorage.getItem('astruct-theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}" }} />
         <ThemeProvider>
           {children}
           <Toaster />

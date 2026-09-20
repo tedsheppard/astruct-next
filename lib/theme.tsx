@@ -35,8 +35,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  // Prevent flash of wrong theme
-  if (!mounted) return null
+  // The page is rendered on the server whatever the theme; the inline
+  // script in app/layout.tsx puts the dark class on before first paint, so
+  // there is no flash and nothing to hide. `mounted` only tells consumers
+  // the stored theme has been read.
+  void mounted
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
