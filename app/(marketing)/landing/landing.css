@@ -140,7 +140,7 @@
 .ax-letter tr.total td { border-bottom: 0; border-top: 1px solid #222; font-weight: 700; }
 .ax-letter-sign { margin-top: 26px; }
 .ax-letter-sign b { display: block; margin-top: 34px; }
-.ax-letter-marks { position: absolute; right: 18px; bottom: 18px; display: grid; gap: 8px; z-index: 2; }
+.ax-letter-marks { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 12px; }
 .ax-letter-mark { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 12px; background: var(--glass-strong); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: inset 0 0 0 1px var(--line), var(--shadow-soft); font-size: 12.5px; color: var(--ink-2); }
 .ax-letter-mark b { color: var(--ink); }
 
@@ -233,7 +233,6 @@
   .ax-dark { padding: 0 12px; }
   .ax-dark-card { padding: 34px 22px; border-radius: 22px; }
   .ax-letter { padding: 30px 24px 36px; font-size: 11.5px; }
-  .ax-letter-marks { display: none; }
   .ax-cmp th, .ax-cmp td { padding: 12px 10px; font-size: 14px; }
   .ax-cmp th:nth-child(2), .ax-cmp td:nth-child(2), .ax-cmp th:nth-child(3), .ax-cmp td:nth-child(3) { width: 74px; }
   .ax-foot-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }

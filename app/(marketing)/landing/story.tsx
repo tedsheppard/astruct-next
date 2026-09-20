@@ -99,12 +99,8 @@ function Letter() {
     return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); if (raf) cancelAnimationFrame(raf) }
   }, [])
   return (
+    <div>
     <div ref={frame} className="ax-letter-frame" aria-label="A variation and extension of time claim prepared by Astruct">
-      <div className="ax-letter-marks" aria-hidden="true">
-        <span className="ax-letter-mark"><Check size={13} /> <b>Clause 36.4</b> valuation cited</span>
-        <span className="ax-letter-mark"><Check size={13} /> <b>28-day</b> time bar met</span>
-        <span className="ax-letter-mark"><Check size={13} /> Total <b>$152,600</b> checked</span>
-      </div>
       <div ref={page} className="ax-letter" style={{ transform: `translateY(${y}px)` }}>
         <div className="ax-letter-head">
           <div><b>XYZ Builders Pty Ltd</b><small>ABN 77 604 211 380 &middot; 16 Distribution Place, Seven Hills NSW 2147 &middot; contracts@xyzbuilders.example</small></div>
@@ -142,6 +138,12 @@ function Letter() {
           <p style={{ marginTop: 14, color: '#555' }}>Enclosures (5)</p>
         </div>
       </div>
+    </div>
+    <div className="ax-letter-marks" aria-hidden="true">
+      <span className="ax-letter-mark"><Check size={13} /> <b>Clause 36.4</b> valuation cited</span>
+      <span className="ax-letter-mark"><Check size={13} /> <b>28-day</b> time bar met</span>
+      <span className="ax-letter-mark"><Check size={13} /> Total <b>$152,600</b> checked</span>
+    </div>
     </div>
   )
 }
