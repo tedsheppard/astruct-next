@@ -1,42 +1,50 @@
-import { Mail, MessageSquare } from 'lucide-react'
-import { Container } from '@/components/site/primitives'
-import LeadForm from '@/components/site/lead-form'
-import { DEMO_HREF } from '@/lib/site/brand'
+/**
+ * Contact. The ways to reach a person on the left, the form on the right.
+ * Same fields and the same /api/leads route as before.
+ */
+import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Mail, MessageSquare } from 'lucide-react'
+import { AxRoot, AxHeader, AxFooter } from '@/components/site/ax-chrome'
+import AxLeadForm from '@/components/site/ax-lead-form'
+import { DEMO_HREF } from '@/lib/site/brand'
+import '../landing/landing.css'
+import '../ax-pages.css'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Contact',
-  description: 'Get in touch with the Astruct team — questions about claims, schedules, pricing or your account.',
+  description: 'Get in touch with the Astruct team about claims, schedules, pricing or your account.',
 }
 
 export default function ContactPage() {
   return (
-    <section className="relative overflow-hidden bg-white">
-      <div className="site-grid-bg pointer-events-none absolute inset-0 opacity-50 [mask-image:radial-gradient(ellipse_at_top_left,black,transparent_60%)]" />
-      <Container wide className="relative grid gap-12 py-16 lg:grid-cols-2 lg:py-20">
-        <div className="site-fade">
-          <p className="site-eyebrow mb-4">Contact</p>
-          <h1 className="text-[40px] font-bold leading-[1.05] tracking-tight text-[var(--site-text)] sm:text-[48px]">
-            Talk to us.
-          </h1>
-          <p className="mt-5 max-w-md text-[18px] leading-relaxed text-[var(--site-body)]">
-            Questions about Security of Payment, your claims, or how Astruct fits your business? We&apos;re happy to help.
-          </p>
-          <div className="mt-8 space-y-4">
-            <a href="mailto:support@astruct.io" className="flex items-center gap-3 text-[15px] text-[var(--site-body)] hover:text-[var(--site-text)]">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--site-brand-tint)] text-[var(--site-brand)]"><Mail size={18} /></span>
-              support@astruct.io
-            </a>
-            <Link href={DEMO_HREF} className="flex items-center gap-3 text-[15px] text-[var(--site-body)] hover:text-[var(--site-text)]">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--site-brand-tint)] text-[var(--site-brand)]"><MessageSquare size={18} /></span>
-              Prefer a walkthrough? Book a demo
-            </Link>
+    <AxRoot>
+      <AxHeader />
+
+      <section className="ax-sec ax-sec-first is-in">
+        <div className="ax-split-form">
+          <div>
+            <div className="ax-page-head" style={{ marginBottom: 0 }}>
+              <span className="ax-pill"><i />Contact</span>
+              <h1>Talk to us.</h1>
+              <p className="ax-lede">Questions about Security of Payment, your claims, or how Astruct fits your business? We are happy to help.</p>
+            </div>
+            <div className="ax-ways">
+              <a className="ax-way" href="mailto:support@astruct.io">
+                <span className="ax-way-ico"><Mail size={17} /></span>
+                <span>support@astruct.io<small>We reply the same business day, most days.</small></span>
+              </a>
+              <Link className="ax-way" href={DEMO_HREF}>
+                <span className="ax-way-ico"><MessageSquare size={17} /></span>
+                <span>Prefer a walkthrough? Book a demo<small>Thirty minutes on your own contracts.</small></span>
+              </Link>
+            </div>
           </div>
+          <AxLeadForm type="contact" source="contact" />
         </div>
-        <div className="lg:pt-8">
-          <LeadForm type="contact" source="contact" />
-        </div>
-      </Container>
-    </section>
+      </section>
+
+      <AxFooter />
+    </AxRoot>
   )
 }

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { FOOTER, startFreeHref, DEMO_HREF } from '@/lib/site/brand'
+import { FOOTER, startFreeHref, DEMO_HREF, isAxChromePath } from '@/lib/site/brand'
 import { AwSiteFooter } from './auswitness/header-footer'
 
 function Col({ title, links }: { title: string; links: { title: string; href: string }[] }) {
@@ -24,7 +24,8 @@ function Col({ title, links }: { title: string; links: { title: string; href: st
 
 export default function SiteFooter() {
   const pathname = usePathname()
-  if (pathname === '/landing' || pathname === '/') return null
+  // The pages on the site's own chrome (ax-chrome) carry their own footer.
+  if (isAxChromePath(pathname)) return null
 
   return (
     <footer className="bg-[var(--site-ink)] text-white">

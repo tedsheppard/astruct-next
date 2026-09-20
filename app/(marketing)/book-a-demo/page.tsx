@@ -1,36 +1,48 @@
-import { Container } from '@/components/site/primitives'
-import { CheckItem } from '@/components/site/primitives'
-import LeadForm from '@/components/site/lead-form'
+/**
+ * Book a demo. What the walkthrough covers on the left, the request form on
+ * the right. Same fields and the same /api/leads route as before.
+ */
+import type { Metadata } from 'next'
+import { Check } from 'lucide-react'
+import { AxRoot, AxHeader, AxFooter } from '@/components/site/ax-chrome'
+import AxLeadForm from '@/components/site/ax-lead-form'
+import '../landing/landing.css'
+import '../ax-pages.css'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Book a demo',
-  description: 'See Astruct on your own contracts — a guided walkthrough of compliant claims, payment schedules and the deadline engine.',
+  description: 'See Astruct on your own contracts: a guided walkthrough of compliant claims, payment schedules and the deadline engine.',
 }
+
+const COVERS = [
+  'The compliant claim and payment schedule flow, end to end',
+  'The business-day deadline engine for your jurisdiction',
+  'The A to K ledger, variations, retention and AI validity checks',
+  'How shared workspaces work between head contractor and subbie',
+]
 
 export default function BookDemoPage() {
   return (
-    <section className="relative overflow-hidden bg-white">
-      <div className="site-grid-bg pointer-events-none absolute inset-0 opacity-50 [mask-image:radial-gradient(ellipse_at_top_left,black,transparent_60%)]" />
-      <Container wide className="relative grid gap-12 py-16 lg:grid-cols-2 lg:py-20">
-        <div className="site-fade">
-          <p className="site-eyebrow mb-4">Book a demo</p>
-          <h1 className="text-[40px] font-bold leading-[1.05] tracking-tight text-[var(--site-text)] sm:text-[48px]">
-            See Astruct on your own contracts.
-          </h1>
-          <p className="mt-5 max-w-md text-[18px] leading-relaxed text-[var(--site-body)]">
-            A 30-minute walkthrough, tailored to whether you make claims or assess them. No obligation.
-          </p>
-          <ul className="mt-8 space-y-3">
-            <CheckItem>The compliant claim and payment schedule flow, end to end</CheckItem>
-            <CheckItem>The business-day deadline engine for your jurisdiction</CheckItem>
-            <CheckItem>The A–K ledger, variations, retention and AI validity checks</CheckItem>
-            <CheckItem>How shared workspaces work between head contractor and subbie</CheckItem>
-          </ul>
+    <AxRoot>
+      <AxHeader />
+
+      <section className="ax-sec ax-sec-first is-in">
+        <div className="ax-split-form">
+          <div>
+            <div className="ax-page-head" style={{ marginBottom: 0 }}>
+              <span className="ax-pill"><i />Book a demo</span>
+              <h1>See Astruct on your own contracts.</h1>
+              <p className="ax-lede">A 30-minute walkthrough, tailored to whether you make claims or assess them. No obligation.</p>
+            </div>
+            <ul className="ax-points">
+              {COVERS.map((c) => <li key={c}><Check size={17} />{c}</li>)}
+            </ul>
+          </div>
+          <AxLeadForm type="demo" source="book-a-demo" />
         </div>
-        <div className="lg:pt-8">
-          <LeadForm type="demo" source="book-a-demo" />
-        </div>
-      </Container>
-    </section>
+      </section>
+
+      <AxFooter />
+    </AxRoot>
   )
 }

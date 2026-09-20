@@ -91,3 +91,23 @@ export const FOOTER = {
     { title: 'Privacy policy', href: '/legal/privacy' },
   ],
 }
+
+/**
+ * The routes that carry the site's own chrome (AxRoot / AxHeader / AxFooter
+ * from components/site/ax-chrome). The older SiteHeader and SiteFooter must
+ * not render on these; every other marketing route still uses them. The root
+ * is rewritten to /landing by proxy.ts, so the browser path is '/'.
+ */
+export const AX_CHROME_PATHS = [
+  '/',
+  '/landing',
+  '/pricing',
+  '/support',
+  '/contact',
+  '/book-a-demo',
+  '/legal/privacy',
+  '/legal/terms',
+]
+
+export const isAxChromePath = (pathname: string | null) =>
+  !!pathname && AX_CHROME_PATHS.some((p) => pathname === p || (p !== '/' && pathname.startsWith(p + '/')))

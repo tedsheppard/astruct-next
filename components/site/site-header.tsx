@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronDown, Menu, X, ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { NAV, DEMO_HREF, startFreeHref, loginHref, type NavGroup } from '@/lib/site/brand'
+import { NAV, DEMO_HREF, startFreeHref, loginHref, isAxChromePath, type NavGroup } from '@/lib/site/brand'
 import { AwSiteHeader } from './auswitness/header-footer'
 
 function Wordmark({ onDark }: { onDark?: boolean }) {
@@ -30,11 +30,11 @@ export default function SiteHeader() {
   const [open, setOpen] = useState<string | null>(null)
   const [mobile, setMobile] = useState(false)
 
-  // The notice-tracker homepage is a literal port of AusWitness's own
-  // header/footer (square corners, flat navy/gold), scoped to that one
-  // route so /pricing, /features etc keep the existing Astruct header.
-  // The root is rewritten to /landing by proxy.ts, so the browser path is '/'.
-  const isHome = pathname === '/landing' || pathname === '/'
+  // The home, pricing, support, contact, the demo and the legal pages all
+  // carry the site's own chrome (ax-chrome), so this header stays out of
+  // their way. /features/*, /about, /main-contractors, /subcontractors and
+  // /resources still use it.
+  const isHome = isAxChromePath(pathname)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -50,7 +50,7 @@ export default function SiteHeader() {
     }
   }, [mobile])
 
-  // The landing page carries its own quiet header.
+  // Those pages carry their own quiet header.
   if (isHome) return null
 
   return (
