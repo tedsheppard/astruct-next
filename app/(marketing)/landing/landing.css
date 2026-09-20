@@ -23,7 +23,7 @@
 .ax-eyebrow { margin: 0 0 12px; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
 .ax-lede { font-size: clamp(17px, 1.6vw, 20px); line-height: 1.5; color: var(--ink-2); }
 .ax-fine { font-size: 13px; color: var(--ink-3); }
-.ax-note { max-width: 720px; margin: 22px auto 0; text-align: center; font-size: 14px; color: var(--ink-3); }
+.ax .ax-note { max-width: 720px; margin: 22px auto 0; text-align: center; font-size: 14px; color: var(--ink-3); }
 .ax-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
 .ax-hero-words .ax-cta { justify-content: center; }
 .ax-orb { display: inline-block; width: 22px; height: 22px; border-radius: 8px; background: radial-gradient(circle at 30% 15%, #fff 5%, #efedff 32%, #c6c2fa 66%, #f1f0ff 100%); box-shadow: 0 4px 24px rgba(198, 194, 250, 0.35), inset 0 0 6px #fff; vertical-align: -5px; margin-right: 10px; }

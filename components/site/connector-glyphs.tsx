@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId } from "react";
 
 // The connected apps as the desk's dock draws them: each brand's mark in
 // its own colours, cut in the desk's glass (a soft gradient through the
@@ -159,13 +159,9 @@ function Unknown({ id, ...p }: P & { id: string }) { return <Tile {...p} colour=
 
 export const CONNECTOR_GLYPHS: Record<string, (p: P) => React.JSX.Element> = { gmail: Gmail, outlook: Outlook, gcal: GoogleCalendar, gdrive: GoogleDrive, onedrive: OneDrive, slack: Slack, xero: Xero, procore: Procore, aconex: Aconex, myob: Myob, sharepoint: SharePoint, hammertech: HammerTech, payapps: Payapps };
 
-// A picture supplied for a connector (public/connectors/<id>.png) is used
-// when one is there; the drawn glyph stands in until it loads or when it
-// is missing.
+// The drawn glyph for a connector; anything not drawn gets its initial on
+// a grey tile, never another brand's mark.
 export function ConnectorGlyph({ id, size = 21, className }: { id: string } & P) {
-  const [pic, setPic] = useState<boolean>(true);
   const G = CONNECTOR_GLYPHS[id];
-  if (!pic) return G ? <G size={size} className={className} /> : <Unknown id={id} size={size} className={className} />;
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={`/marketing/connectors/${id}.png`} alt="" width={size} height={size} className={className} style={{ width: size, height: size, objectFit: "contain", filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.18))" }} draggable={false} onError={() => setPic(false)} />;
+  return G ? <G size={size} className={className} /> : <Unknown id={id} size={size} className={className} />;
 }
