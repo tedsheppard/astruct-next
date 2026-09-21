@@ -25,15 +25,7 @@
 .ax-split-form { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 56px; align-items: start; }
 .ax-split-form .ax-page-head h1 { font-size: clamp(32px, 3.4vw, 46px); }
 
-/* Pricing: the choice of the two ways to pay, then a track at a time. */
-.ax-choice { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0 0 42px; }
-.ax-choice-card { position: relative; display: grid; gap: 6px; padding: 18px 46px 18px 20px; border-radius: 18px; background: var(--glass); box-shadow: inset 0 0 0 1px var(--line), var(--shadow-soft); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); text-decoration: none; text-align: left; transition: background-color .15s ease, transform .15s ease; }
-.ax-choice-card:hover { background: var(--glass-strong); transform: translateY(-2px); }
-.ax-choice-card b { font-size: 16px; font-weight: 600; line-height: 1.3; }
-.ax-choice-card span { font-size: 14.5px; line-height: 1.5; color: var(--ink-2); }
-.ax-choice-card::after { content: ''; position: absolute; right: 22px; top: 50%; width: 8px; height: 8px; border-right: 1.5px solid var(--ink-3); border-bottom: 1.5px solid var(--ink-3); transform: translateY(-70%) rotate(45deg); transition: transform .15s ease; }
-.ax-choice-card:hover::after { transform: translateY(-30%) rotate(45deg); border-color: var(--ink); }
-
+/* Pricing: one plan, then how the model work is paid for. */
 .ax-track { margin-top: 56px; scroll-margin-top: 104px; }
 .ax-track:first-of-type { margin-top: 0; }
 .ax-track-head { max-width: 640px; margin: 0 0 26px; }
@@ -61,13 +53,32 @@
 .ax-plan-feats svg { flex: none; margin-top: 2px; color: var(--tick); }
 .ax-plans.is-four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
-/* The own-account plan: one card across the row, its list beside the price. */
-.ax-plan-wide { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 40px; align-items: start; background: var(--glass-strong); box-shadow: inset 0 0 0 1px var(--ink-3), var(--shadow); }
-.ax-plan-wide-left { display: flex; flex-direction: column; }
-.ax-plan-wide-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-.ax-plan-wide-cta .ax-btn { width: auto; margin-top: 0; }
+/* The one plan: the price on the left, what is included beside it. */
+.ax-plan-one { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 44px; align-items: start; padding: 32px 30px 30px; background: var(--glass-strong); box-shadow: inset 0 0 0 1px var(--ink-3), var(--shadow); }
+.ax-plan-one-left { display: flex; flex-direction: column; }
+.ax-plan-one-left .ax-plan-price b { font-size: 52px; }
+.ax-plan-one-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.ax-plan-one-cta .ax-btn { width: auto; margin-top: 0; }
+.ax-plan-one-left .ax-fine { margin-top: 14px; }
 .ax-plan-feats-two { margin-top: 0; padding-top: 0; border-top: 0; }
 @media (min-width: 901px) { .ax-plan-feats-two { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; } }
+
+/* The two ways the model work is paid for, side by side. */
+.ax-two-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.ax-two-cards .ax-card h3 { font-size: 17px; }
+.ax-two-cards .ax-card .ax-plan-blurb { min-height: 0; margin-top: 8px; }
+.ax-two-cards .ax-points { margin-top: 16px; }
+.ax-two-cards .ax-points li { font-size: 14.5px; }
+
+/* The credit rates. */
+.ax-rates-wrap { margin-top: 16px; overflow-x: auto; }
+.ax-rates { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.ax-rates th, .ax-rates td { padding: 9px 10px; text-align: right; border-bottom: 1px solid var(--line-2); white-space: nowrap; }
+.ax-rates thead th { font-size: 12.5px; font-weight: 500; color: var(--ink-3); }
+.ax-rates thead th:first-child, .ax-rates tbody th { text-align: left; }
+.ax-rates tbody th { font-weight: 500; color: var(--ink); }
+.ax-rates tbody th small { display: block; font-size: 12.5px; font-weight: 400; color: var(--ink-3); white-space: normal; }
+.ax-rates tbody tr:last-child th, .ax-rates tbody tr:last-child td { border-bottom: 0; }
 
 .ax-plan-note { margin-top: 18px; text-align: center; }
 .ax-plan-note a { text-decoration: underline; text-underline-offset: 3px; color: var(--ink-2); }
@@ -147,11 +158,11 @@ textarea.ax-input { height: auto; min-height: 112px; padding: 12px 14px; line-he
 @media (max-width: 900px) {
   .ax-sec-first { padding-top: 5vh; }
   .ax-page-head { margin-bottom: 30px; }
-  .ax-two, .ax-split-form, .ax-plans, .ax-plans.is-four, .ax-tiles, .ax-doc, .ax-choice, .ax-plan-wide { grid-template-columns: 1fr; gap: 26px; }
-  .ax-choice { gap: 10px; margin-bottom: 30px; }
+  .ax-two, .ax-split-form, .ax-plans, .ax-plans.is-four, .ax-tiles, .ax-doc, .ax-plan-one, .ax-two-cards { grid-template-columns: 1fr; gap: 26px; }
   .ax-track { margin-top: 40px; }
-  .ax-plan-wide { gap: 22px; }
-  .ax-plan-wide-cta .ax-btn { width: 100%; }
+  .ax-plan-one { gap: 24px; padding: 24px 20px; }
+  .ax-plan-one-cta .ax-btn { width: 100%; }
+  .ax-plan-one-left .ax-plan-price b { font-size: 44px; }
   .ax-form-row { grid-template-columns: 1fr; }
   .ax-form { padding: 22px 18px; }
   .ax-plan-blurb { min-height: 0; }

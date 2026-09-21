@@ -66,7 +66,7 @@ export default function Hero() {
             <a className="ax-btn ax-btn-primary" href={startFreeHref()}>Start your free trial</a>
             <a className="ax-btn ax-btn-ghost" href="#work">See it work</a>
           </div>
-          <p className="ax-fine">Free to start, no card. Plans from AU$59 a month.</p>
+          <p className="ax-fine">Free to start, no card. Then AU$89.95 a month.</p>
         </div>
 
         <div className="ax-scene" style={sceneStyle} aria-hidden="true">

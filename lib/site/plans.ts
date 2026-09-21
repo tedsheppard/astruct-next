@@ -1,94 +1,49 @@
 /**
- * The two ways Astruct is sold, for the pricing page. Every number here is
- * copied from the app's own definitions and must not be changed here alone:
+ * What Astruct costs, for the pricing page. One subscription, and on top of
+ * it the model work either on the reader's own account or on Astruct credits.
  *
- *   astruct-app/lib/pricing.ts     PLANS (priceAud 59 / 199 / 399, the Pro and
- *                                  Max multipliers 5 and 20) and
- *                                  FREE_TRIAL_CAP_MICROS (AU$5, once)
- *   astruct-app/lib/models/billing.ts  OWN_ACCOUNT_AUD (149.95)
+ * Every number here is the app's own and must not be changed here alone:
  *
- * Track A is metered by tokens on the tiers; track B is a flat platform fee
- * with no token charges at all (astruct-app/docs/BILLING.md).
+ *   astruct-app/lib/models/billing.ts  PLATFORM_AUD (89.95) and PLATFORM_COPY
+ *   astruct-app/lib/usage.ts           FREE_TRIAL_CAP_MICROS (AU$5 of credits)
+ *   astruct-app/lib/pricing.ts         MODEL_RATES, AUD_PER_USD (1.55) and
+ *                                      MARGIN (3.5), which give the credit
+ *                                      rates below: USD rate x 1.55 x 3.5
+ *   astruct-app/lib/agent/model-mix.ts which model each intelligence level
+ *                                      uses (Efficient: Luna; Advanced:
+ *                                      Terra; Expert: Sol; Maximum: Astra,
+ *                                      with Fable writing)
  */
 
-export type CreditTier = {
-  id: 'free' | 'plus' | 'pro' | 'max'
-  name: string
-  price: string
-  cadence?: string
-  blurb: string
-  featured?: boolean
-  features: string[]
-}
+/** The one subscription. */
+export const PLATFORM_AUD = 89.95
+export const PLATFORM_PRICE = `AU$${PLATFORM_AUD.toFixed(2)} a month`
+/** The sentence, as the app says it (PLATFORM_COPY). */
+export const PLATFORM_COPY =
+  'AU$89.95 a month for the platform. Then use your own ChatGPT or API key at no extra cost, or Astruct credits by the token.'
+/** The free trial, as the gate actually applies it. */
+export const TRIAL_LINE = 'Free to start: your first project and AU$5 of Astruct credits, with no card.'
 
-/** Track A: Astruct pays the model bills and charges by tokens on the tiers. */
-export const CREDIT_TIERS: CreditTier[] = [
-  {
-    id: 'free',
-    name: 'Free',
-    price: '$0',
-    blurb: 'Bring a contract in and see the work come back.',
-    features: [
-      'AU$5 of included usage, once',
-      'The whole product: claims, notices, letters, the vault',
-      'Your own persistent computer',
-      'No credit card to start',
-    ],
-  },
-  {
-    id: 'plus',
-    name: 'Plus',
-    price: '$59',
-    cadence: '/month',
-    blurb: 'For one contract administrator running live jobs.',
-    features: [
-      'A rolling 5-hour limit and a weekly limit',
-      'Pay as you go beyond the week',
-      'Connected mail, calendar and drive',
-      'Everything in Free',
-    ],
-  },
-  {
-    id: 'pro',
-    name: 'Pro',
-    price: '$199',
-    cadence: '/month',
-    featured: true,
-    blurb: 'For a busy desk across several projects.',
-    features: [
-      'Five times the usage of Plus',
-      'The same rolling 5-hour and weekly limits, five times larger',
-      'Pay as you go beyond the week',
-      'Everything in Plus',
-    ],
-  },
-  {
-    id: 'max',
-    name: 'Max',
-    price: '$399',
-    cadence: '/month',
-    blurb: 'For a contracts team, or the heaviest single desk.',
-    features: [
-      'Twenty times the usage of Plus',
-      'The strongest intelligence on the longest documents',
-      'Pay as you go beyond the week',
-      'Everything in Pro',
-    ],
-  },
-]
-
-/** Track B: the customer's own model account, and a flat fee for Astruct. */
-export const OWN_ACCOUNT_AUD = 149.95
-export const OWN_ACCOUNT_PRICE = `AU$${OWN_ACCOUNT_AUD.toFixed(2)} a month`
-export const OWN_ACCOUNT_FEATURES = [
-  'Everything in the product, on every project',
-  'Your own persistent computer, always there',
-  'Your own ChatGPT, or your own OpenAI or Anthropic key',
-  'No token charges at all',
+export const PLATFORM_INCLUDES = [
+  'Everything in the product: claims, notices, letters, the vault, the registers',
+  'Your own persistent computer, always there, with a real terminal',
+  'Your own ChatGPT, or your own OpenAI or Anthropic key, at no extra cost',
+  'Or Astruct credits by the token, at the rates below',
+  'Connected mail, calendar and drive, and the work queue that reads them',
   'Cancel any time',
 ]
-export const OWN_ACCOUNT_NOTE =
-  'Your ChatGPT runs on your ChatGPT plan’s own limits, and an API key is billed to you by the provider. Astruct charges the platform fee and nothing else.'
 
-/** The lowest paid price, for the home page’s fine print. */
-export const LOWEST_PAID_AUD = 59
+export const OWN_ACCOUNT_NOTE =
+  'On your own account there are no token charges at all: your ChatGPT runs on your ChatGPT plan’s own limits, and an API key is billed to you by the provider. If your own allowance runs out part way through a task, Astruct stops and asks: wait, buy more from the provider, or finish that task on Astruct credits.'
+
+/** Astruct credits, per million tokens in Australian dollars, by the
+ *  intelligence level the desk shows. Provider rate x 1.55 x 3.5. */
+export type CreditRate = { level: string; model: string; input: string; output: string }
+export const CREDIT_RATES: CreditRate[] = [
+  { level: 'Efficient', model: 'for everyday work', input: '$6.78', output: '$54.25' },
+  { level: 'Advanced', model: 'for detailed project work', input: '$13.56', output: '$108.50' },
+  { level: 'Expert', model: 'for drafting and analysis', input: '$27.13', output: '$217.00' },
+  { level: 'Maximum', model: 'the strongest available', input: '$54.25', output: '$271.25' },
+]
+export const CREDIT_NOTE =
+  'Per million tokens, in Australian dollars. Reading a document Astruct has already read is charged at a tenth of the input rate, so a long contract is paid for once. A task pauses and asks before it runs up a bill.'
