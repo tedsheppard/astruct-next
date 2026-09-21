@@ -1,7 +1,9 @@
 /**
- * Pricing. The same plans and the same prices as before, on the site's own
- * chrome: the switch between the two sides of the chain, the three plans,
- * then the questions people ask about them.
+ * Pricing: the two ways Astruct is sold. Pay as you go on Astruct credits
+ * (the tiers, metered by tokens), or bring your own ChatGPT or API key and
+ * pay a flat AU$149.95 a month for the platform with no token charges at all.
+ * The numbers are the app's own (lib/site/plans.ts copies them from
+ * astruct-app/lib/pricing.ts and astruct-app/lib/models/billing.ts).
  */
 import type { Metadata } from 'next'
 import Link from 'next/link'
@@ -13,14 +15,16 @@ import '../ax-pages.css'
 
 export const metadata: Metadata = {
   title: 'Pricing',
-  description: 'Free to start. Plans for subcontractors making claims and for head contractors assessing them.',
+  description: 'Free to start. Pay as you go on Astruct credits from AU$59 a month, or bring your own ChatGPT or API key for a flat AU$149.95 a month with no token charges.',
 }
 
 const FAQ = [
-  { q: 'Is there really a free plan?', a: 'Yes. Subcontractors can start free on their first project, with no credit card. It includes compliant claims, the statutory endorsement and deadline tracking.' },
-  { q: 'How is pricing structured for head contractors?', a: 'Head-contractor plans scale with the number of contracts and assessors you run, with custom enterprise pricing for larger builders. Book a demo and we will size it to your projects.' },
-  { q: 'Can I change plans later?', a: 'Yes. You can upgrade or change plans as your needs change.' },
-  { q: 'Do both parties pay?', a: 'Each organisation has its own plan. A subcontractor on the free plan can still work in a shared workspace created by a head contractor.' },
+  { q: 'Is there really a free plan?', a: 'Yes. You start with AU$5 of included usage, once, and no credit card. It is the whole product, not a cut-down one: bring a contract in, ask for the claim or the notice, and see what comes back.' },
+  { q: 'What is the difference between the two ways of paying?', a: 'On Astruct credits, Astruct pays the model bills and meters your work by tokens against your plan, the way ChatGPT and Claude do. On your own account, you connect your own ChatGPT or your own OpenAI or Anthropic key, the provider bills you for the model work, and you pay Astruct a flat AU$149.95 a month with no token charges at all.' },
+  { q: 'Which one is cheaper for me?', a: 'If you already pay for ChatGPT or run an API account, your own account usually is: you are not paying twice for the same tokens. If you would rather one bill and no second account to think about, Astruct credits are simpler. You can move between the two whenever you like.' },
+  { q: 'What happens when my own ChatGPT allowance runs out?', a: 'Astruct stops and says so, keeping what it had written. You can wait for the allowance to reset, buy more from OpenAI, or finish that task on Astruct credits, which are then metered by tokens as usual. You choose in advance which of those it should do.' },
+  { q: 'Can I change plans later?', a: 'Yes. Move up or down a tier at any time, or switch between Astruct credits and your own account. Leaving the own-account plan takes effect at the end of the period you have paid for.' },
+  { q: 'What happens if I go over my limits?', a: 'On a paid tier the work carries on as pay as you go beyond the weekly allowance, at the rate shown in Settings. On the free allowance it stops and asks you to choose a plan, so nothing is ever charged without you deciding to.' },
 ]
 
 export default function PricingPage() {
@@ -31,8 +35,8 @@ export default function PricingPage() {
       <section className="ax-sec ax-sec-first is-in">
         <div className="ax-page-head ax-page-head-mid">
           <span className="ax-pill"><i />Pricing</span>
-          <h1>Simple pricing for both sides of the chain.</h1>
-          <p className="ax-lede">Free to start. Plans scale with the work you do, whether you make claims or assess them.</p>
+          <h1>Two ways to pay. Same Astruct.</h1>
+          <p className="ax-lede">Free to start, with no card. Then either pay as you go on Astruct credits, or bring your own ChatGPT or API key and pay a flat fee for the platform with no token charges at all.</p>
         </div>
         <Plans />
       </section>
@@ -56,7 +60,7 @@ export default function PricingPage() {
       </section>
 
       <section className="ax-sec ax-close is-in" style={{ paddingTop: 0 }}>
-        <h2>Start on your first project.</h2>
+        <h2>Start on your first contract.</h2>
         <p className="ax-lede" style={{ maxWidth: 560, margin: '16px auto 0' }}>Bring one contract in and see the claim, the notice and the letter come back finished.</p>
         <div className="ax-cta">
           <a className="ax-btn ax-btn-primary" href={startFreeHref()}>Start your free trial</a>

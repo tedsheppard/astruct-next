@@ -25,6 +25,21 @@
 .ax-split-form { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 56px; align-items: start; }
 .ax-split-form .ax-page-head h1 { font-size: clamp(32px, 3.4vw, 46px); }
 
+/* Pricing: the choice of the two ways to pay, then a track at a time. */
+.ax-choice { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0 0 42px; }
+.ax-choice-card { position: relative; display: grid; gap: 6px; padding: 18px 46px 18px 20px; border-radius: 18px; background: var(--glass); box-shadow: inset 0 0 0 1px var(--line), var(--shadow-soft); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); text-decoration: none; text-align: left; transition: background-color .15s ease, transform .15s ease; }
+.ax-choice-card:hover { background: var(--glass-strong); transform: translateY(-2px); }
+.ax-choice-card b { font-size: 16px; font-weight: 600; line-height: 1.3; }
+.ax-choice-card span { font-size: 14.5px; line-height: 1.5; color: var(--ink-2); }
+.ax-choice-card::after { content: ''; position: absolute; right: 22px; top: 50%; width: 8px; height: 8px; border-right: 1.5px solid var(--ink-3); border-bottom: 1.5px solid var(--ink-3); transform: translateY(-70%) rotate(45deg); transition: transform .15s ease; }
+.ax-choice-card:hover::after { transform: translateY(-30%) rotate(45deg); border-color: var(--ink); }
+
+.ax-track { margin-top: 56px; scroll-margin-top: 104px; }
+.ax-track:first-of-type { margin-top: 0; }
+.ax-track-head { max-width: 640px; margin: 0 0 26px; }
+.ax-track-head h2 { font-size: clamp(24px, 2.6vw, 34px); line-height: 1.08; letter-spacing: -0.03em; }
+.ax-track-head p { margin-top: 12px; font-size: 16px; line-height: 1.6; color: var(--ink-2); }
+
 /* Pricing: the audience switch, then the plans. */
 .ax-switch { display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--glass); box-shadow: inset 0 0 0 1px var(--line); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
 .ax-switch button { height: 38px; padding: 0 20px; border: 0; border-radius: 999px; background: transparent; color: var(--ink-3); font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color .15s ease, color .15s ease; }
@@ -44,6 +59,16 @@
 .ax-plan-feats { display: grid; align-content: start; gap: 10px; margin: 22px 0 0; padding: 20px 0 0; border-top: 1px solid var(--line-2); list-style: none; }
 .ax-plan-feats li { display: flex; align-items: flex-start; gap: 10px; font-size: 14.5px; line-height: 1.45; color: var(--ink-2); }
 .ax-plan-feats svg { flex: none; margin-top: 2px; color: var(--tick); }
+.ax-plans.is-four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* The own-account plan: one card across the row, its list beside the price. */
+.ax-plan-wide { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 40px; align-items: start; background: var(--glass-strong); box-shadow: inset 0 0 0 1px var(--ink-3), var(--shadow); }
+.ax-plan-wide-left { display: flex; flex-direction: column; }
+.ax-plan-wide-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.ax-plan-wide-cta .ax-btn { width: auto; margin-top: 0; }
+.ax-plan-feats-two { margin-top: 0; padding-top: 0; border-top: 0; }
+@media (min-width: 901px) { .ax-plan-feats-two { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; } }
+
 .ax-plan-note { margin-top: 18px; text-align: center; }
 .ax-plan-note a { text-decoration: underline; text-underline-offset: 3px; color: var(--ink-2); }
 .ax-plan-note a:hover { color: var(--ink); }
@@ -115,10 +140,18 @@ textarea.ax-input { height: auto; min-height: 112px; padding: 12px 14px; line-he
 .ax-legal a { text-decoration: underline; text-underline-offset: 3px; }
 .ax-legal-note { margin-top: 36px; padding: 16px 18px; border-radius: 16px; background: var(--glass); box-shadow: inset 0 0 0 1px var(--line); font-size: 13.5px; line-height: 1.55; color: var(--ink-3); }
 
+@media (max-width: 1180px) {
+  .ax-plans.is-four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 @media (max-width: 900px) {
   .ax-sec-first { padding-top: 5vh; }
   .ax-page-head { margin-bottom: 30px; }
-  .ax-two, .ax-split-form, .ax-plans, .ax-tiles, .ax-doc { grid-template-columns: 1fr; gap: 26px; }
+  .ax-two, .ax-split-form, .ax-plans, .ax-plans.is-four, .ax-tiles, .ax-doc, .ax-choice, .ax-plan-wide { grid-template-columns: 1fr; gap: 26px; }
+  .ax-choice { gap: 10px; margin-bottom: 30px; }
+  .ax-track { margin-top: 40px; }
+  .ax-plan-wide { gap: 22px; }
+  .ax-plan-wide-cta .ax-btn { width: 100%; }
   .ax-form-row { grid-template-columns: 1fr; }
   .ax-form { padding: 22px 18px; }
   .ax-plan-blurb { min-height: 0; }

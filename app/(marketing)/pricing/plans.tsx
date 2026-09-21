@@ -1,67 +1,81 @@
-'use client'
-
-import { useState } from 'react'
 import Link from 'next/link'
 import { Check } from 'lucide-react'
 import { startFreeHref, DEMO_HREF } from '@/lib/site/brand'
+import { CREDIT_TIERS, OWN_ACCOUNT_FEATURES, OWN_ACCOUNT_NOTE, OWN_ACCOUNT_PRICE } from '@/lib/site/plans'
 
-// The plans, with the audience switch above them. The tiers, their prices
-// and what is in them are unchanged; only the dress is new.
-type Tier = { name: string; price: string; cadence?: string; blurb: string; cta: string; href: 'start' | 'demo'; featured?: boolean; features: string[] }
-
-const SUB_TIERS: Tier[] = [
-  { name: 'Free', price: '$0', blurb: 'For your first project. Make compliant claims and get paid.', cta: 'Start your free trial', href: 'start', features: ['1 active project', 'Compliant payment claims', 'Statutory endorsement and deadlines', 'PDF generation and serving', 'Variations and retention tracking'] },
-  { name: 'Pro', price: '$—', cadence: '/month', blurb: 'For busy subcontractors running multiple jobs.', cta: 'Start your free trial', href: 'start', featured: true, features: ['Unlimited projects and claims', 'AI validity checks', 'Project document library', 'Priority email support', 'Everything in Free'] },
-  { name: 'Enterprise', price: 'Custom', blurb: 'For larger trade businesses and groups.', cta: 'Talk to us', href: 'demo', features: ['Multiple users and teams', 'Custom onboarding', 'Volume pricing', 'Dedicated support', 'Everything in Pro'] },
-]
-
-const MC_TIERS: Tier[] = [
-  { name: 'Starter', price: '$—', cadence: '/month', blurb: 'For smaller builders assessing a handful of contracts.', cta: 'Book a demo', href: 'demo', features: ['Assess incoming claims', 'Issue compliant payment schedules', 'Business-day deadline tracking', 'Variations and retention', 'Up to a set number of contracts'] },
-  { name: 'Business', price: '$—', cadence: '/month', blurb: 'For head contractors running projects at scale.', cta: 'Book a demo', href: 'demo', featured: true, features: ['Unlimited contracts and claims', 'Shared workspaces with subcontractors', 'AI validity checks', 'Multiple assessors and roles', 'Audit trail and exports'] },
-  { name: 'Enterprise', price: 'Custom', blurb: 'For Tier 1 and 2 builders with bespoke needs.', cta: 'Talk to us', href: 'demo', features: ['Custom contract and user volumes', 'SSO and advanced controls', 'Dedicated onboarding and support', 'Custom integrations', 'Everything in Business'] },
-]
-
+// The two ways Astruct is sold, one under the other, with the choice named at
+// the top. Track A is metered by tokens on the tiers; track B is a flat fee
+// for the platform with the model work on the reader's own account and no
+// token charges (astruct-app/docs/BILLING.md). Every figure comes from
+// lib/site/plans.ts, which copies the app's own definitions.
 export default function Plans() {
-  const [aud, setAud] = useState<'sub' | 'mc'>('sub')
-  const tiers = aud === 'sub' ? SUB_TIERS : MC_TIERS
+  const startFree = startFreeHref()
+  const startOwn = `${startFree}?plan=own`
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
-        <div className="ax-switch" role="group" aria-label="Who the plans are for">
-          {([['sub', 'Subcontractors'], ['mc', 'Main contractors']] as const).map(([k, label]) => (
-            <button key={k} type="button" aria-pressed={aud === k} onClick={() => setAud(k)}>{label}</button>
+      <div className="ax-choice" role="group" aria-label="The two ways to pay">
+        <a className="ax-choice-card" href="#credits">
+          <b>Pay as you go on Astruct credits</b>
+          <span>Astruct pays the model bills. From $0 to $399 a month, by what you use.</span>
+        </a>
+        <a className="ax-choice-card" href="#own">
+          <b>Bring your own account, {OWN_ACCOUNT_PRICE}</b>
+          <span>Your own ChatGPT or your own API key. No token charges at all.</span>
+        </a>
+      </div>
+
+      <section id="credits" className="ax-track">
+        <div className="ax-track-head">
+          <h2>Astruct credits</h2>
+          <p>Astruct runs the models on its own accounts and meters the work against your plan. Start free, and move up when the work does.</p>
+        </div>
+        <div className="ax-plans is-four">
+          {CREDIT_TIERS.map((t) => (
+            <article key={t.id} className={t.featured ? 'ax-plan ax-plan-feat' : 'ax-plan'}>
+              <div className="ax-plan-top">
+                <h3>{t.name}</h3>
+                {t.featured && <span className="ax-pill"><i />Most popular</span>}
+              </div>
+              <div className="ax-plan-price">
+                <b>{t.price}</b>
+                {t.cadence && <span>{t.cadence}</span>}
+              </div>
+              <p className="ax-plan-blurb">{t.blurb}</p>
+              <a href={startFree} className={t.featured ? 'ax-btn ax-btn-primary' : 'ax-btn ax-btn-ghost'}>Start your free trial</a>
+              <ul className="ax-plan-feats">
+                {t.features.map((f) => <li key={f}><Check size={16} />{f}</li>)}
+              </ul>
+            </article>
           ))}
         </div>
-      </div>
+        <p className="ax-fine ax-plan-note">Prices in Australian dollars. Usage is shared across chat, drafting, contract reading, workflows and scheduled tasks.</p>
+      </section>
 
-      <div className="ax-plans">
-        {tiers.map((t) => (
-          <article key={t.name} className={t.featured ? 'ax-plan ax-plan-feat' : 'ax-plan'}>
-            <div className="ax-plan-top">
-              <h3>{t.name}</h3>
-              {t.featured && <span className="ax-pill"><i />Most popular</span>}
-            </div>
+      <section id="own" className="ax-track">
+        <div className="ax-track-head">
+          <h2>Your own account</h2>
+          <p>Connect your own ChatGPT, or your own OpenAI or Anthropic key, and pay a flat fee for Astruct itself. The provider bills you for the model work, and Astruct charges nothing by the token.</p>
+        </div>
+        <article className="ax-plan ax-plan-wide">
+          <div className="ax-plan-wide-left">
+            <div className="ax-plan-top"><h3>Own account</h3></div>
             <div className="ax-plan-price">
-              <b>{t.price}</b>
-              {t.cadence && <span>{t.cadence}</span>}
+              <b>$149.95</b>
+              <span>/month</span>
             </div>
-            <p className="ax-plan-blurb">{t.blurb}</p>
-            {t.href === 'start' ? (
-              <a href={startFreeHref()} className={t.featured ? 'ax-btn ax-btn-primary' : 'ax-btn ax-btn-ghost'}>{t.cta}</a>
-            ) : (
-              <Link href={DEMO_HREF} className={t.featured ? 'ax-btn ax-btn-primary' : 'ax-btn ax-btn-ghost'}>{t.cta}</Link>
-            )}
-            <ul className="ax-plan-feats">
-              {t.features.map((f) => <li key={f}><Check size={16} />{f}</li>)}
-            </ul>
-          </article>
-        ))}
-      </div>
-
-      <p className="ax-fine ax-plan-note">
-        Prices shown as &ldquo;$&mdash;&rdquo; are being finalised. <Link href={DEMO_HREF}>Talk to us</Link> for current pricing.
-      </p>
+            <p className="ax-plan-blurb">For a desk that already pays for ChatGPT or an API account and would rather not pay twice.</p>
+            <div className="ax-plan-wide-cta">
+              <a href={startOwn} className="ax-btn ax-btn-primary">Start on your own account</a>
+              <Link href={DEMO_HREF} className="ax-btn ax-btn-ghost">Book a demo</Link>
+            </div>
+          </div>
+          <ul className="ax-plan-feats ax-plan-feats-two">
+            {OWN_ACCOUNT_FEATURES.map((f) => <li key={f}><Check size={16} />{f}</li>)}
+          </ul>
+        </article>
+        <p className="ax-fine ax-plan-note">{OWN_ACCOUNT_NOTE}</p>
+      </section>
     </>
   )
 }
