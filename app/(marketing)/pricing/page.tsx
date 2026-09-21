@@ -1,7 +1,8 @@
 /**
- * Pricing: one plan. AU$89.95 a month for the platform, and then the model
- * work either on the reader's own ChatGPT or API key at no extra cost, or on
- * Astruct credits by the token. The numbers are the app's own (lib/site/plans.ts
+ * Pricing: one plan. AU$89.95 a month for the account after the free trial,
+ * and the model work on top of it paid either with the reader's own ChatGPT
+ * or API key at no extra cost, or with Astruct credits by the token; the fee
+ * is the same either way. The numbers are the app's own (lib/site/plans.ts
  * copies them from astruct-app/lib/models/billing.ts and lib/pricing.ts).
  */
 import type { Metadata } from 'next'
@@ -14,13 +15,13 @@ import '../ax-pages.css'
 
 export const metadata: Metadata = {
   title: 'Pricing',
-  description: 'AU$89.95 a month for the platform. Then use your own ChatGPT or API key at no extra cost, or Astruct credits by the token. Free to start, no card.',
+  description: 'AU$89.95 a month for your account after the free trial. Model work is then paid either with your own ChatGPT or API key at no extra cost, or with Astruct credits by the token.',
 }
 
 const FAQ = [
-  { q: 'What do I get for AU$89.95 a month?', a: 'The whole product: the projects, the contract reading, the claims, the notices, the letters, the vault and the registers, your connected mail and calendar, the work queue that reads them, and your own persistent computer with a real terminal in it. One price, whether you run the model work on your own account or on Astruct credits.' },
+  { q: 'What do I get for AU$89.95 a month?', a: 'Your account, and everything in it: the projects, the contract reading, the claims, the notices, the letters, the vault and the registers, your connected mail and calendar, the work queue that reads them, and your own persistent computer with a real terminal in it. The fee is for the account itself: it is the same price whether the model work runs on your own ChatGPT, on your own API key, or on Astruct credits.' },
   { q: 'Is there really a free trial?', a: 'Yes. Your first project and AU$5 of Astruct credits, with no card. It is the whole product, not a cut-down one: bring a contract in, ask for the claim or the notice, and see what comes back.' },
-  { q: 'What does "your own ChatGPT or API key at no extra cost" mean?', a: 'Connect your ChatGPT, or your own OpenAI or Anthropic key, in Settings. The model work then runs on your account: your ChatGPT plan’s own limits apply, or your provider bills you for the API, and Astruct charges nothing by the token on top of the subscription.' },
+  { q: 'What does "your own ChatGPT or API key at no extra cost" mean?', a: 'Connect your ChatGPT, or your own OpenAI or Anthropic key, in Settings. The model work then runs on your account: your ChatGPT plan’s own limits apply, or your provider bills you for the API, and Astruct charges nothing by the token on top of the subscription. You can do it on any plan, the free trial included, and it does not change what you pay Astruct.' },
   { q: 'And if I would rather not connect anything?', a: 'Then Astruct runs the models and you pay by the token as Astruct credits, at the rates on this page. Most people end up using both in a month: their ChatGPT for the conversation, and credits for a job it cannot run.' },
   { q: 'What happens when my own ChatGPT allowance runs out?', a: 'Astruct stops and says so, keeping what it had written. You can wait for the allowance to reset, buy more from OpenAI, or finish that task on Astruct credits, which are then charged by the token. You choose in advance which of those it should do.' },
   { q: 'Can I cancel?', a: 'Any time. The subscription runs to the end of the period you have paid for and does not renew, and nothing is deleted: your projects, documents and keys stay where they are.' },
@@ -36,7 +37,7 @@ export default function PricingPage() {
         <div className="ax-page-head ax-page-head-mid">
           <span className="ax-pill"><i />Pricing</span>
           <h1>One plan. Your own ChatGPT, or ours.</h1>
-          <p className="ax-lede">AU$89.95 a month for the platform. Then use your own ChatGPT or API key at no extra cost, or Astruct credits by the token. Free to start, with no card.</p>
+          <p className="ax-lede">AU$89.95 a month for your account after the free trial. Model work is then paid either with your own ChatGPT or API key at no extra cost, or with Astruct credits by the token. Free to start, with no card.</p>
         </div>
         <Plans />
       </section>

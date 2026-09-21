@@ -4,9 +4,10 @@ import { startFreeHref, DEMO_HREF } from '@/lib/site/brand'
 import { CREDIT_NOTE, CREDIT_RATES, OWN_ACCOUNT_NOTE, PLATFORM_INCLUDES, PLATFORM_PRICE, TRIAL_LINE } from '@/lib/site/plans'
 
 // One plan, one price, and the credit rates under it. The reader pays
-// AU$89.95 a month for Astruct and then either brings their own ChatGPT or
-// API key, at no extra cost, or uses Astruct credits by the token. Every
-// figure comes from lib/site/plans.ts, which copies the app's own.
+// AU$89.95 a month for the account once the free trial is over, and the model
+// work on top of it is paid either with their own ChatGPT or API key, at no
+// extra cost, or with Astruct credits by the token: the fee is the same
+// either way. Every figure comes from lib/site/plans.ts, the app's own.
 export default function Plans() {
   const startFree = startFreeHref()
   const startPlatform = `${startFree}?plan=platform`
@@ -21,8 +22,8 @@ export default function Plans() {
             <span>/month</span>
           </div>
           <p className="ax-plan-blurb">
-            Everything in the product, for one contract administrator. Then use your own ChatGPT or API key at no extra
-            cost, or Astruct credits by the token.
+            Everything in the product, for one contract administrator. The model work on top of it is paid either with
+            your own ChatGPT or API key at no extra cost, or with Astruct credits by the token.
           </p>
           <div className="ax-plan-one-cta">
             <a href={startFree} className="ax-btn ax-btn-primary">Start your free trial</a>
@@ -37,7 +38,7 @@ export default function Plans() {
 
       <section id="usage" className="ax-track">
         <div className="ax-track-head">
-          <h2>Then the model work: yours, or ours</h2>
+          <h2>The model work: yours, or ours</h2>
           <p>{OWN_ACCOUNT_NOTE}</p>
         </div>
 
@@ -49,6 +50,7 @@ export default function Plans() {
               <li><Check size={16} />No token charges at all</li>
               <li><Check size={16} />Your ChatGPT runs on your own plan’s limits</li>
               <li><Check size={16} />An API key is billed to you by the provider</li>
+              <li><Check size={16} />Available on every plan, the free trial included</li>
             </ul>
           </div>
           <div className="ax-card">
@@ -75,8 +77,9 @@ export default function Plans() {
         </div>
 
         <p className="ax-fine ax-plan-note">
-          Prices in Australian dollars. Using both in the same month is normal: your ChatGPT for the conversation, and
-          credits for a job it cannot run. <Link href={DEMO_HREF}>Talk to us</Link> about a team.
+          Prices in Australian dollars. The subscription is the same whichever you use, and using both in the same
+          month is normal: your ChatGPT for the conversation, and credits for a job it cannot run.{' '}
+          <Link href={DEMO_HREF}>Talk to us</Link> about a team.
         </p>
       </section>
     </>

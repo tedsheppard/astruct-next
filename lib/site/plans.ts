@@ -1,6 +1,8 @@
 /**
- * What Astruct costs, for the pricing page. One subscription, and on top of
- * it the model work either on the reader's own account or on Astruct credits.
+ * What Astruct costs, for the pricing page. One subscription for the account
+ * itself, and then the model work paid either with the reader's own ChatGPT
+ * or API key, at no extra cost, or with Astruct credits by the token. The fee
+ * has no nexus to which of those they choose.
  *
  * Every number here is the app's own and must not be changed here alone:
  *
@@ -20,21 +22,21 @@ export const PLATFORM_AUD = 89.95
 export const PLATFORM_PRICE = `AU$${PLATFORM_AUD.toFixed(2)} a month`
 /** The sentence, as the app says it (PLATFORM_COPY). */
 export const PLATFORM_COPY =
-  'AU$89.95 a month for the platform. Then use your own ChatGPT or API key at no extra cost, or Astruct credits by the token.'
+  'AU$89.95 a month for your account after the free trial. Model work is then paid either with your own ChatGPT or API key at no extra cost, or with Astruct credits by the token.'
 /** The free trial, as the gate actually applies it. */
 export const TRIAL_LINE = 'Free to start: your first project and AU$5 of Astruct credits, with no card.'
 
 export const PLATFORM_INCLUDES = [
   'Everything in the product: claims, notices, letters, the vault, the registers',
   'Your own persistent computer, always there, with a real terminal',
-  'Your own ChatGPT, or your own OpenAI or Anthropic key, at no extra cost',
-  'Or Astruct credits by the token, at the rates below',
   'Connected mail, calendar and drive, and the work queue that reads them',
+  'Model work on your own ChatGPT or API key at no extra cost, on any plan',
+  'Or Astruct credits by the token, at the rates below',
   'Cancel any time',
 ]
 
 export const OWN_ACCOUNT_NOTE =
-  'On your own account there are no token charges at all: your ChatGPT runs on your ChatGPT plan’s own limits, and an API key is billed to you by the provider. If your own allowance runs out part way through a task, Astruct stops and asks: wait, buy more from the provider, or finish that task on Astruct credits.'
+  'The subscription pays for the account. The model work on top of it is paid either way, and the choice costs nothing: connect your own ChatGPT or API key on any plan, including the free trial, and there are no token charges at all; or let Astruct run the models and pay by the token. If your own allowance runs out part way through a task, Astruct stops and asks: wait, buy more from the provider, or finish that task on Astruct credits.'
 
 /** Astruct credits, per million tokens in Australian dollars, by the
  *  intelligence level the desk shows. Provider rate x 1.55 x 3.5. */
