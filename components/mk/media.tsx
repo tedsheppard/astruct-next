@@ -4,36 +4,48 @@ import { useEffect, useRef, useState } from 'react'
 import { IPlay } from './icons'
 
 /**
- * The hero's 15-second loop. The still frame (children) is the poster, drawn in
- * HTML so it is sharp at any size and follows the theme. The video fades in
- * over it only once it is actually playing, so until the files are delivered
- * (or if they fail, or the visitor prefers reduced motion) the still is the
- * finished picture. Phones get the vertical cut.
+ * The hero's 15-second explainer, muted, looping and inline. The poster is a
+ * <picture> underneath (16:9, or the 9:16 cut on phones) so the frame is never
+ * empty; the video fades in over it once it is actually playing. Visitors who
+ * prefer reduced motion keep the poster. React does not reliably reflect
+ * `muted` onto a server-rendered <video>, so it is set on the element before
+ * play(), which is what browsers check before allowing autoplay.
  */
-export function HeroLoop({ desktop, phone, label }: { desktop: React.ReactNode; phone: React.ReactNode; label: string }) {
+export function HeroLoop({ label }: { label: string }) {
   const ref = useRef<HTMLVideoElement>(null)
   const [playing, setPlaying] = useState(false)
 
   useEffect(() => {
     const v = ref.current
     if (!v) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (reduce.matches) return
     const isPhone = window.matchMedia('(max-width: 640px)').matches
+    v.muted = true
+    v.defaultMuted = true
+    v.playsInline = true
+    v.loop = true
     v.poster = isPhone ? '/media/explainer-15-vertical-poster.jpg' : '/media/explainer-15-poster.jpg'
     v.src = isPhone ? '/media/explainer-15-vertical.mp4' : '/media/explainer-15.mp4'
-    v.play().catch(() => { /* autoplay refused or file missing: the still stays */ })
+    v.play().catch(() => { /* autoplay refused: the poster stays */ })
+    const stop = () => { if (reduce.matches) { v.pause(); setPlaying(false) } }
+    reduce.addEventListener?.('change', stop)
+    return () => reduce.removeEventListener?.('change', stop)
   }, [])
 
   return (
     <div className={`mk-media mk-hero-media${playing ? ' is-playing' : ''}`} role="img" aria-label={label}>
-      <div className="mk-media-still mk-still-desktop" aria-hidden="true">{desktop}</div>
-      <div className="mk-media-still mk-still-phone" aria-hidden="true">{phone}</div>
+      <picture className="mk-media-still" aria-hidden="true">
+        <source media="(max-width: 640px)" srcSet="/media/explainer-15-vertical-poster.jpg" />
+        <img src="/media/explainer-15-poster.jpg" alt="" width={1920} height={1080} fetchPriority="high" />
+      </picture>
       <video
         ref={ref}
         muted
+        autoPlay
         loop
         playsInline
-        preload="none"
+        preload="auto"
         aria-hidden="true"
         onPlaying={() => setPlaying(true)}
         onError={() => setPlaying(false)}

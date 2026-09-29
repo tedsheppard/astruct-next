@@ -5,7 +5,7 @@ import { SIGNUP_URL } from './links'
 export function PricingCards() {
   const included = [
     '100 credits per user per month, pooled across your organisation',
-    'Live Outlook, Gmail and SharePoint connections',
+    'Live Outlook and SharePoint connections, Gmail for pilot customers',
     'The issue register, with deadlines from your contract',
     'Evidence quoted verbatim, one click from its source',
     'Notices prepared for review, downloadable as .docx',

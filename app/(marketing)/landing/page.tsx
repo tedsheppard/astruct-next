@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { HeroLoop, Walkthrough } from '@/components/mk/media'
-import { AppWindow, Clause, Evidence, IssueWindow, MailList, Notice, PhoneStill, Sources, StateHistory } from '@/components/mk/fragments'
+import { Clause, Evidence, IssueWindow, MailList, Notice, Sources, StateHistory } from '@/components/mk/fragments'
 import { Faq, HOME_FAQ, faqJsonLd } from '@/components/mk/faq'
 import { GGmail, GOutlook, GSharePoint, GUpload, IArrow } from '@/components/mk/icons'
 import { PricingCards } from '@/components/mk/pricing'
@@ -84,11 +84,7 @@ export default function HomePage() {
           </div>
           <p className="mk-fine mk-hero-fine">30 days free with 100 credits. No card needed.</p>
           <div className="mk-hero-stage">
-            <HeroLoop
-              label="Astruct's project page: a new site instruction arrives and becomes a variation with a notice due in three business days."
-              desktop={<AppWindow />}
-              phone={<PhoneStill />}
-            />
+            <HeroLoop label="A 15-second explainer: site instruction SI-014 arrives from Harrow &amp; Vale, Astruct links the evidence, finds Special Condition SC 8.1 and a notice due Fri 2 Oct at 5:00 pm, and prepares the Variation Notice for review." />
           </div>
         </div>
       </section>
@@ -122,7 +118,7 @@ export default function HomePage() {
           <div className="mk-head mk-center mk-reveal">
             <span className="mk-kicker">See it work</span>
             <h2 className="mk-h2">From one email to a notice, ready for review.</h2>
-            <p className="mk-lede">A walkthrough on the demo project, a fictional façade subcontract in Brisbane.</p>
+            <p className="mk-lede">A walkthrough on the demo project: a fictional façade subcontract in Fortitude Valley, Brisbane, and the site instruction that changed its brackets.</p>
           </div>
           <div className="mk-walk mk-reveal">
             <Walkthrough label="Astruct walkthrough on the demo project" phone={<div className="ui mk-still-phone-pad"><Clause /></div>}>
