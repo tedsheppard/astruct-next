@@ -26,9 +26,10 @@ const dmSerifDisplay = DM_Serif_Display({
 })
 
 export const metadata: Metadata = {
-  title: 'Astruct — AI contract intelligence. Try free, no signup.',
+  metadataBase: new URL('https://astruct.io'),
+  title: 'Astruct: commercial intelligence for construction projects',
   description:
-    'AI contract intelligence for Australian construction. Upload a contract, ask anything, draft notices in seconds — free for your first project, no credit card required.',
+    'Astruct stays connected to your project mail and documents, spots variations and delays, finds the clause and the time bar, and prepares the notice for your review.',
 }
 
 export default function RootLayout({
@@ -40,10 +41,11 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${manrope.variable} ${jetbrainsMono.variable} ${dmSerifDisplay.variable}`}
+      suppressHydrationWarning
     >
       <body className="min-h-screen bg-background text-foreground antialiased">
         {/* The stored theme goes on before first paint, so the server-rendered page never flashes the wrong one. */}
-        <script dangerouslySetInnerHTML={{ __html: "try{if(localStorage.getItem('astruct-theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}" }} />
+        <script dangerouslySetInnerHTML={{ __html: "try{var t=localStorage.getItem('astruct-theme');if(t==='dark'||t==='light')document.documentElement.classList.add(t)}catch(e){}" }} />
         <ThemeProvider>
           {children}
           <Toaster />

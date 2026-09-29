@@ -8,15 +8,18 @@ export async function proxy(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/api/documents/upload') ||
       request.nextUrl.pathname.startsWith('/api/correspondence/upload') ||
       request.nextUrl.pathname.startsWith('/api/waitlist') ||
-      request.nextUrl.pathname.startsWith('/api/leads')) {
+      request.nextUrl.pathname.startsWith('/api/leads') ||
+      request.nextUrl.pathname.startsWith('/api/pilot')) {
     return NextResponse.next()
   }
 
   const hostname = request.headers.get('host') || ''
   const isAppDomain = hostname.startsWith('app.')
-  const isMainDomain = !isAppDomain && (hostname.includes('astruct.io') || hostname.includes('astruct.com'))
+  // astruct.io, plus Vercel preview hosts so a preview behaves like the live site.
+  const isMainDomain = !isAppDomain && (hostname.includes('astruct.io') || hostname.includes('astruct.com') || hostname.endsWith('.vercel.app'))
 
   // ─── Main domain (astruct.io) → marketing site only ───────────────────
+  // Retired pages are redirected (308) in next.config.ts, before this runs.
   if (isMainDomain) {
     const path = request.nextUrl.pathname
 
@@ -25,28 +28,8 @@ export async function proxy(request: NextRequest) {
       return NextResponse.next()
     }
 
-    // Legacy URL redirects (old marketing IA → new). Exact match first, then prefix.
-    const legacyRedirects: Record<string, string> = {
-      '/platform': '/features',
-      '/product': '/features',
-      '/solutions': '/main-contractors',
-      '/solutions/contractors': '/main-contractors',
-      '/solutions/developers': '/main-contractors',
-      '/solutions/subcontractors': '/subcontractors',
-      '/solutions/contract-administrators': '/main-contractors',
-      '/solutions/construction-lawyers': '/main-contractors',
-      '/company': '/about',
-      '/security': '/features/security-of-payment-compliance',
-      '/privacy': '/legal/privacy',
-      '/terms': '/legal/terms',
-    }
-    if (legacyRedirects[path]) {
-      return NextResponse.redirect(new URL(legacyRedirects[path], request.url), 308)
-    }
-    if (path.startsWith('/platform/')) return NextResponse.redirect(new URL('/features', request.url), 308)
-
     // Marketing public paths
-    const marketingPaths = ['/', '/landing', '/landing-legacy', '/pricing', '/contact', '/features', '/about', '/main-contractors', '/subcontractors', '/resources', '/book-a-demo', '/support', '/legal', '/sitemap.xml', '/robots.txt']
+    const marketingPaths = ['/', '/landing', '/apply', '/pricing', '/security', '/contact', '/legal', '/brand', '/media', '/sitemap.xml', '/robots.txt', '/manifest.webmanifest']
     const isMarketingPath = marketingPaths.some(p => path === p || path.startsWith(p + '/'))
 
     // Root on main domain → landing page
@@ -56,9 +39,9 @@ export async function proxy(request: NextRequest) {
       return NextResponse.rewrite(url)
     }
 
-    // Login/register on main domain → redirect to app subdomain
-    if (path === '/login' || path === '/register') {
-      return NextResponse.redirect(new URL(`https://app.astruct.io${path}`, request.url))
+    // Login/register/signup on main domain → the app
+    if (path === '/login' || path === '/register' || path === '/signup') {
+      return NextResponse.redirect(new URL(`https://app.astruct.io${path === '/register' ? '/signup' : path}`, request.url))
     }
 
     // Non-marketing paths on main domain → redirect to app subdomain

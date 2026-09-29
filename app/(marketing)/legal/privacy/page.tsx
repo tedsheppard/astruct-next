@@ -1,119 +1,177 @@
-/**
- * Privacy policy. The text is unchanged; it sits on the site's chrome with
- * the contents beside it.
- */
 import type { Metadata } from 'next'
-import { AxRoot, AxHeader, AxFooter } from '@/components/site/ax-chrome'
-import '../../landing/landing.css'
-import '../../ax-pages.css'
+import Link from 'next/link'
+import { LegalPage, type LegalSection } from '@/components/mk/legal'
+import { CONTACT_EMAIL } from '@/components/mk/links'
 
 export const metadata: Metadata = {
   title: 'Privacy policy',
-  description: 'How Astruct collects, uses and protects your personal information.',
+  description: 'How Astruct collects, uses, stores and protects personal information.',
+  alternates: { canonical: '/legal/privacy' },
 }
 
-const UPDATED = 'June 2026'
+const mail = <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
 
-const SECTIONS = [
-  ['collect', '1. Information we collect'],
-  ['use', '2. How we use information'],
-  ['disclosure', '3. Disclosure'],
-  ['cookies', '4. Cookies'],
-  ['security', '5. Security'],
-  ['rights', '6. Your rights'],
-  ['retention', '7. Retention'],
-  ['contact', '8. Contact'],
+const SECTIONS: LegalSection[] = [
+  {
+    id: 'collect',
+    h: '1. What we collect',
+    body: (
+      <>
+        <p>We collect the following kinds of personal information:</p>
+        <ul>
+          <li><strong>Contact and application details</strong> you give us on this website, for example when you apply for the private pilot or email us: your name, work email, company, role and your answers to the application questions.</li>
+          <li><strong>Account information</strong>: your name, email address, organisation and sign-in details when you create an account or are invited to one.</li>
+          <li><strong>Project content</strong>: the contracts, documents, mail, drafts and other material you upload, or that Astruct reads from the mailboxes and folders you connect (<strong>Your Content</strong>). Your Content may contain personal information about you and other people, such as the names and contact details of people you correspond with.</li>
+          <li><strong>Connected-account data</strong>: where you or your administrator connect a Microsoft 365 or Google account, the mail and files Astruct is permitted to read from it.</li>
+          <li><strong>Usage and billing data</strong>: your plan, credit usage and, for paid plans, billing details handled by our payment processor. We do not store full card numbers.</li>
+          <li><strong>Technical data</strong>: device and browser type, IP address, log data and cookie identifiers.</li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    id: 'use',
+    h: '2. How we use it',
+    body: (
+      <>
+        <p>We use personal information to:</p>
+        <ul>
+          <li>provide and operate Astruct, including reading your connected sources, detecting issues, linking evidence, computing deadlines and preparing drafts for your review;</li>
+          <li>respond to pilot applications and enquiries, and set up and support your account;</li>
+          <li>meter credit usage, administer plans and process payments;</li>
+          <li>keep Astruct secure and detect misuse; and</li>
+          <li>meet our legal obligations.</li>
+        </ul>
+        <p>We do not sell personal information. Your Content is never used to train models, by us or by our AI provider.</p>
+      </>
+    ),
+  },
+  {
+    id: 'storage',
+    h: '3. Where it is stored',
+    body: (
+      <p>
+        Your account, Your Content and pilot applications are stored in Australia, in Sydney. The application runs in
+        Sydney. Data is encrypted in transit and at rest.
+      </p>
+    ),
+  },
+  {
+    id: 'ai',
+    h: '4. AI processing',
+    body: (
+      <p>
+        To read mail and documents, check issues and prepare drafts, Astruct sends the relevant parts of Your Content to
+        OpenAI&rsquo;s API. Our OpenAI account has Zero Data Retention, which means requests are processed and answered but
+        not retained by OpenAI, and OpenAI does not use them to train its models. This processing may take place outside
+        Australia, including in the United States.
+      </p>
+    ),
+  },
+  {
+    id: 'providers',
+    h: '5. Service providers and overseas disclosure',
+    body: (
+      <>
+        <p>
+          We use these service providers: Supabase (database and file storage, Sydney), Vercel (hosting, Sydney), OpenAI
+          (model processing, under Zero Data Retention), Stripe (billing), Microsoft and Google (only for the accounts you
+          connect), and Meta (website advertising measurement, see section 7). Each handles data under its own terms.
+        </p>
+        <p>
+          Some providers may process data outside Australia. Where we disclose personal information overseas, we take
+          reasonable steps to ensure it is handled consistently with the Australian Privacy Principles. We may also disclose
+          personal information to professional advisers, to a purchaser of our business, or where required or authorised
+          by law.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: 'mailboxes',
+    h: '6. Mailboxes and connected accounts',
+    body: (
+      <>
+        <p>
+          Astruct only reads the mailboxes and folders that you, or your organisation&rsquo;s administrator, connect. Your
+          administrator decides whose mailbox each person in your organisation may search and use with Astruct. Astruct
+          prepares drafts for review and never sends them on your behalf.
+        </p>
+        <p>
+          Astruct&rsquo;s use of information received from Google APIs adheres to the{' '}
+          <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer">Google API Services User Data Policy</a>,
+          including the Limited Use requirements. We do not use Google or Microsoft user data for advertising.
+        </p>
+        <p>You can disconnect an account at any time in Settings. Your Microsoft 365 or Google administrator can also revoke Astruct&rsquo;s access.</p>
+      </>
+    ),
+  },
+  {
+    id: 'cookies',
+    h: '7. Cookies and measurement',
+    body: (
+      <p>
+        We use essential cookies to operate the website and keep you signed in to the app. On this website we use the
+        Meta Pixel to measure visits and pilot applications from our advertising. It records page views and, when you
+        submit a pilot application, the fact that an application was made. It does not receive your answers. You can
+        block or clear cookies in your browser.
+      </p>
+    ),
+  },
+  {
+    id: 'retention',
+    h: '8. Retention',
+    body: (
+      <p>
+        We keep personal information for as long as we need it to provide Astruct and for legitimate business and legal
+        purposes. Your Content is kept until you delete it or your organisation&rsquo;s account is closed, subject to short
+        backup cycles. You can ask us to delete a pilot application at any time.
+      </p>
+    ),
+  },
+  {
+    id: 'rights',
+    h: '9. Access, correction and complaints',
+    body: (
+      <>
+        <p>
+          You may ask for access to, or correction of, the personal information we hold about you, or ask us to delete it.
+          Email {mail}. We may need to verify your identity.
+        </p>
+        <p>
+          If you have a privacy concern, contact us and we will investigate and respond. If you are not satisfied with our
+          response, you can complain to the Office of the Australian Information Commissioner at oaic.gov.au. If we become
+          aware of an eligible data breach, we will respond under the Notifiable Data Breaches scheme.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: 'changes',
+    h: '10. Changes and contact',
+    body: (
+      <p>
+        We may update this policy. The current version is always on this page with its date. For privacy questions or
+        requests, email {mail}. See also our <Link href="/legal/terms">terms</Link> and <Link href="/security">security</Link> page.
+      </p>
+    ),
+  },
 ]
 
 export default function PrivacyPage() {
   return (
-    <AxRoot>
-      <AxHeader />
-
-      <section className="ax-sec ax-sec-first is-in">
-        <div className="ax-page-head">
-          <span className="ax-pill"><i />Legal</span>
-          <h1>Privacy policy</h1>
-          <p className="ax-fine" style={{ marginTop: 14 }}>Last updated: {UPDATED}</p>
-        </div>
-
-        <div className="ax-doc">
-          <nav className="ax-doc-nav" aria-label="Contents">
-            <b>Contents</b>
-            {SECTIONS.map(([id, label]) => <a key={id} href={`#${id}`}>{label}</a>)}
-          </nav>
-
-          <div className="ax-legal">
-            <p>
-              Astruct (<strong>&ldquo;we&rdquo;</strong>, <strong>&ldquo;us&rdquo;</strong>, <strong>&ldquo;our&rdquo;</strong>) respects your privacy. This
-              policy explains how we collect, use, disclose and protect personal information, consistent with the Privacy
-              Act 1988 (Cth) and the Australian Privacy Principles.
-            </p>
-
-            <h2 id="collect">1. Information we collect</h2>
-            <p>We may collect:</p>
-            <ul>
-              <li><strong>Contact details</strong> you give us, such as your name, email, company and phone number when you book a demo, contact us, or create an account;</li>
-              <li><strong>Account and usage information</strong> when you use the Astruct application, including the contracts, claims and documents you create;</li>
-              <li><strong>Technical information</strong> such as your IP address, browser type and pages visited, collected through cookies and analytics.</li>
-            </ul>
-
-            <h2 id="use">2. How we use information</h2>
-            <p>We use personal information to:</p>
-            <ul>
-              <li>provide, maintain and improve our website and services;</li>
-              <li>respond to your enquiries and demo requests;</li>
-              <li>send you service-related communications and, where you have opted in, updates about Astruct;</li>
-              <li>meet our legal and regulatory obligations.</li>
-            </ul>
-
-            <h2 id="disclosure">3. Disclosure</h2>
-            <p>
-              We do not sell your personal information. We may share it with service providers who help us operate (for
-              example hosting, email and analytics providers), who are bound to protect it, and where required by law. Some
-              providers may store data overseas; where they do, we take reasonable steps to ensure your information is
-              handled consistently with this policy.
-            </p>
-
-            <h2 id="cookies">4. Cookies</h2>
-            <p>
-              We use cookies and similar technologies to operate the Site, remember your preferences, and understand how the
-              Site is used. You can control cookies through your browser settings; disabling them may affect how the Site
-              works.
-            </p>
-
-            <h2 id="security">5. Security</h2>
-            <p>
-              We take reasonable steps to protect personal information from misuse, loss, and unauthorised access, including
-              encryption in transit, access controls, and reputable infrastructure providers. No system is completely
-              secure, and we cannot guarantee absolute security.
-            </p>
-
-            <h2 id="rights">6. Your rights</h2>
-            <p>
-              You may request access to, or correction of, the personal information we hold about you. To do so, or to make
-              a privacy complaint, contact us using the details below. We will respond within a reasonable time.
-            </p>
-
-            <h2 id="retention">7. Retention</h2>
-            <p>
-              We keep personal information only for as long as needed for the purposes described in this policy, or as
-              required by law, after which we take reasonable steps to delete or de-identify it.
-            </p>
-
-            <h2 id="contact">8. Contact</h2>
-            <p>
-              For privacy questions or requests, contact <a href="mailto:support@astruct.io">support@astruct.io</a>.
-            </p>
-
-            <p className="ax-legal-note">
-              This page is a general template and should be reviewed by your legal adviser before you rely on it.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <AxFooter />
-    </AxRoot>
+    <LegalPage
+      title="Privacy policy"
+      updated="29 September 2026"
+      intro={
+        <p>
+          This policy explains how Astruct (<strong>we</strong>, <strong>us</strong>, <strong>our</strong>) collects, uses,
+          discloses and protects personal information when you use astruct.io, the Astruct application and related
+          services. We handle personal information in line with the Privacy Act 1988 (Cth) and the Australian Privacy
+          Principles.
+        </p>
+      }
+      sections={SECTIONS}
+    />
   )
 }

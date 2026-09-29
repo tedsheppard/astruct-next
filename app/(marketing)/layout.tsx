@@ -1,40 +1,78 @@
-import type { Metadata } from 'next'
-import SiteHeader from '@/components/site/site-header'
-import SiteFooter from '@/components/site/site-footer'
-import './site.css'
+import type { Metadata, Viewport } from 'next'
+import Header from '@/components/mk/header'
+import Footer from '@/components/mk/footer'
+import { MetaPixel, Reveal } from '@/components/mk/client-bits'
+import { SITE_ORIGIN, CONTACT_EMAIL } from '@/components/mk/links'
+import './mk.css'
+
+const TITLE = 'Astruct: commercial intelligence for construction projects'
+const DESCRIPTION =
+  'Astruct stays connected to your project mail and documents, spots variations and delays, finds the clause and the time bar, and prepares the notice for your review.'
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://astruct.io'),
-  title: {
-    default: 'Astruct — Security of Payment software for Australian construction',
-    template: '%s · Astruct',
-  },
-  description:
-    'Compliant payment claims and payment schedules for Australian head contractors and subcontractors. Built to the Security of Payment Act in every state and territory.',
+  metadataBase: new URL(SITE_ORIGIN),
+  title: { default: TITLE, template: '%s · Astruct' },
+  description: DESCRIPTION,
+  applicationName: 'Astruct',
   openGraph: {
     type: 'website',
     siteName: 'Astruct',
     locale: 'en_AU',
+    url: SITE_ORIGIN,
+    title: TITLE,
+    description: DESCRIPTION,
   },
+  twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION },
+  robots: { index: true, follow: true },
 }
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0a0a0b' },
+  ],
+}
+
+// The organisation only: no people, titles or phone numbers.
 const ORG_JSONLD = {
   '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'Astruct',
-  url: 'https://astruct.io',
-  description: 'Security of Payment software for Australian head contractors and subcontractors.',
-  areaServed: 'AU',
-  sameAs: [],
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${SITE_ORIGIN}/#org`,
+      name: 'Astruct',
+      url: SITE_ORIGIN,
+      logo: `${SITE_ORIGIN}/brand/astruct-mark-512.png`,
+      email: CONTACT_EMAIL,
+      areaServed: 'AU',
+    },
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Astruct',
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Web',
+      url: SITE_ORIGIN,
+      description: DESCRIPTION,
+      offers: {
+        '@type': 'Offer',
+        price: '89.95',
+        priceCurrency: 'AUD',
+        description: 'Per user per month, excluding GST. Includes 100 credits per user per month. 30-day free trial.',
+      },
+      publisher: { '@id': `${SITE_ORIGIN}/#org` },
+    },
+  ],
 }
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="astruct-site min-h-screen">
+    <div className="mk">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }} />
-      <SiteHeader />
-      <main>{children}</main>
-      <SiteFooter />
+      <Header />
+      <main id="main">{children}</main>
+      <Footer />
+      <MetaPixel />
+      <Reveal />
     </div>
   )
 }
