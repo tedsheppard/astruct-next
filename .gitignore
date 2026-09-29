@@ -46,3 +46,6 @@ next-env.d.ts
 # QA artifacts
 .qa-auth-state.json
 test-results/screenshots/
+
+# The site's own launch videos are part of the site.
+!public/media/*.mp4
