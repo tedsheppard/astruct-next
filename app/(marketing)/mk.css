@@ -567,6 +567,7 @@ fieldset.mk-field { border: 0; margin: 0 0 22px; padding: 0; min-width: 0; }
 @media (max-width: 640px) {
   .ui-deadline-box { grid-template-columns: 1fr; gap: 10px; }
   .ui-deadline-box > div:last-child { text-align: left !important; justify-items: start !important; }
+  .ui-deadline-box > .ui-btn { justify-self: start; }
   .ui-src { grid-template-columns: 34px 1fr; }
   .ui-src-status { grid-column: 2; }
   .mk-walk-steps { gap: 8px 18px; }
