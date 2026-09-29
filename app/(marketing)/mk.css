@@ -378,6 +378,7 @@ html.dark .mk .ui-side .is-on { background: rgba(255, 255, 255, 0.08); }
 .mk-int-status { margin-top: auto; display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
 .mk-int-status .ui-dot { color: #34a853; }
 .mk-int-status.is-request .ui-dot { color: var(--ink-3); }
+.mk-int-status.is-pilot .ui-dot { color: #d89b1c; }
 .mk-int-others { grid-column: 1 / -1; min-height: 0; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 14px 24px; }
 .mk-int-others .mk-int-status { margin-top: 0; margin-left: auto; }
 .mk-int-names { display: flex; flex-wrap: wrap; gap: 8px; }

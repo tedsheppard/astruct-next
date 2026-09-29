@@ -20,7 +20,7 @@ const STEPS = [
   },
   {
     title: 'Astruct stays connected and keeps reading.',
-    body: 'Connect Outlook or Gmail mailboxes and SharePoint libraries once. New mail is picked up within about five minutes, and Outlook mailboxes can also notify Astruct as mail arrives. Documents are read as they land.',
+    body: 'Connect Outlook mailboxes and SharePoint libraries once. New mail is picked up within about five minutes, and Outlook mailboxes can also notify Astruct as mail arrives. Documents are read as they land.',
     note: 'Shared mailboxes and SharePoint need your Microsoft 365 admin’s consent.',
     frag: <Sources />,
   },
@@ -181,8 +181,8 @@ export default function HomePage() {
             <div className="mk-int-card">
               <div className="mk-int-logos"><span className="mk-int-logo"><GGmail /></span></div>
               <h3>Gmail</h3>
-              <p>Project mailboxes on Gmail or Google Workspace, read with each person’s permission.</p>
-              <span className="mk-int-status"><i className="ui-dot" />Live</span>
+              <p>Project mailboxes on Gmail or Google Workspace, read with each person’s permission. Open to pilot customers while Google completes its review.</p>
+              <span className="mk-int-status is-pilot"><i className="ui-dot" />Pilot</span>
             </div>
             <div className="mk-int-card">
               <div className="mk-int-logos"><span className="mk-int-logo" style={{ color: 'var(--ink)' }}><GUpload /></span></div>
