@@ -55,10 +55,10 @@ const VS = [
   ['The output', 'Text to copy into a letter', 'A notice prepared for your review, as a .docx'],
 ]
 
-const SECURITY = [
-  { big: 'Sydney', title: 'Stored in Australia', body: 'Your projects, mail and documents are stored in Australia, in Sydney.' },
-  { big: 'Zero', title: 'Zero Data Retention', body: 'Astruct uses OpenAI’s API under Zero Data Retention, so your content is not kept by OpenAI once a request is answered.' },
-  { big: 'None', title: 'No training on your data', body: 'Your mail, documents and drafts are never used to train models, by us or by OpenAI.' },
+const SECURITY: { big?: string; title: string; body: string }[] = [
+  { title: 'Stored in Australia', body: 'Your projects, mail and documents are stored in Australia, in Sydney.' },
+  { title: 'Zero Data Retention', body: 'Astruct uses OpenAI’s API under Zero Data Retention, so your content is not kept by OpenAI once a request is answered.' },
+  { title: 'No training on your data', body: 'Your mail, documents and drafts are never used to train models, by us or by OpenAI.' },
   { title: 'Mailbox access set by your admin', body: 'Your administrator decides whose mailbox each person can search and use with Astruct, one user at a time.' },
   { title: 'Drafts are never sent automatically', body: 'Astruct prepares notices and correspondence. A person on your team reviews them and sends them.' },
   { title: 'Microsoft 365 on your terms', body: 'Organisation-wide connections run on your tenant’s admin consent, and your admin can revoke them at any time.' },
@@ -121,11 +121,11 @@ export default function HomePage() {
         <div className="mk-wrap">
           <div className="mk-head mk-center mk-reveal">
             <span className="mk-kicker">See it work</span>
-            <h2 className="mk-h2">From one email to a notice, ready to send.</h2>
+            <h2 className="mk-h2">From one email to a notice, ready for review.</h2>
             <p className="mk-lede">A walkthrough on the demo project, a fictional façade subcontract in Brisbane.</p>
           </div>
           <div className="mk-walk mk-reveal">
-            <Walkthrough label="Astruct walkthrough on the demo project">
+            <Walkthrough label="Astruct walkthrough on the demo project" phone={<div className="ui mk-still-phone-pad"><Clause /></div>}>
               <IssueWindow />
             </Walkthrough>
             <div className="mk-walk-steps" aria-label="What the walkthrough shows">

@@ -141,6 +141,12 @@ export function IssueWindow() {
           </div>
           <Notice />
         </div>
+        <div className="ui-card" style={{ padding: '4px 18px' }}>
+          <div className="ui-hist" style={{ marginTop: 0 }}>
+            <div style={{ borderTop: 0 }}><time>Thu 8:30 am</time><span>Notice of variation prepared for review from clause 36.2</span></div>
+            <div><time>Wed 9:02 am</time><span>Site diary for 14 Oct linked as supporting evidence</span></div>
+          </div>
+        </div>
       </div>
     </div>
   )

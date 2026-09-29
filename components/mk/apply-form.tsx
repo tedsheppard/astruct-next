@@ -96,7 +96,7 @@ export default function ApplyForm() {
 
   const next = () => {
     const m = problems(step)
-    if (m.length) { setError(`Please add ${m.join(', ')}.`); return }
+    if (m.length) { setError(`Please add ${m.join(', ')}.`); scrollTop(); return }
     setError('')
     setStep((x) => x + 1)
     scrollTop()
@@ -104,7 +104,7 @@ export default function ApplyForm() {
 
   const submit = async () => {
     const m = problems(3)
-    if (m.length) { setError(`Please add ${m.join(', ')}.`); return }
+    if (m.length) { setError(`Please add ${m.join(', ')}.`); scrollTop(); return }
     setError('')
     setBusy(true)
     try {

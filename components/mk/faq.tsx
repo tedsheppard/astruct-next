@@ -41,7 +41,7 @@ export const HOME_FAQ: QA[] = [
   ),
   qa(
     'How quickly does it see new mail?',
-    'New mail is picked up within about five minutes. Outlook mailboxes can also notify Astruct when mail arrives, so a message is often picked up sooner. It is not instant, and we do not claim it is.',
+    'New mail is picked up within about five minutes. Outlook mailboxes can also notify Astruct when mail arrives, so a message is often picked up sooner. It is not instant.',
   ),
   qa(
     'Can I rely on the deadlines it computes?',
