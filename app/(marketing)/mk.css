@@ -235,7 +235,7 @@ html.dark body:has(.mk) { background: #0a0a0b; }
 /* ── The app, drawn: shared fragment styles ─────────────────────────────── */
 .ui { font-family: var(--f-sans); color: var(--ink); font-size: 13px; line-height: 1.45; letter-spacing: -0.006em; text-align: left; }
 .ui-card { background: var(--card); border-radius: 16px; box-shadow: 0 0 0 1px var(--line), var(--shadow-card); }
-.ui-mono { font-size: 11.5px; font-weight: 550; font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.ui-mono { font-size: 11.5px; font-weight: 550; letter-spacing: 0; }
 .ui-tag { display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 8px; border-radius: 7px; background: var(--line-2); box-shadow: inset 0 0 0 1px var(--line); font-size: 11.5px; font-weight: 550; color: var(--ink-2); white-space: nowrap; }
 .ui-tag-accent { background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent-line); color: var(--accent-ink); }
 .ui-tag-solid { background: var(--ink); color: var(--bg); box-shadow: none; }
@@ -272,6 +272,7 @@ html.dark .mk .ui-side .is-on { background: rgba(255, 255, 255, 0.08); }
 .ui-list { display: grid; }
 .ui-issue { display: grid; grid-template-columns: 1fr auto; gap: 4px 18px; align-items: center; padding: 12px 14px; border-top: 1px solid var(--line); }
 .ui-issue:first-child { border-top: 0; }
+.ui-card div { text-wrap: pretty; }
 .ui-issue-title { font-size: 13.5px; font-weight: 600; letter-spacing: -0.012em; }
 .ui-issue-meta { display: flex; align-items: center; gap: 8px; color: var(--ink-3); font-size: 12px; flex-wrap: wrap; }
 .ui-deadline { text-align: right; font-size: 12.5px; font-weight: 600; }
