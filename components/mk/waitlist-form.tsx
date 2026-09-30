@@ -70,7 +70,7 @@ export default function WaitlistForm() {
         </label>
         <label className="wl-l">
           <span>You are a</span>
-          <select className="mk-input wl-select" name="role" defaultValue="">
+          <select className="mk-input wl-select" name="role" defaultValue="" required>
             <option value="" disabled>Choose one</option>
             {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
           </select>
