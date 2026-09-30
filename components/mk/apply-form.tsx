@@ -146,7 +146,7 @@ export default function ApplyForm() {
         </ol>
         <p className="mk-fine">Want to look around first? Start the 30-day free trial. Your card is not charged during the trial.</p>
         <div className="mk-cta-row" style={{ marginTop: 18 }}>
-          <a className="mk-btn" href={SIGNUP_URL}>Start free trial</a>
+          <a className="mk-btn" href={SIGNUP_URL}>Get early access</a>
           <Link className="mk-link" href="/">Back to astruct.io<IArrow /></Link>
         </div>
       </div>

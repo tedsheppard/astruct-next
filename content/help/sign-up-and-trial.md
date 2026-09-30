@@ -5,7 +5,7 @@ category: getting-started
 order: 1
 keywords: signup register account trial card free start credit reminder
 ---
-Start at [app.astruct.io/signup](https://app.astruct.io/signup). Sign up with your work email, then add a card. Your card is not charged during the trial.
+We are onboarding customers in stages. Join the waitlist at [astruct.io/signup-waitlist](/signup-waitlist) and we’ll email you when your place is ready. You then sign up with your work email and add a card. Your card is not charged during the trial.
 
 ## What the trial includes
 

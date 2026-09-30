@@ -36,7 +36,7 @@ export default function Footer() {
           <div>
             <h4>Get started</h4>
             <ul>
-              <li><a href={SIGNUP_URL}>Start free trial</a></li>
+              <li><a href={SIGNUP_URL}>Get early access</a></li>
               <li><Link href="/apply">Private pilot</Link></li>
               <li><a href={LOGIN_URL}>Log in</a></li>
             </ul>

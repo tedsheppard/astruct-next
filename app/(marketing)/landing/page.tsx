@@ -94,7 +94,7 @@ export default function HomePage() {
             of project documents, notices and EOT claims on your letterhead, and an agent that watches project mail.
           </p>
           <div className="mk-cta-row">
-            <a className="mk-btn" href={SIGNUP_URL}>Start free trial</a>
+            <a className="mk-btn" href={SIGNUP_URL}>Get early access</a>
             <Link className="mk-link" href="#ask">See what it does<IArrow /></Link>
           </div>
           <p className="mk-fine mk-hero-fine">{TRIAL_LINE}</p>
@@ -343,7 +343,7 @@ export default function HomePage() {
             Add the contract, connect a mailbox and ask your first question.
           </p>
           <div className="mk-cta-row">
-            <a className="mk-btn" href={SIGNUP_URL}>Start free trial</a>
+            <a className="mk-btn" href={SIGNUP_URL}>Get early access</a>
             <Link className="mk-link" href="/support">Visit the help centre<IArrow /></Link>
           </div>
           <p className="mk-fine" style={{ marginTop: 18 }}>{TRIAL_LINE}</p>

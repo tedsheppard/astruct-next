@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { IArrow, ICheck } from './icons'
 import { SIGNUP_URL } from './links'
 
-// One line of trial terms, used under every "Start free trial" so they never drift.
+// One line of trial terms, used under every "Get early access" so they never drift.
 export const TRIAL_LINE =
   '30-day free trial with 100 credits. Card required, not charged during the trial. We’ll email you 5 days before it ends.'
 
@@ -28,7 +28,7 @@ export function PricingCards({ onPricingPage = false }: { onPricingPage?: boolea
           &gt; Billing.
         </p>
         <div className="mk-cta-row">
-          <a className="mk-btn" href={SIGNUP_URL}>Start free trial</a>
+          <a className="mk-btn" href={SIGNUP_URL}>Get early access</a>
           {!onPricingPage && <Link className="mk-link" href="/pricing">Pricing details<IArrow /></Link>}
         </div>
       </div>

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Mark, Wordmark } from '@/components/mk/mark'
 import WaitlistForm from '@/components/mk/waitlist-form'
 import WaitlistReveal from '@/components/mk/waitlist-reveal'
+import { MetaPixel } from '@/components/mk/client-bits'
 import { LOGIN_URL, CONTACT_EMAIL } from '@/components/mk/links'
 import '../../(marketing)/mk.css'
 import './waitlist.css'
@@ -42,6 +43,7 @@ export default function SignupWaitlistPage() {
         </p>
       </main>
       </WaitlistReveal>
+      <MetaPixel />
     </div>
   )
 }

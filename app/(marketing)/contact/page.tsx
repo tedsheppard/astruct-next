@@ -19,7 +19,7 @@ export default function ContactPage() {
           <a className="mk-contact-mail" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
         </p>
         <div className="mk-cta-row" style={{ marginTop: 64 }}>
-          <a className="mk-btn" href={SIGNUP_URL}>Start free trial</a>
+          <a className="mk-btn" href={SIGNUP_URL}>Get early access</a>
           <Link className="mk-link" href="/apply">Apply for the private pilot<IArrow /></Link>
         </div>
       </div>

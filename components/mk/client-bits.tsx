@@ -31,7 +31,39 @@ export function MetaPixel() {
     }
     window.fbq?.('track', 'PageView')
   }, [pathname])
+  useEffect(() => { captureAttribution() }, [])
   return null
+}
+
+const ATTR_KEY = 'astruct_attr'
+const ATTR_PARAMS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid']
+
+/** First touch: keeps the ad parameters a visitor arrived with (for 30 days),
+ *  so a sign-up on a later page can say which ad brought it. */
+function captureAttribution() {
+  try {
+    const q = new URLSearchParams(window.location.search)
+    const found: Record<string, string> = {}
+    for (const k of ATTR_PARAMS) { const v = q.get(k); if (v) found[k] = v.slice(0, 200) }
+    if (!Object.keys(found).length) return
+    const prev = JSON.parse(localStorage.getItem(ATTR_KEY) || 'null')
+    if (prev && Date.now() - (prev.at || 0) < 30 * 864e5) return
+    localStorage.setItem(ATTR_KEY, JSON.stringify({ ...found, landing: window.location.pathname, at: Date.now() }))
+  } catch { /* storage may be blocked */ }
+}
+
+/** The stored first-touch parameters, plus any on the current URL. */
+export function readAttribution(): Record<string, string> {
+  const out: Record<string, string> = {}
+  try {
+    const prev = JSON.parse(localStorage.getItem(ATTR_KEY) || 'null')
+    if (prev) for (const [k, v] of Object.entries(prev)) if (k !== 'at') out[k] = String(v).slice(0, 200)
+  } catch { /* storage may be blocked */ }
+  try {
+    const q = new URLSearchParams(window.location.search)
+    for (const k of ATTR_PARAMS) { const v = q.get(k); if (v && !out[k]) out[k] = v.slice(0, 200) }
+  } catch { /* ignore */ }
+  return out
 }
 
 /** Fire a standard Meta Pixel event. Never throws. */

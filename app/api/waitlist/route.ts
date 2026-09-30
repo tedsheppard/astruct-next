@@ -27,6 +27,20 @@ const one = (v: unknown, allowed: string[]) => (typeof v === 'string' && allowed
 const many = (v: unknown, allowed: string[]) =>
   Array.isArray(v) ? Array.from(new Set(v.filter((x): x is string => typeof x === 'string' && allowed.includes(x)))) : []
 
+// Ad parameters from the visitor's first touch (utm_*, fbclid, landing page).
+function attribution(v: unknown): Record<string, string> | null {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return null
+  const keep = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'landing']
+  const out: Record<string, string> = {}
+  for (const k of keep) { const x = clip((v as Record<string, unknown>)[k], 200); if (x) out[k] = x }
+  return Object.keys(out).length ? out : null
+}
+
+function sourceOf(a: Record<string, string> | null) {
+  if (!a?.utm_source) return a?.fbclid ? 'ad:meta' : 'astruct.io/signup-waitlist'
+  return ['ad', a.utm_source, a.utm_campaign, a.utm_content].filter(Boolean).join(':').slice(0, 100)
+}
+
 export async function POST(req: NextRequest) {
   const origin = req.headers.get('origin')
   if (origin && origin !== req.nextUrl.origin) {
@@ -79,9 +93,9 @@ export async function POST(req: NextRequest) {
     mail_platform: details ? one(b.mail, MAIL) : null,
     jurisdiction: details ? states.join(', ') || null : null,
     pain: details ? clip(b.pain, 4000) : null,
-    source: 'astruct.io/signup-waitlist',
+    source: sourceOf(attribution(b.attribution)),
     user_agent: req.headers.get('user-agent')?.slice(0, 400) || null,
-    meta: { form: 'signup-waitlist', version: '2026-09-30', step: details ? 'details' : 'contact', referrer: clip(b.referrer, 300) },
+    meta: { form: 'signup-waitlist', version: '2026-09-30', step: details ? 'details' : 'contact', referrer: clip(b.referrer, 300), attribution: attribution(b.attribution) },
   })
 
   if (!result.ok) {

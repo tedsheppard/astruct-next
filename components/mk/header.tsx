@@ -47,7 +47,7 @@ export default function Header() {
         </nav>
         <div className="mk-header-cta">
           <a className="mk-login" href={LOGIN_URL}>Log in</a>
-          <a className="mk-btn mk-btn-sm" href={SIGNUP_URL}>Start free trial</a>
+          <a className="mk-btn mk-btn-sm" href={SIGNUP_URL}>Get early access</a>
           <button
             type="button"
             className="mk-menu-btn"
@@ -66,7 +66,7 @@ export default function Header() {
             <Link key={n.href} href={n.href} onClick={() => setOpen(false)}>{n.label}</Link>
           ))}
           <a href={LOGIN_URL}>Log in</a>
-          <a className="mk-btn" href={SIGNUP_URL}>Start free trial</a>
+          <a className="mk-btn" href={SIGNUP_URL}>Get early access</a>
         </div>
       )}
     </header>

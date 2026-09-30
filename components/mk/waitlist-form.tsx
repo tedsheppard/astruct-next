@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { readAttribution, trackPixel } from './client-bits'
 
 const ROLES = ['Head contractor', 'Subcontractor', 'Developer or principal', 'Consultant']
 const SIZES = ['1 to 20 people', '21 to 100 people', '101 to 500 people', 'More than 500 people']
@@ -67,7 +68,8 @@ export default function WaitlistForm() {
     setError('')
     setBusy(true)
     try {
-      await post({ ...next, website: f.get('website'), elapsed: Date.now() - started.current, referrer: document.referrer })
+      await post({ ...next, website: f.get('website'), elapsed: Date.now() - started.current, referrer: document.referrer, attribution: readAttribution() })
+      trackPixel('Lead', { content_name: 'waitlist' })
       setWho(next)
       setStep('details')
     } catch (err) {
@@ -90,6 +92,7 @@ export default function WaitlistForm() {
         mail: f.get('mail') || null, contractForms: forms, states, pain: f.get('pain') || null,
         elapsed: Date.now() - started.current,
       })
+      trackPixel('CompleteRegistration', { content_name: 'waitlist-details' })
       setStep('done')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'We could not save that just now. Please try again.')
