@@ -29,7 +29,7 @@ export async function proxy(request: NextRequest) {
     }
 
     // Marketing public paths
-    const marketingPaths = ['/', '/landing', '/apply', '/pricing', '/security', '/contact', '/legal', '/brand', '/media', '/sitemap.xml', '/robots.txt', '/manifest.webmanifest']
+    const marketingPaths = ['/', '/landing', '/apply', '/pricing', '/security', '/contact', '/support', '/legal', '/brand', '/media', '/sitemap.xml', '/robots.txt', '/manifest.webmanifest']
     const isMarketingPath = marketingPaths.some(p => path === p || path.startsWith(p + '/'))
 
     // Root on main domain → landing page
