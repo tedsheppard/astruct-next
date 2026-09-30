@@ -23,8 +23,8 @@ export default function WaitlistReveal({ children }: { children: React.ReactNode
           <i className="wl-sk wl-sk-p3" />
           <div className="wl-card wl-sk-card">
             <div className="wl-grid">
-              {[0, 1, 2, 3].map((n) => (
-                <div key={n} className="wl-sk-f"><i className="wl-sk wl-sk-l" /><i className="wl-sk wl-sk-in" /></div>
+              {[0, 1, 2].map((n) => (
+                <div key={n} className={`wl-sk-f${n === 2 ? ' wl-span' : ''}`}><i className="wl-sk wl-sk-l" /><i className="wl-sk wl-sk-in" /></div>
               ))}
             </div>
             <i className="wl-sk wl-sk-btn" />

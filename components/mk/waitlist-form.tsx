@@ -3,59 +3,142 @@
 import { useRef, useState } from 'react'
 
 const ROLES = ['Head contractor', 'Subcontractor', 'Developer or principal', 'Consultant']
+const SIZES = ['1 to 20 people', '21 to 100 people', '101 to 500 people', 'More than 500 people']
+const PROJECTS = ['1 project', '2 to 5 projects', '6 to 20 projects', 'More than 20 projects']
+const MAIL = ['Outlook / Microsoft 365', 'Gmail / Google Workspace', 'Other']
+const FORMS = ['AS 4000 or AS 4001', 'AS 2124 or AS 2545', 'AS 4902 or AS 4903', 'AS 4300 or AS 4303', 'GC21', 'Bespoke or heavily amended', 'Not sure']
+const STATES = ['QLD', 'NSW', 'VIC', 'WA', 'SA', 'TAS', 'ACT', 'NT']
+
+type Step = 'contact' | 'details' | 'done'
+
+async function post(body: Record<string, unknown>) {
+  const r = await fetch('/api/waitlist', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  const j = await r.json().catch(() => ({}))
+  if (!r.ok) throw new Error(j.error || 'We could not save that just now. Please try again.')
+}
+
+function Select({ name, label, options }: { name: string; label: string; options: string[] }) {
+  return (
+    <label className="wl-l">
+      <span>{label}</span>
+      <select className="mk-input wl-select" name={name} defaultValue="" required>
+        <option value="" disabled>Choose one</option>
+        {options.map((o) => <option key={o} value={o}>{o}</option>)}
+      </select>
+    </label>
+  )
+}
+
+function Toggles({ legend, options, value, onChange }: { legend: string; options: string[]; value: string[]; onChange: (v: string[]) => void }) {
+  return (
+    <fieldset className="wl-set">
+      <legend>{legend}</legend>
+      <div className="wl-toggles">
+        {options.map((o) => {
+          const on = value.includes(o)
+          return (
+            <button key={o} type="button" className={`wl-tog${on ? ' is-on' : ''}`} aria-pressed={on}
+              onClick={() => onChange(on ? value.filter((x) => x !== o) : [...value, o])}>{o}</button>
+          )
+        })}
+      </div>
+    </fieldset>
+  )
+}
 
 export default function WaitlistForm() {
   const started = useRef(Date.now())
-  const [state, setState] = useState<'idle' | 'sending' | 'done'>('idle')
+  const [step, setStep] = useState<Step>('contact')
+  const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const [email, setEmail] = useState('')
+  const [who, setWho] = useState({ name: '', email: '', company: '' })
+  const [forms, setForms] = useState<string[]>([])
+  const [states, setStates] = useState<string[]>([])
 
-  async function submit(e: React.FormEvent<HTMLFormElement>) {
+  async function submitContact(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (state === 'sending') return
+    if (busy) return
     const f = new FormData(e.currentTarget)
-    const body = {
-      name: f.get('name'),
-      email: f.get('email'),
-      company: f.get('company'),
-      role: f.get('role') || null,
-      website: f.get('website'),
-      elapsed: Date.now() - started.current,
-      referrer: typeof document !== 'undefined' ? document.referrer : '',
-    }
+    const next = { name: String(f.get('name') || '').trim(), email: String(f.get('email') || '').trim(), company: String(f.get('company') || '').trim() }
     setError('')
-    setState('sending')
+    setBusy(true)
     try {
-      const r = await fetch('/api/waitlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      })
-      const j = await r.json().catch(() => ({}))
-      if (!r.ok) throw new Error(j.error || 'We could not save that just now. Please try again.')
-      setEmail(String(body.email || ''))
-      setState('done')
+      await post({ ...next, website: f.get('website'), elapsed: Date.now() - started.current, referrer: document.referrer })
+      setWho(next)
+      setStep('details')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'We could not save that just now. Please try again.')
-      setState('idle')
+    } finally {
+      setBusy(false)
     }
   }
 
-  if (state === 'done') {
+  async function submitDetails(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (busy) return
+    const f = new FormData(e.currentTarget)
+    setError('')
+    setBusy(true)
+    try {
+      await post({
+        step: 'details', ...who,
+        role: f.get('role') || null, companySize: f.get('companySize') || null, projects: f.get('projects') || null,
+        mail: f.get('mail') || null, contractForms: forms, states, pain: f.get('pain') || null,
+        elapsed: Date.now() - started.current,
+      })
+      setStep('done')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'We could not save that just now. Please try again.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  if (step === 'done') {
     return (
       <div className="wl-done" role="status">
         <span className="wl-tick" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="22" height="22"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </span>
         <p className="wl-done-h">You&rsquo;re on the waitlist.</p>
-        <p className="wl-done-p">We&rsquo;ll email {email ? <b>{email}</b> : 'you'} as soon as your place is ready.</p>
+        <p className="wl-done-p">We&rsquo;ll email <b>{who.email}</b> as soon as your place is ready.</p>
       </div>
     )
   }
 
+  if (step === 'details') {
+    return (
+      <form className="wl-form wl-details" onSubmit={submitDetails} noValidate>
+        <p className="wl-step-h">You&rsquo;re on the list.</p>
+        <p className="wl-step-p">A few quick questions help us set you up sooner. All optional.</p>
+        <div className="wl-grid">
+          <Select name="role" label="You are a" options={ROLES} />
+          <Select name="companySize" label="Company size" options={SIZES} />
+          <Select name="projects" label="Live projects" options={PROJECTS} />
+          <Select name="mail" label="Project mail is in" options={MAIL} />
+        </div>
+        <Toggles legend="Contracts you work under" options={FORMS} value={forms} onChange={setForms} />
+        <Toggles legend="States" options={STATES} value={states} onChange={setStates} />
+        <label className="wl-l wl-pain">
+          <span>Biggest contract headache right now</span>
+          <textarea className="mk-input wl-ta" name="pain" rows={2} maxLength={4000} />
+        </label>
+        {error ? <p className="wl-err" role="alert">{error}</p> : null}
+        <div className="wl-row">
+          <button className="wl-skip" type="button" onClick={() => setStep('done')}>Skip</button>
+          <button className="mk-btn wl-btn wl-btn-inline" type="submit" disabled={busy}>{busy ? 'Sending…' : 'Send'}</button>
+        </div>
+      </form>
+    )
+  }
+
   return (
-    <form className="wl-form" onSubmit={submit} noValidate>
-      <div className="wl-grid">
+    <form className="wl-form" onSubmit={submitContact} noValidate>
+      <div className="wl-grid wl-grid-3">
         <label className="wl-l">
           <span>Name</span>
           <input className="mk-input" name="name" autoComplete="name" required maxLength={200} />
@@ -64,22 +147,15 @@ export default function WaitlistForm() {
           <span>Work email</span>
           <input className="mk-input" name="email" type="email" autoComplete="email" required maxLength={254} />
         </label>
-        <label className="wl-l">
+        <label className="wl-l wl-span">
           <span>Company</span>
           <input className="mk-input" name="company" autoComplete="organization" required maxLength={200} />
-        </label>
-        <label className="wl-l">
-          <span>You are a</span>
-          <select className="mk-input wl-select" name="role" defaultValue="" required>
-            <option value="" disabled>Choose one</option>
-            {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
-          </select>
         </label>
       </div>
       <input className="wl-hp" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
       {error ? <p className="wl-err" role="alert">{error}</p> : null}
-      <button className="mk-btn wl-btn" type="submit" disabled={state === 'sending'}>
-        {state === 'sending' ? 'Joining…' : 'Join the waitlist'}
+      <button className="mk-btn wl-btn" type="submit" disabled={busy}>
+        {busy ? 'Joining…' : 'Join the waitlist'}
       </button>
     </form>
   )
