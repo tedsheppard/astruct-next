@@ -82,3 +82,43 @@ export function prog(t: number, a: number, b: number): number {
 }
 
 export const fmt = (n: number) => n.toLocaleString('en-AU')
+
+/**
+ * Time on a timeline driven by scroll instead of the clock: the element is a
+ * tall track whose child sticks; as the track scrolls past, t runs from 0 to
+ * `end`, and back again when scrolling up. Phones (below 900 px), reduced
+ * motion and no-JS all get FINAL, the finished state.
+ */
+export function useScrollTime<T extends HTMLElement = HTMLDivElement>(end: number) {
+  const ref = useRef<T>(null)
+  const [t, setT] = useState(FINAL)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const narrow = window.matchMedia('(max-width: 900px)')
+    let raf = 0
+    const measure = () => {
+      raf = 0
+      if (reduce.matches || narrow.matches) { setT(FINAL); return }
+      const r = el.getBoundingClientRect()
+      const span = r.height - window.innerHeight
+      const p = span > 0 ? Math.min(1, Math.max(0, -r.top / span)) : 1
+      setT(Math.round((p * end) / 20) * 20)
+    }
+    const on = () => { if (!raf) raf = requestAnimationFrame(measure) }
+    measure()
+    window.addEventListener('scroll', on, { passive: true })
+    window.addEventListener('resize', on)
+    reduce.addEventListener?.('change', on)
+    narrow.addEventListener?.('change', on)
+    return () => {
+      window.removeEventListener('scroll', on)
+      window.removeEventListener('resize', on)
+      reduce.removeEventListener?.('change', on)
+      narrow.removeEventListener?.('change', on)
+      cancelAnimationFrame(raf)
+    }
+  }, [end])
+  return [ref, t] as const
+}

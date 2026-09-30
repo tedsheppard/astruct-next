@@ -5,7 +5,7 @@
 // lands on the clause on p 22 and drafts paragraph 3 of the Variation Notice
 // citing it. The clause text is the demo subcontract's own (SC 9(b), p 22).
 import { useEffect, useRef, useState } from 'react'
-import { FINAL, typed, typedEnd, useLoop } from './core'
+import { FINAL, typed, typedEnd, useScrollTime } from './core'
 import { Mark } from '../mark'
 import { ContractCover, ContractPage22, LetterPage } from './letter'
 
@@ -82,7 +82,7 @@ function Tree({ t, fin }: { t: number; fin: boolean }) {
 }
 
 export function ComputerLive() {
-  const [ref, t] = useLoop<HTMLDivElement>(LEN, 0.3)
+  const [ref, t] = useScrollTime<HTMLDivElement>(T_DRAFTED + 400)
   const wrap = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(1)
   useEffect(() => {
@@ -104,7 +104,9 @@ export function ComputerLive() {
   const stepsOn = STEPS.filter((s) => fin || t >= s.at)
 
   return (
-    <div className={`cm${out ? ' is-out' : ''}`} ref={ref}>
+    <div className="sc-track sc-track-cm" ref={ref}>
+    <div className="sc-stage">
+    <div className={`cm${out ? ' is-out' : ''}`}>
       <div className="cm-wrap" ref={wrap} style={{ height: H * scale }}>
         <div className="cm-desk" style={{ width: W, height: H, transform: `scale(${scale})` }} aria-hidden="true">
           <div className="cm-wall" />
@@ -192,6 +194,8 @@ export function ComputerLive() {
           )
         })}
       </ol>
+    </div>
+    </div>
     </div>
   )
 }

@@ -16,6 +16,7 @@ export function PricingCards({ onPricingPage = false }: { onPricingPage?: boolea
   ]
   return (
     <div className="mk-price mk-reveal">
+      <div className="mk-field mk-field-price" aria-hidden="true"><i /><i /><i /></div>
       <div className="mk-price-card">
         <span className="mk-h4">Astruct</span>
         <div className="mk-price-amount"><b>AU$89.95</b><span>per user per month, ex GST</span></div>
@@ -33,10 +34,9 @@ export function PricingCards({ onPricingPage = false }: { onPricingPage?: boolea
       </div>
       <div className="mk-price-side">
         <div className="mk-price-trial">
-          <div className="mk-field" aria-hidden="true"><i /><i /><i /></div>
           <div className="mk-price-mini mk-lg">
             <h3>30-day free trial</h3>
-            <span className="mk-big">100 credits</span>
+            <span className="mk-big"><span className="mk-grad">100 credits</span></span>
             <ul className="mk-trial-steps">
               <li><span>1</span>Add your card at sign-up. Nothing is charged during the trial.</li>
               <li><span>2</span>We’ll email you 5 days before your trial ends.</li>

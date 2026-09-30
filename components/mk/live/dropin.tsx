@@ -4,7 +4,7 @@
 // project, the count racing to 4,812 documents, a request typed into the
 // composer, and the Delay Notice composing itself on Arcline's letterhead.
 // The notice is the demo pack's ARC-KS2-L-041 (fictional parties).
-import { FINAL, fmt, prog, typed, typedEnd, useLoop } from './core'
+import { FINAL, fmt, prog, typed, typedEnd, useScrollTime } from './core'
 import { DelayNoticePages } from './letter'
 
 const PROMPT = 'Draft me a notice of delay for the crane outage and late Level 6 access, on our letterhead'
@@ -49,7 +49,7 @@ function FolderIcon({ k }: { k: string }) {
 }
 
 export function DropInLive() {
-  const [ref, t] = useLoop<HTMLDivElement>(LEN, 0.2)
+  const [ref, t] = useScrollTime<HTMLDivElement>(WRITTEN + 300)
   const fin = t >= FINAL
   const out = t >= OUT && !fin
   const move = prog(t, MOVE, DROP)
@@ -62,7 +62,9 @@ export function DropInLive() {
   const writing = !fin && t >= WRITE && t < WRITTEN
 
   return (
-    <div className={`dp${out ? ' is-out' : ''}`} ref={ref}>
+    <div className="sc-track sc-track-dp" ref={ref}>
+    <div className="sc-stage">
+    <div className={`dp${out ? ' is-out' : ''}`}>
       <div className="dp-work">
         <div className="dp-drop">
           <div className={`dp-card${t >= MOVE && t < DROP + 400 && !fin ? ' is-target' : ''}${fin || t >= DROP + 500 ? ' is-home' : ''}`}>
@@ -129,6 +131,8 @@ export function DropInLive() {
           <span className={`lv-chip${fin || upto >= BLOCKS ? ' is-in' : ''}`}>Not sent</span>
         </div>
       </div>
+    </div>
+    </div>
     </div>
   )
 }

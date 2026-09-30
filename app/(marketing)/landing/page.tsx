@@ -5,6 +5,7 @@ import { Clause, IssueWindow } from '@/components/mk/fragments'
 import { AskLive, DraftLive, SearchLive, WatchLive } from '@/components/mk/live/fragments'
 import { DropInLive } from '@/components/mk/live/dropin'
 import { ComputerLive } from '@/components/mk/live/computer'
+import { WhoScroll } from '@/components/mk/live/who'
 import { Faq, HOME_FAQ, faqJsonLd } from '@/components/mk/faq'
 import { GGmail, GOneDrive, GOutlook, GSharePoint, GUpload, IArrow, ICheck } from '@/components/mk/icons'
 import { PricingCards, TRIAL_LINE } from '@/components/mk/pricing'
@@ -41,10 +42,20 @@ const CONTRACTS: [string, string][] = [
 ]
 
 
-const SECURITY: { title: string; body: string }[] = [
-  { title: 'Stored in Australia', body: 'Your projects, mail and documents are stored in Australia, in Sydney, and never used to train models.' },
-  { title: 'Zero Data Retention', body: 'Astruct uses OpenAI’s API under Zero Data Retention, so your content is not kept by OpenAI once a request is answered.' },
-  { title: 'You stay in control', body: 'Your admin decides who can search which mailbox, and drafts are never sent automatically.' },
+const ic = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
+const SECURITY: { title: string; body: string; icon: React.ReactNode }[] = [
+  {
+    title: 'Stored in Australia', body: 'Your projects, mail and documents are stored in Australia, in Sydney, and never used to train models.',
+    icon: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" {...ic} /><circle cx="12" cy="10" r="2.4" {...ic} /></svg>,
+  },
+  {
+    title: 'Zero Data Retention', body: 'Astruct uses OpenAI’s API under Zero Data Retention, so your content is not kept by OpenAI once a request is answered.',
+    icon: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5.5c0 4.5-3 7.8-7 9.5-4-1.7-7-5-7-9.5V6z" {...ic} /><path d="M9 12l2 2 4-4" {...ic} /></svg>,
+  },
+  {
+    title: 'You stay in control', body: 'Your admin decides who can search which mailbox, and drafts are never sent automatically.',
+    icon: <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2" {...ic} /><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" {...ic} /><path d="M12 14.5v2.5" {...ic} /></svg>,
+  },
 ]
 
 function Bullets({ items }: { items: string[] }) {
@@ -95,6 +106,27 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Ask */}
+      <section className="mk-sec mk-feature-sec" id="ask">
+        <div className="mk-wrap mk-feature">
+          <div className="mk-feature-copy mk-reveal">
+            <h2 className="mk-h2">AI that’s actually built for construction.</h2>
+            <p className="mk-body mk-feature-body">
+              ChatGPT and Claude are general-purpose assistants built in the US for everyone. They aren’t set up for
+              construction contracts, and they limit how many files you can give them. Astruct is built in Australia for
+              Australian construction:
+            </p>
+            <Bullets items={[
+              'Reads AS 2124, AS 4000, AS 4300, AS 4902 and AS 4903 style contracts, their subcontracts and amendments',
+              'Knows the security of payment time limits, such as under SOPA and Queensland’s BIF Act',
+              'Every answer cites the document and page',
+              'Up to 5,000 documents per project',
+            ]} />
+          </div>
+          <div className="mk-panel mk-reveal"><AskLive /></div>
+        </div>
+      </section>
+
       {/* The contracts and laws it reads */}
       <section className="mk-marquee-sec" aria-labelledby="reads">
         <div className="mk-wrap">
@@ -106,33 +138,13 @@ export default function HomePage() {
         <Marquee items={CONTRACTS} dur={70} />
       </section>
 
-      {/* Ask */}
-      <section className="mk-sec mk-feature-sec" id="ask">
-        <div className="mk-wrap mk-feature">
-          <div className="mk-feature-copy mk-reveal">
-            <h2 className="mk-h2">Ask a question. Get an answer that’s actually for construction.</h2>
-            <p className="mk-body mk-feature-body">
-              Answers come from your contract, correspondence and project documents, with the page for each point.
-              Special conditions and amendments are read with the rest.
-            </p>
-            <Bullets items={[
-              'Knows how Australian contracts work: AS 2124, AS 4000, AS 4300, AS 4902 and AS 4903 style contracts, their subcontracts, and bespoke or heavily amended forms',
-              'Security of payment law, such as SOPA and Queensland’s BIF Act, with its payment and adjudication time limits',
-              'Every answer cites the document and page, one click from the source',
-            ]} />
-          </div>
-          <div className="mk-panel mk-reveal"><AskLive /></div>
-        </div>
-      </section>
-
       {/* Search */}
       <section className="mk-sec mk-feature-sec mk-alt" id="search">
         <div className="mk-wrap mk-feature mk-feature-flip">
           <div className="mk-feature-copy mk-reveal">
-            <h2 className="mk-h2">Search every document. Boolean or plain English.</h2>
+            <h2 className="mk-h2">Search across thousands of project documents.</h2>
             <p className="mk-body mk-feature-body">
-              Up to 5,000 documents per project, and every email. Use Boolean operators or plain English. Every result
-              lands on the page.
+              Use Boolean operators or plain English, across documents and every email. Every result lands on the page.
             </p>
             <Bullets items={[
               'AND, OR, NOT, “exact phrases”, brackets and wildcards',
@@ -152,10 +164,10 @@ export default function HomePage() {
       <section className="mk-sec mk-feature-sec" id="draft">
         <div className="mk-wrap mk-feature">
           <div className="mk-feature-copy mk-reveal">
-            <h2 className="mk-h2">Draft the letter. On your letterhead.</h2>
+            <h2 className="mk-h2">Automatically produce correspondence on your letterhead and in your style.</h2>
             <p className="mk-body mk-feature-body">
               Letters, emails, variation notices, notices of delay and EOT claims, drafted from the project’s facts and
-              the governing clause. On your letterhead, in your format, as Word files.
+              the governing clause. Astruct draws on your past project correspondence to match your style, and tightens it.
             </p>
             <Bullets items={[
               'Particulars filled in from the project: references, dates, parties and the clause',
@@ -231,8 +243,15 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* For builders, subcontractors and developers */}
+      <section className="mk-sec mk-alt" id="who">
+        <div className="mk-wrap">
+          <WhoScroll />
+        </div>
+      </section>
+
       {/* Integrations */}
-      <section className="mk-sec mk-alt" id="integrations">
+      <section className="mk-sec" id="integrations">
         <div className="mk-wrap">
           <div className="mk-head mk-reveal">
             <h2 className="mk-h2">Works where your project already lives.</h2>
@@ -266,7 +285,7 @@ export default function HomePage() {
             <div className="mk-int-card mk-int-others">
               <div>
                 <h3 style={{ marginTop: 0 }}>Procore, Aconex and other platforms</h3>
-                <p style={{ marginTop: 6 }}>Connections to project platforms such as Procore, Aconex, HammerTech and Payapps are built on request.</p>
+                <p style={{ marginTop: 6 }}>Connections to project platforms such as Procore, Aconex, HammerTech and Payapps can be built on request, subject to third-party provider costs and API availability.</p>
               </div>
               <span className="mk-int-status is-request"><i className="ui-dot" />On request</span>
             </div>
@@ -283,6 +302,7 @@ export default function HomePage() {
           <div className="mk-sec-grid mk-reveal">
             {SECURITY.map((s) => (
               <div className="mk-sec-item" key={s.title}>
+                <span className="mk-sec-ic">{s.icon}</span>
                 <h3>{s.title}</h3>
                 <p>{s.body}</p>
               </div>

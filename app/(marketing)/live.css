@@ -378,3 +378,51 @@ html.dark .mk .dr-canvas::after { background: linear-gradient(transparent, #1c1d
   .mk-tpill { height: 34px; padding: 0 13px; font-size: 13.5px; }
   .mk-tpill small { display: none; }
 }
+
+/* ── Scroll-driven stages: a tall track with a sticky stage ──────────── */
+.sc-track { position: relative; height: 320vh; }
+.sc-track-cm { height: 300vh; }
+.sc-stage { position: sticky; top: 76px; height: calc(100vh - 76px); display: flex; flex-direction: column; justify-content: center; }
+.sc-stage > .dp, .sc-stage > .cm { margin-top: 0; width: 100%; }
+.sc-stage .dp-viewer { max-height: calc(100vh - 150px); }
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .sc-track, .sc-track-cm { height: auto; }
+  .sc-stage { position: static; height: auto; display: block; }
+  .sc-stage > .dp, .sc-stage > .cm { margin-top: clamp(40px, 7vw, 64px); }
+}
+
+/* ── For builders, subcontractors and developers ─────────────────────── */
+.wh { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 6vw, 96px); }
+.wh-labels { position: sticky; top: calc(50vh - 90px); align-self: start; display: grid; gap: 6px; }
+.wh-labels span { font-size: clamp(34px, 4.4vw, 58px); font-weight: 650; letter-spacing: -0.045em; line-height: 1.08; color: var(--ink-3); opacity: .45; transition: color .35s ease, opacity .35s ease; }
+.wh-labels span.is-on { color: var(--ink); opacity: 1; }
+.wh-panels { display: grid; }
+.wh-panel { min-height: 62vh; display: flex; flex-direction: column; justify-content: center; opacity: .35; transition: opacity .4s ease; }
+.wh-panel.is-on { opacity: 1; }
+.wh-panel h3 { display: none; }
+.wh-panel p { margin: 0; font-size: clamp(22px, 2.3vw, 30px); line-height: 1.35; letter-spacing: -0.022em; color: var(--ink); max-width: 560px; text-wrap: pretty; }
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .wh { grid-template-columns: 1fr; gap: 0; }
+  .wh-labels { display: none; }
+  .wh-panel { min-height: 0; opacity: 1; padding: 22px 0; border-top: 1px solid var(--line); }
+  .wh-panel h3 { display: block; margin: 0 0 8px; font-size: 24px; font-weight: 650; letter-spacing: -0.03em; }
+  .wh-panel p { font-size: 18px; color: var(--ink-2); }
+}
+.mk-sec-ic { display: inline-flex; width: 40px; height: 40px; border-radius: 12px; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+.mk-sec-ic svg { width: 21px; height: 21px; }
+
+/* ── Pricing: one deliberate field framing both cards ─────────────────── */
+.mk-price { position: relative; isolation: isolate; }
+.mk-price > .mk-price-card, .mk-price > .mk-price-side { position: relative; z-index: 1; }
+.mk-field-price { inset: -6% -3%; opacity: calc(var(--field-opacity) * .8); }
+.mk-field-price i:nth-child(1) { width: 46%; height: 70%; left: -4%; bottom: -6%; background: var(--f-teal); }
+.mk-field-price i:nth-child(2) { width: 44%; height: 70%; left: 34%; top: 10%; background: var(--f-blue); }
+.mk-field-price i:nth-child(3) { width: 42%; height: 72%; right: -4%; top: -8%; background: var(--f-violet); }
+.mk-price-card { position: relative; overflow: hidden; }
+.mk-price-card::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--grad); }
+.mk-price-trial .mk-price-mini.mk-lg { position: relative; }
+.mk-price-trial .mk-price-mini.mk-lg::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; border-radius: 28px 28px 0 0; background: var(--grad); opacity: .9; }
+.mk-price-side > .mk-price-mini:not(.mk-lg) { background: var(--card); }
+@media (max-width: 900px) { .mk-field-price { inset: -3% -6%; } }
+.mk-price-trial .mk-price-mini.mk-lg { overflow: hidden; }
+.mk-price-trial .mk-price-mini.mk-lg::after { border-radius: 0; }
