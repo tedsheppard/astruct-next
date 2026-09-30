@@ -15,10 +15,10 @@
   --line-2: rgba(0, 0, 0, 0.05);
   --card: #ffffff;
   --app-side: #f0efed;
-  --accent: #2b59e0;
-  --accent-ink: #2149c4;
-  --accent-soft: rgba(43, 89, 224, 0.09);
-  --accent-line: rgba(43, 89, 224, 0.28);
+  --accent: #0e9579;
+  --accent-ink: #0b7a64;
+  --accent-soft: rgba(20, 170, 140, 0.10);
+  --accent-line: rgba(14, 149, 121, 0.30);
   --band: #0b0b0c;
   --band-ink: #f5f5f7;
   --band-ink-2: #a1a1a6;
@@ -30,7 +30,7 @@
   --glass-hair: rgba(0, 0, 0, 0.07);
   --btn-bg: #0b0b0c;
   --btn-ink: #ffffff;
-  --focus: 0 0 0 3px rgba(43, 89, 224, 0.35);
+  --focus: 0 0 0 3px rgba(14, 149, 121, 0.35);
 
   --f-sans: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --f-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -61,10 +61,10 @@ html.dark .mk {
   --line-2: rgba(255, 255, 255, 0.06);
   --card: #1a1a1d;
   --app-side: #171717;
-  --accent: #7c9bff;
-  --accent-ink: #9db4ff;
-  --accent-soft: rgba(124, 155, 255, 0.13);
-  --accent-line: rgba(124, 155, 255, 0.35);
+  --accent: #46d6ac;
+  --accent-ink: #72e2c0;
+  --accent-soft: rgba(70, 214, 172, 0.14);
+  --accent-line: rgba(70, 214, 172, 0.4);
   --band: #000000;
   --band-ink: #f5f5f7;
   --band-ink-2: #98989d;
@@ -89,10 +89,10 @@ html.dark .mk {
     --line-2: rgba(255, 255, 255, 0.06);
     --card: #1a1a1d;
     --app-side: #171717;
-    --accent: #7c9bff;
-    --accent-ink: #9db4ff;
-    --accent-soft: rgba(124, 155, 255, 0.13);
-    --accent-line: rgba(124, 155, 255, 0.35);
+    --accent: #46d6ac;
+    --accent-ink: #72e2c0;
+    --accent-soft: rgba(70, 214, 172, 0.14);
+    --accent-line: rgba(70, 214, 172, 0.4);
     --band: #000000;
     --band-ink: #f5f5f7;
     --band-ink-2: #98989d;
