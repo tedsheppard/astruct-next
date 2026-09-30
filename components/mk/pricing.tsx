@@ -2,13 +2,17 @@ import Link from 'next/link'
 import { IArrow, ICheck } from './icons'
 import { SIGNUP_URL } from './links'
 
-export function PricingCards() {
+// One line of trial terms, used under every "Start free trial" so they never drift.
+export const TRIAL_LINE =
+  '30-day free trial with 100 credits. Card required, not charged during the trial. We’ll email you 5 days before it ends.'
+
+export function PricingCards({ onPricingPage = false }: { onPricingPage?: boolean }) {
   const included = [
     '100 credits per user per month, pooled across your organisation',
-    'Live Outlook and SharePoint connections, Gmail for pilot customers',
-    'The issue register, with deadlines from your contract',
-    'Evidence quoted verbatim, one click from its source',
-    'Notices prepared for review, downloadable as .docx',
+    'Ask, Search, Draft and the agent that watches your mail',
+    'Up to 5,000 documents per project',
+    'Outlook, SharePoint and OneDrive connections, Gmail for pilot customers',
+    'Letters, notices and EOT claims downloadable as .docx',
   ]
   return (
     <div className="mk-price mk-reveal">
@@ -18,17 +22,27 @@ export function PricingCards() {
         <ul className="mk-price-list">
           {included.map((t) => <li key={t}><ICheck />{t}</li>)}
         </ul>
-        <p className="mk-fine" style={{ marginBottom: 28 }}>Need more than your included credits? Pay as you go at AU$1.00 per extra credit, billed monthly.</p>
+        <p className="mk-fine" style={{ marginBottom: 28 }}>
+          Beyond your included credits, pay as you go at AU$1.00 per credit, billed monthly. Cancel any time in Settings
+          &gt; Billing.
+        </p>
         <div className="mk-cta-row">
           <a className="mk-btn" href={SIGNUP_URL}>Start free trial</a>
-          <Link className="mk-link" href="/pricing">Pricing details<IArrow /></Link>
+          {!onPricingPage && <Link className="mk-link" href="/pricing">Pricing details<IArrow /></Link>}
         </div>
       </div>
       <div className="mk-price-side">
-        <div className="mk-price-mini">
-          <h3>30-day free trial</h3>
-          <span className="mk-big">100 credits</span>
-          <p>No card needed. Connect a real mailbox, add the contract and see what Astruct finds.</p>
+        <div className="mk-price-trial">
+          <div className="mk-field" aria-hidden="true"><i /><i /><i /></div>
+          <div className="mk-price-mini mk-lg">
+            <h3>30-day free trial</h3>
+            <span className="mk-big">100 credits</span>
+            <ul className="mk-trial-steps">
+              <li><span>1</span>Add your card at sign-up. Nothing is charged during the trial.</li>
+              <li><span>2</span>We’ll email you 5 days before your trial ends.</li>
+              <li><span>3</span>Keep going at AU$89.95 per user per month, or cancel in Settings &gt; Billing.</li>
+            </ul>
+          </div>
         </div>
         <div className="mk-price-mini">
           <h3>Private pilot</h3>

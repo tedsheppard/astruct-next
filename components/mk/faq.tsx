@@ -33,35 +33,54 @@ function qa(q: string, text: string, a?: React.ReactNode): QA {
 export const HOME_FAQ: QA[] = [
   qa(
     'What does Astruct actually do?',
-    'It stays connected to your project mailboxes and document folders, and turns commercial events into issues: variations, delays and EOTs, notices and claims. For each issue it links the evidence, finds the clause and the deadline in your contract, keeps the issue’s state, and prepares the notice for your review.',
+    'Astruct is AI built for Australian construction contracts. You can ask questions and get answers from your contract and project documents with the page reference, search up to 5,000 documents per project with Boolean or plain-English queries, and draft letters, emails, variation notices, notices of delay and EOT claims as Word files. Its agent also reads project mail as it arrives and flags variation directions and potential delays, with the notice clause and deadline.',
   ),
   qa(
     'How is it different from ChatGPT or Copilot?',
-    'Chat tools answer questions about whatever you give them. Astruct is connected to the project itself. It keeps an issue register, computes deadlines from your contract, and quotes the evidence with a link to its source. You can still ask it questions, and the answers cite your documents and mail.',
+    'General chat tools answer from whatever you paste in. Astruct works from your project: the contract with its special conditions, the drawings, the programme and every connected mailbox. Answers cite the document and page, search runs across every project document, and the agent watches mail without being asked.',
+  ),
+  qa(
+    'Which contracts does it work with?',
+    'The contract you give it. That includes AS 2124, AS 4000, AS 4300, AS 4902 and AS 4903 style head contracts and subcontracts, and bespoke or heavily amended forms. Special conditions and amendments are read with the rest, so a replaced clause is not used. It also works with security of payment law, such as SOPA and Queensland’s BIF Act.',
+  ),
+  qa(
+    'How does the agent spot variations and delays?',
+    'As mail arrives, Astruct reads it for directions, instructions, RFI responses, revised drawings and programme changes. It compares each direction against the scope of work in your contract and flags the ones that look like variations, and flags events that may delay you. It works upstream, for notices you must give the principal or head contractor, and downstream, for notices and claims from your subcontractors.',
+  ),
+  qa(
+    'Can I rely on the deadlines it works out?',
+    'Each deadline shows the clause text it came from and how it was counted: the notice period, business or calendar days and your state’s public holidays. It stays marked “check the clause” until someone on your team confirms the rule for the project. Astruct only sees the mailboxes and folders you connect, so your team stays responsible for your notices. Astruct helps you give them on time.',
+    <p>
+      Each deadline shows the clause text it came from and how it was counted: the notice period, business or calendar
+      days and your state’s public holidays. It stays marked “check the clause” until someone on your team confirms the
+      rule for the project. Astruct only sees the mailboxes and folders you connect, so your team stays responsible for
+      your notices. Astruct helps you give them on time. <Link href="/support/deadlines-and-check-the-clause">How deadlines are worked out</Link>.
+    </p>,
+  ),
+  qa(
+    'Does it send anything on our behalf?',
+    'No. Astruct drafts letters, notices and claims for review. It never sends them. You check the draft, download the .docx and send it through your normal process.',
   ),
   qa(
     'How quickly does it see new mail?',
     'New mail is picked up within about five minutes. Outlook mailboxes can also notify Astruct when mail arrives, so a message is often picked up sooner. It is not instant.',
   ),
   qa(
-    'Can I rely on the deadlines it computes?',
-    'Each deadline shows the clause text it came from and how it was counted: the notice period, business or calendar days, and public holidays in your state. It stays marked “check the clause” until someone on your team confirms the rule for the project. Your team stays responsible for your notices. Astruct helps you see them coming.',
-  ),
-  qa(
-    'Does it send anything on our behalf?',
-    'No. Astruct prepares notices and correspondence for review. It never sends them. You check the draft, download the .docx and send it through your normal process.',
-  ),
-  qa(
-    'Which contracts does it work with?',
-    'It works from the contract you give it: Australian standard forms such as AS 4000, AS 4902 and AS 2124 and their subcontract versions, and bespoke or heavily amended contracts. Special conditions and amendments are read with the rest.',
-  ),
-  qa(
     'What do we need from IT?',
-    'Each person can connect their own mailbox. Shared mailboxes and SharePoint libraries need a Microsoft 365 administrator to grant consent to Astruct once, for your organisation. Your admin also decides whose mailbox each person may search. If you join the private pilot, we walk your admin through it.',
+    'Each person can connect their own Outlook mailbox. Shared mailboxes and SharePoint need a Microsoft 365 administrator to approve Astruct once for your organisation, using a single link from Settings. Your admin also decides whose mailbox each person may search.',
+    <p>
+      Each person can connect their own Outlook mailbox. Shared mailboxes and SharePoint need a Microsoft 365
+      administrator to approve Astruct once for your organisation, using a single link from Settings. Your admin also
+      decides whose mailbox each person may search. <Link href="/support/microsoft-365-admin-consent">Admin consent, step by step</Link>.
+    </p>,
+  ),
+  qa(
+    'How does the free trial work?',
+    'The trial runs for 30 days with 100 credits. You add a card when you sign up, and it is not charged during the trial. We’ll email you 5 days before your trial ends. After that it is AU$89.95 per user per month, ex GST, unless you cancel in Settings > Billing before the trial ends.',
   ),
   qa(
     'What is a credit?',
-    'Credits measure the model work Astruct does for you, such as reading new mail and documents, checking issues and preparing notices. Each user’s subscription includes 100 credits a month, pooled across your organisation. Extra credits are AU$1.00 each, billed monthly. You can see your usage at any time in Billing and credits.',
+    'Credits measure the AI work Astruct does for you, such as answering questions, reading new mail and documents, and drafting. Each user’s subscription includes 100 credits a month, pooled across your organisation. Beyond that, credits are AU$1.00 each, billed monthly. You can see your usage at any time in Settings > Billing.',
   ),
   qa(
     'Where is our data stored?',
@@ -70,9 +89,5 @@ export const HOME_FAQ: QA[] = [
       In Australia, in Sydney. Model requests go to OpenAI under Zero Data Retention, and your data is never used to
       train models. More on the <Link href="/security">security page</Link>.
     </p>,
-  ),
-  qa(
-    'What happens when the trial ends?',
-    'The trial runs for 30 days with 100 credits and needs no card. At the end you choose whether to subscribe. Nothing is charged unless you do.',
   ),
 ]

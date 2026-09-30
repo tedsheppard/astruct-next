@@ -5,41 +5,23 @@ import { Faq, faqJsonLd, type QA } from '@/components/mk/faq'
 export const metadata: Metadata = {
   title: 'Pricing',
   description:
-    'AU$89.95 per user per month, ex GST, with 100 credits per user per month included. Start with a 30-day free trial and 100 credits. No card needed.',
+    'AU$89.95 per user per month, ex GST, with 100 credits per user per month included. Start with a 30-day free trial and 100 credits. Card required, not charged during the trial, and we email you 5 days before it ends.',
   alternates: { canonical: '/pricing' },
 }
 
+function item(q: string, text: string): QA {
+  return { q, text, a: <p>{text}</p> }
+}
+
 const ITEMS: QA[] = [
-  {
-    q: 'What is included in the subscription?',
-    text: 'Everything in Astruct: live mailbox and SharePoint connections, the issue register, deadlines from your contract, evidence and prepared notices. Each user’s subscription includes 100 credits a month.',
-    a: <p>Everything in Astruct: live mailbox and SharePoint connections, the issue register, deadlines from your contract, evidence and prepared notices. Each user’s subscription includes 100 credits a month.</p>,
-  },
-  {
-    q: 'What uses credits?',
-    text: 'Credits measure the model work Astruct does for you: reading new mail and documents as they arrive, checking them for issues, answering questions and preparing notices. Billing and credits shows what used them.',
-    a: <p>Credits measure the model work Astruct does for you: reading new mail and documents as they arrive, checking them for issues, answering questions and preparing notices. Billing and credits shows what used them.</p>,
-  },
-  {
-    q: 'How does pooling work?',
-    text: 'Included credits are pooled across your organisation. A team of five has 500 credits a month to share, however the work falls between them.',
-    a: <p>Included credits are pooled across your organisation. A team of five has 500 credits a month to share, however the work falls between them.</p>,
-  },
-  {
-    q: 'What if we use more than our included credits?',
-    text: 'Astruct keeps working, and extra credits are charged at AU$1.00 each, billed monthly. You can see usage at any time in Billing and credits.',
-    a: <p>Astruct keeps working, and extra credits are charged at AU$1.00 each, billed monthly. You can see usage at any time in Billing and credits.</p>,
-  },
-  {
-    q: 'Do we need a card for the trial?',
-    text: 'No. The trial runs for 30 days with 100 credits. At the end you choose whether to subscribe. Nothing is charged unless you do.',
-    a: <p>No. The trial runs for 30 days with 100 credits. At the end you choose whether to subscribe. Nothing is charged unless you do.</p>,
-  },
-  {
-    q: 'Are prices in Australian dollars?',
-    text: 'Yes. All prices are in Australian dollars and exclude GST.',
-    a: <p>Yes. All prices are in Australian dollars and exclude GST.</p>,
-  },
+  item('How does the free trial work?', 'The trial runs for 30 days and includes 100 credits. You add a card when you sign up so there is no gap if you keep going, and it is not charged during the trial. We’ll email you 5 days before your trial ends. If you do nothing, the subscription starts at AU$89.95 per user per month, ex GST.'),
+  item('How do I cancel?', 'Cancel any time in Settings > Billing. Cancel before your trial ends and you are not charged at all.'),
+  item('What is included in the subscription?', 'Everything in Astruct: Ask, Search, Draft and the agent that watches your mail, up to 5,000 documents per project, and your Outlook, SharePoint and OneDrive connections. Each user’s subscription includes 100 credits a month.'),
+  item('What uses credits?', 'Credits measure the AI work Astruct does for you: answering questions, reading new mail and documents as they arrive, checking them for directions and delays, and drafting. Settings > Billing shows what used them.'),
+  item('How does pooling work?', 'Included credits are pooled across your organisation. A team of five has 500 credits a month to share, however the work falls between them.'),
+  item('What if we use more than our included credits?', 'Astruct keeps working, and extra credits are charged at AU$1.00 each, billed monthly. You can see usage at any time in Settings > Billing.'),
+  item('How do seats work?', 'Each person in your organisation who uses Astruct is a seat, at AU$89.95 per month, ex GST, with 100 credits added to the shared pool. Owners and admins add and remove people in Team.'),
+  item('Are prices in Australian dollars?', 'Yes. All prices are in Australian dollars and exclude GST.'),
 ]
 
 export default function PricingPage() {
@@ -50,12 +32,12 @@ export default function PricingPage() {
         <div className="mk-wrap">
           <span className="mk-kicker">Pricing</span>
           <h1 className="mk-h1" style={{ fontSize: 'clamp(48px, 7.4vw, 96px)' }}>One plan.<br />Start free.</h1>
-          <p className="mk-lede">Try Astruct on a live project for 30 days with 100 credits. No card needed. Then one price per user, with credits included.</p>
+          <p className="mk-lede">Try Astruct on a live project for 30 days with 100 credits. Your card is not charged during the trial, and we’ll email you 5 days before it ends. Then one price per user, with credits included.</p>
         </div>
       </section>
       <section style={{ paddingBottom: 'clamp(96px, 12vw, 160px)' }}>
         <div className="mk-wrap" style={{ marginTop: -48 }}>
-          <PricingCards />
+          <PricingCards onPricingPage />
         </div>
       </section>
       <section className="mk-sec mk-alt">

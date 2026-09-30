@@ -144,7 +144,7 @@ export default function ApplyForm() {
           <li><span>2</span><div><b>A guided setup</b><p>We set up the first project with you: the contract, the mailboxes and folders to connect, and the notice rules your team confirms.</p></div></li>
           <li><span>3</span><div><b>Admin consent</b><p>{consentNote}</p></div></li>
         </ol>
-        <p className="mk-fine">Want to look around first? The free trial needs no card.</p>
+        <p className="mk-fine">Want to look around first? Start the 30-day free trial. Your card is not charged during the trial.</p>
         <div className="mk-cta-row" style={{ marginTop: 18 }}>
           <a className="mk-btn" href={SIGNUP_URL}>Start free trial</a>
           <Link className="mk-link" href="/">Back to astruct.io<IArrow /></Link>

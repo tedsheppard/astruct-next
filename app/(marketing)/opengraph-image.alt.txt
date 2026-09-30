@@ -1,1 +1,1 @@
-Astruct: don’t get time-barred. Commercial intelligence for construction projects.
+Astruct: frontier AI built for Australian construction contracts.

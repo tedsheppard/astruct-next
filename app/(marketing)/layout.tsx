@@ -5,9 +5,9 @@ import { MetaPixel, Reveal } from '@/components/mk/client-bits'
 import { SITE_ORIGIN, CONTACT_EMAIL } from '@/components/mk/links'
 import './mk.css'
 
-const TITLE = 'Astruct: commercial intelligence for construction projects'
+const TITLE = 'Astruct: frontier AI built for Australian construction contracts'
 const DESCRIPTION =
-  'Astruct stays connected to your project mail and documents, spots variations and delays, finds the clause and the time bar, and prepares the notice for your review.'
+  'Ask questions of your contract with page references, search up to 5,000 project documents with Boolean or plain English, draft notices and EOT claims, and let the agent flag variation directions and delays. 30-day free trial.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),
@@ -57,7 +57,7 @@ const ORG_JSONLD = {
         '@type': 'Offer',
         price: '89.95',
         priceCurrency: 'AUD',
-        description: 'Per user per month, excluding GST. Includes 100 credits per user per month. 30-day free trial.',
+        description: 'Per user per month, excluding GST. Includes 100 credits per user per month. 30-day free trial with 100 credits; card required, not charged during the trial.',
       },
       publisher: { '@id': `${SITE_ORIGIN}/#org` },
     },

@@ -23,7 +23,7 @@ const SECTIONS: LegalSection[] = [
           <li><strong>Account information</strong>: your name, email address, organisation and sign-in details when you create an account or are invited to one.</li>
           <li><strong>Project content</strong>: the contracts, documents, mail, drafts and other material you upload, or that Astruct reads from the mailboxes and folders you connect (<strong>Your Content</strong>). Your Content may contain personal information about you and other people, such as the names and contact details of people you correspond with.</li>
           <li><strong>Connected-account data</strong>: where you or your administrator connect a Microsoft 365 or Google account, the mail and files Astruct is permitted to read from it.</li>
-          <li><strong>Usage and billing data</strong>: your plan, credit usage and, for paid plans, billing details handled by our payment processor. We do not store full card numbers.</li>
+          <li><strong>Usage and billing data</strong>: your plan, credit usage and billing details (including the card you add when you start a trial), handled by our payment processor. We do not store full card numbers.</li>
           <li><strong>Technical data</strong>: device and browser type, IP address, log data and cookie identifiers.</li>
         </ul>
       </>
@@ -162,7 +162,7 @@ export default function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy policy"
-      updated="29 September 2026"
+      updated="30 September 2026"
       intro={
         <p>
           This policy explains how Astruct (<strong>we</strong>, <strong>us</strong>, <strong>our</strong>) collects, uses,
