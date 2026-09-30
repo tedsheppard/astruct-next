@@ -8,7 +8,7 @@ import { createClient } from '@supabase/supabase-js'
  * Schema: supabase/astruct-app/20260929_leads.sql.
  */
 export type LeadRow = {
-  type: 'pilot' | 'contact'
+  type: 'pilot' | 'contact' | 'waitlist'
   email: string
   name?: string | null
   company?: string | null

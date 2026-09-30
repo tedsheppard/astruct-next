@@ -658,7 +658,7 @@ html.dark .mk {
 .mk-chip-lg { height: 30px; font-size: 14px; padding: 0 13px 0 11px; margin-bottom: 22px; }
 
 /* Light fields: soft, blurred, low-saturation colour behind glass */
-.mk-field { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: var(--field-opacity); }
+.mk-field[aria-hidden] { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: var(--field-opacity); }
 .mk-field i { position: absolute; display: block; border-radius: 50%; filter: blur(64px); will-change: transform; }
 @media (prefers-reduced-motion: no-preference) {
   .mk-field i { animation: mk-drift 36s ease-in-out infinite alternate; }

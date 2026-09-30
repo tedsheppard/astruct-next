@@ -1,0 +1,46 @@
+/* astruct.io/signup-waitlist: one centred screen over soft colour. */
+.wl { position: relative; isolation: isolate; min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 40px 16px; }
+.wl-field { position: fixed; inset: 0; }
+.wl-field i:nth-child(1) { width: 42vw; height: 42vw; left: -6%; top: 8%; background: var(--f-teal); }
+.wl-field i:nth-child(2) { width: 40vw; height: 40vw; right: -8%; top: -4%; background: var(--f-blue); }
+.wl-field i:nth-child(3) { width: 34vw; height: 34vw; right: 6%; bottom: -6%; background: var(--f-violet); }
+.wl-field i:nth-child(4) { width: 26vw; height: 26vw; left: 18%; bottom: -8%; background: var(--f-amber); opacity: 0.7; }
+
+.wl-main { position: relative; z-index: 1; width: 100%; max-width: 580px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.wl-brand { margin-bottom: 36px; }
+.wl-date { font-size: 14px; color: var(--ink-3); margin-bottom: 14px; font-variant-numeric: tabular-nums; }
+.wl-h { font-size: clamp(30px, 5vw, 44px); line-height: 1.08; letter-spacing: -0.035em; font-weight: 650; margin: 0 0 18px; text-wrap: balance; }
+.wl-p { font-size: 17px; line-height: 1.55; color: var(--ink-2); margin: 0 0 10px; text-wrap: pretty; }
+.wl-card { width: 100%; margin-top: 26px; text-align: left; border-radius: 26px; }
+
+.wl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.wl-l { display: grid; gap: 6px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.wl .mk-input { height: 44px; font-size: 15.5px; background: color-mix(in srgb, var(--bg) 82%, transparent); }
+.wl-select { appearance: none; -webkit-appearance: none; padding-right: 34px; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%2386868b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 13px center; }
+.wl-select:invalid { color: var(--ink-3); }
+.wl-btn { width: 100%; margin-top: 16px; height: 46px; }
+.wl-btn:disabled { opacity: 0.6; cursor: default; }
+.wl-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.wl-err { margin: 12px 0 0; font-size: 14px; color: #c2334d; }
+
+.wl-done { text-align: center; padding: 14px 6px 8px; }
+.wl-tick { display: inline-flex; width: 44px; height: 44px; border-radius: 99px; align-items: center; justify-content: center; color: #fff; background: var(--grad); margin-bottom: 12px; }
+.wl-done-h { font-size: 20px; font-weight: 650; letter-spacing: -0.02em; margin: 0 0 4px; }
+.wl-done-p { font-size: 15.5px; color: var(--ink-2); margin: 0; }
+
+.wl-foot { margin-top: 22px; font-size: 14px; color: var(--ink-3); }
+.wl-dot { margin: 0 10px; }
+
+@media (max-width: 520px) {
+  .wl { align-items: flex-start; padding-top: 32px; }
+  .wl-brand { margin-bottom: 26px; }
+  .wl-grid { grid-template-columns: 1fr; }
+  .wl-p { font-size: 16px; }
+  .wl-foot { display: grid; gap: 6px; }
+  .wl-dot { display: none; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .wl-card { background: var(--card); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
