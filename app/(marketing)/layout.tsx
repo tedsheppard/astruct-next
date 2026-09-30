@@ -4,6 +4,7 @@ import Footer from '@/components/mk/footer'
 import { MetaPixel, Reveal } from '@/components/mk/client-bits'
 import { SITE_ORIGIN, CONTACT_EMAIL } from '@/components/mk/links'
 import './mk.css'
+import './live.css'
 
 const TITLE = 'Astruct: frontier AI built for Australian construction contracts'
 const DESCRIPTION =

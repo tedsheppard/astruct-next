@@ -19,6 +19,6 @@ Drafts open in **Draft**, where you can edit the text directly. Your changes sav
 
 ## Take it away
 
-Choose **Download .docx** to get a Word file on your letterhead. See [House style and Word files](/support/house-style-and-word-files).
+Choose **Download .docx** to get a Word file on your letterhead. See [Your letterhead and Word files](/support/letterhead-and-word-files).
 
 Astruct doesn’t send letters or emails for you. See [Nothing is sent automatically](/support/nothing-is-sent-automatically).

@@ -2,7 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { HeroLoop, Walkthrough } from '@/components/mk/media'
 import { Clause, IssueWindow } from '@/components/mk/fragments'
-import { AskFragment, DraftFragment, SearchFragment, WatchFragment } from '@/components/mk/capabilities'
+import { AskLive, DraftLive, SearchLive, WatchLive } from '@/components/mk/live/fragments'
+import { DropInLive } from '@/components/mk/live/dropin'
+import { ComputerLive } from '@/components/mk/live/computer'
 import { Faq, HOME_FAQ, faqJsonLd } from '@/components/mk/faq'
 import { GGmail, GOneDrive, GOutlook, GSharePoint, GUpload, IArrow, ICheck } from '@/components/mk/icons'
 import { PricingCards, TRIAL_LINE } from '@/components/mk/pricing'
@@ -20,13 +22,78 @@ const CAPS = [
   { id: 'watch', c: 'amber', label: 'Watch', line: 'Directions and delays, flagged as mail arrives.' },
 ]
 
+// Every form and Act here is one Astruct reads when you give it the contract;
+// it works from the document itself, so amended and bespoke forms read the same way.
+const CONTRACTS: [string, string][] = [
+  ['AS 2124-1992', 'General conditions'],
+  ['AS 2545-1993', 'Subcontract'],
+  ['AS 4000-1997', 'General conditions'],
+  ['AS 4901-1998', 'Subcontract'],
+  ['AS 4300-1995', 'Design and construct'],
+  ['AS 4902-2000', 'Design and construct'],
+  ['AS 4903-2000', 'D&C subcontract'],
+  ['AS 4905-2002', 'Minor works'],
+  ['AS 4906-2002', 'Minor works'],
+  ['AS 4917-2003', 'Construction management'],
+  ['AS 11000-2015', 'General conditions'],
+  ['ABIC MW-2018', 'Major works'],
+  ['ABIC SW-2018', 'Simple works'],
+  ['GC21', 'NSW Government'],
+  ['NEC4', 'ECC'],
+  ['FIDIC', 'Red, Yellow and Silver Books'],
+  ['HIA', 'Residential contracts'],
+  ['MBA', 'Residential contracts'],
+  ['Bespoke', 'and amended contracts'],
+]
+const LAWS: [string, string][] = [
+  ['BIF Act 2017', 'Qld'],
+  ['SOP Act 1999', 'NSW'],
+  ['SOP Act 2002', 'Vic'],
+  ['SOP Act 2021', 'WA'],
+  ['SOP Act 2009', 'SA'],
+  ['SOP Act 2009', 'Tas'],
+  ['SOP Act 2009', 'ACT'],
+  ['Construction Contracts (Security of Payments) Act 2004', 'NT'],
+  ['QBCC Act 1991', 'Qld'],
+  ['Home Building Act 1989', 'NSW'],
+  ['Domestic Building Contracts Act 1995', 'Vic'],
+  ['Australian Consumer Law', 'Cth'],
+]
+
+const WHO: { c: string; label: string; jobs: string[] }[] = [
+  {
+    c: 'teal', label: 'Head contractors',
+    jobs: [
+      'Give variation and delay notices to the principal on time',
+      'Check subcontractor notices and claims against their subcontracts',
+      'Give payment schedules inside the security of payment deadlines',
+      'Draft EOT claims with the programme and correspondence behind them',
+    ],
+  },
+  {
+    c: 'amber', label: 'Subcontractors',
+    jobs: [
+      'Catch directions that change your scope, even when they say “no change”',
+      'Give variation notices, delay notices and EOT claims before the time bar',
+      'Know when the payment schedule is due back on your payment claim',
+      'Find what was agreed in years of site mail',
+    ],
+  },
+  {
+    c: 'violet', label: 'Developers and principals',
+    jobs: [
+      'Respond to variation and EOT claims within the time the contract allows',
+      'Test each claim against the contract, the programme and the record',
+      'Keep every notice given and received, with its clause and deadline',
+      'Draft directions, responses and letters to your builder',
+    ],
+  },
+]
+
 const SECURITY: { title: string; body: string }[] = [
-  { title: 'Stored in Australia', body: 'Your projects, mail and documents are stored in Australia, in Sydney.' },
+  { title: 'Stored in Australia', body: 'Your projects, mail and documents are stored in Australia, in Sydney, and never used to train models.' },
   { title: 'Zero Data Retention', body: 'Astruct uses OpenAI’s API under Zero Data Retention, so your content is not kept by OpenAI once a request is answered.' },
-  { title: 'No training on your data', body: 'Your mail, documents and drafts are never used to train models, by us or by OpenAI.' },
-  { title: 'Mailbox access set by your admin', body: 'Your administrator decides whose mailbox each person can search and use with Astruct, one person at a time.' },
-  { title: 'Drafts are never sent automatically', body: 'Astruct prepares letters, notices and claims. A person on your team reviews them and sends them.' },
-  { title: 'Microsoft 365 on your terms', body: 'Organisation-wide connections run on your tenant’s admin consent, and your admin can revoke them at any time.' },
+  { title: 'You stay in control', body: 'Your admin decides who can search which mailbox, and drafts are never sent automatically.' },
 ]
 
 function Bullets({ items }: { items: string[] }) {
@@ -34,6 +101,19 @@ function Bullets({ items }: { items: string[] }) {
     <ul className="mk-ticks">
       {items.map((t) => <li key={t}><ICheck />{t}</li>)}
     </ul>
+  )
+}
+
+function Marquee({ items, rev, law, dur }: { items: [string, string][]; rev?: boolean; law?: boolean; dur: number }) {
+  const set = (hidden?: boolean) => (
+    <div className="mk-pillset" aria-hidden={hidden || undefined}>
+      {items.map(([a, b], i) => <span className="mk-tpill" key={i}>{a}<small>{b}</small></span>)}
+    </div>
+  )
+  return (
+    <div className={`mk-marquee${rev ? ' is-rev' : ''}${law ? ' is-law' : ''}`} style={{ ['--dur' as string]: `${dur}s` }}>
+      <div className="mk-marquee-track">{set()}{set(true)}</div>
+    </div>
   )
 }
 
@@ -46,12 +126,11 @@ export default function HomePage() {
       <section className="mk-hero">
         <div className="mk-field mk-field-hero" aria-hidden="true"><i /><i /><i /><i /><i /></div>
         <div className="mk-wrap">
-          <span className="mk-pill mk-glass-pill">Built in Australia for Australian contracts</span>
+          <span className="mk-pill mk-glass-pill">End to end, built for Australian construction</span>
           <h1 className="mk-h1 mk-hero-h1">Frontier AI for <span className="mk-grad">Australian construction contracts.</span></h1>
           <p className="mk-lede">
-            Ask a question and get an answer that’s actually about construction, with the page it came from. Search
-            thousands of project documents, draft notices and EOT claims, and let Astruct’s agent watch your project mail
-            for variation directions and delays.
+            Answers with the page they came from. Search across thousands of project documents. Notices and EOT claims on
+            your letterhead. An agent that watches project mail for directions and delays.
           </p>
           <div className="mk-cta-row">
             <a className="mk-btn" href={SIGNUP_URL}>Start free trial</a>
@@ -68,8 +147,39 @@ export default function HomePage() {
           </nav>
           <div className="mk-hero-stage">
             <div className="mk-bezel">
-              <HeroLoop label="A 15-second explainer: site instruction SI-014 arrives from Harrow &amp; Vale, Astruct links the evidence, finds Special Condition SC 8.1 and a notice due Fri 2 Oct at 5:00 pm, and prepares the Variation Notice for review." />
+              <HeroLoop label="A 15-second explainer on the demo project. Ask: a question about SI-014, answered with the Variation Notice due Fri 2 Oct at 5:00 pm, citing SC 8.1 on p 21 and SC 9(b) on p 22. Search: (bracket* OR fixing) w/5 &quot;L4&quot; across 4,812 documents. Draft: Variation Notice V-06 as a Word file. Watch: SI-014 flagged as a variation direction outside the Scope of Works in Annexure C, notice due Fri 2 Oct at 5:00 pm." />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* The contracts and laws it reads */}
+      <section className="mk-marquee-sec" aria-labelledby="reads">
+        <div className="mk-wrap">
+          <div className="mk-marquee-head mk-reveal">
+            <h2 id="reads">Reads the contracts you actually sign.</h2>
+            <p>Standard forms, subcontracts, amendments and the law around them.</p>
+          </div>
+        </div>
+        <Marquee items={CONTRACTS} dur={70} />
+        <Marquee items={LAWS} rev law dur={80} />
+      </section>
+
+      {/* One AI for the whole contract */}
+      <section className="mk-sec mk-alt mk-one" id="who">
+        <div className="mk-wrap">
+          <div className="mk-head mk-reveal">
+            <span className="mk-kicker">Who it’s for</span>
+            <h2 className="mk-h2">One AI for the whole contract.</h2>
+            <p className="mk-lede">For builders, subcontractors and developers. End to end, built for Australian construction.</p>
+          </div>
+          <div className="mk-one-grid mk-reveal">
+            {WHO.map((w) => (
+              <div className="mk-one-card" key={w.label}>
+                <span className="mk-chip" data-c={w.c}>{w.label}</span>
+                <ul>{w.jobs.map((j) => <li key={j}>{j}</li>)}</ul>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -81,9 +191,8 @@ export default function HomePage() {
             <span className="mk-chip mk-chip-lg" data-c="teal">Ask</span>
             <h2 className="mk-h2">Ask a question. Get an answer that’s actually for construction.</h2>
             <p className="mk-body mk-feature-body">
-              Astruct answers from your contract, your correspondence and your project documents, and shows the page
-              each point came from. It reads special conditions and amendments with the rest, so the answer follows the
-              clause that actually applies.
+              Answers come from your contract, correspondence and project documents, with the page for each point.
+              Special conditions and amendments are read with the rest.
             </p>
             <Bullets items={[
               'Knows how Australian contracts work: AS 2124, AS 4000, AS 4300, AS 4902 and AS 4903 style contracts, their subcontracts, and bespoke or heavily amended forms',
@@ -91,7 +200,7 @@ export default function HomePage() {
               'Every answer cites the document and page, one click from the source',
             ]} />
           </div>
-          <div className="mk-panel mk-reveal"><AskFragment /></div>
+          <div className="mk-panel mk-reveal"><AskLive /></div>
         </div>
       </section>
 
@@ -102,8 +211,7 @@ export default function HomePage() {
             <span className="mk-chip mk-chip-lg" data-c="blue">Search</span>
             <h2 className="mk-h2">Search every document. Boolean or plain English.</h2>
             <p className="mk-body mk-feature-body">
-              Up to 5,000 documents per project: the contract, drawings, programmes, RFIs, site diaries, minutes and every
-              email. Write a Boolean query the way a litigation team would, or just ask in plain English. Every result
+              Up to 5,000 documents per project, and every email. Use Boolean operators or plain English. Every result
               lands on the page.
             </p>
             <Bullets items={[
@@ -115,7 +223,7 @@ export default function HomePage() {
           </div>
           <div className="mk-stage mk-reveal" data-tone="cool">
             <div className="mk-field" aria-hidden="true"><i /><i /><i /></div>
-            <div className="mk-lg"><SearchFragment /></div>
+            <div className="mk-lg"><SearchLive /></div>
           </div>
         </div>
       </section>
@@ -125,58 +233,67 @@ export default function HomePage() {
         <div className="mk-wrap mk-feature">
           <div className="mk-feature-copy mk-reveal">
             <span className="mk-chip mk-chip-lg" data-c="violet">Draft</span>
-            <h2 className="mk-h2">Draft the letter. Keep your house style.</h2>
+            <h2 className="mk-h2">Draft the letter. On your letterhead.</h2>
             <p className="mk-body mk-feature-body">
-              Project letters, emails, variation notices, notices of delay and EOT claims, drafted from the facts of the
-              project and the clause that governs them. They come out in your house style as Word files, ready for you to
-              check, edit and send.
+              Letters, emails, variation notices, notices of delay and EOT claims, drafted from the project’s facts and
+              the governing clause. On your letterhead, in your format, as Word files.
             </p>
             <Bullets items={[
               'Particulars filled in from the project: references, dates, parties and the clause',
-              'Your letterhead and house style, downloaded as .docx',
+              'Your letterhead and templates, downloaded as .docx',
               'Nothing is sent automatically. A person on your team reviews and sends',
             ]} />
           </div>
-          <div className="mk-panel mk-reveal"><DraftFragment /></div>
+          <div className="mk-panel mk-reveal"><DraftLive /></div>
         </div>
       </section>
 
       {/* Watch */}
       <section className="mk-sec mk-feature-sec mk-alt" id="watch">
+        <div className="mk-wrap mk-feature mk-feature-flip">
+          <div className="mk-feature-copy mk-reveal">
+            <span className="mk-chip mk-chip-lg" data-c="amber">Watch</span>
+            <h2 className="mk-h2">Don’t get time-barred.</h2>
+            <p className="mk-body mk-feature-body">
+              The agent reads project mail as it arrives. It compares each direction with your scope of work, flags likely
+              variations and potential delays, and works out the notice deadline from the clause. Upstream and downstream.
+            </p>
+            <Bullets items={[
+              'Directions compared against the scope of work automatically',
+              'Potential delays flagged from mail, minutes and programme updates',
+              'Every deadline shows the clause it came from, and stays marked “check the clause” until you confirm the rule',
+            ]} />
+            <p className="mk-fine mk-feature-note">New mail is picked up within about five minutes. Astruct only sees the mailboxes and folders you connect.</p>
+          </div>
+          <div className="mk-stage mk-reveal" data-tone="warm">
+            <div className="mk-field" aria-hidden="true"><i /><i /><i /></div>
+            <div className="mk-lg"><WatchLive /></div>
+          </div>
+        </div>
+      </section>
+
+      {/* Drop in the whole project */}
+      <section className="mk-sec" id="drop-in">
         <div className="mk-wrap">
-          <div className="mk-feature mk-feature-flip">
-            <div className="mk-feature-copy mk-reveal">
-              <span className="mk-chip mk-chip-lg" data-c="amber">Watch</span>
-              <h2 className="mk-h2">Don’t get time-barred.</h2>
-              <p className="mk-body mk-feature-body">
-                Astruct’s agent reads project mail as it arrives. Without being asked, it compares each direction against
-                your scope of work and flags the ones that look like variations. It spots potential delays too, then finds
-                the notice clause and works out the deadline, so you can give notice on time.
-              </p>
-              <Bullets items={[
-                'Directions compared against the scope of work automatically',
-                'Potential delays flagged from mail, minutes and programme updates',
-                'Every deadline shows the clause it came from, and stays marked “check the clause” until you confirm the rule',
-              ]} />
-              <p className="mk-fine mk-feature-note">New mail is picked up within about five minutes. Astruct only sees the mailboxes and folders you connect.</p>
-            </div>
-            <div className="mk-stage mk-reveal" data-tone="warm">
-              <div className="mk-field" aria-hidden="true"><i /><i /><i /></div>
-              <div className="mk-lg"><WatchFragment /></div>
-            </div>
+          <div className="mk-head mk-center mk-reveal">
+            <span className="mk-kicker">Documents to notice</span>
+            <h2 className="mk-h2">Drop in the whole project.</h2>
+            <p className="mk-lede">Up to 5,000 documents per project. Ask for a notice and Astruct drafts it from the record, on your letterhead.</p>
           </div>
-          <div className="mk-updown mk-reveal">
-            <div className="mk-updown-card">
-              <span className="mk-updown-k">Upstream</span>
-              <h3>To the principal or head contractor</h3>
-              <p>The notices and claims you must give: variations, delays, EOTs and payment claims, each with its time bar.</p>
-            </div>
-            <div className="mk-updown-card">
-              <span className="mk-updown-k">Downstream</span>
-              <h3>From your subcontractors</h3>
-              <p>The notices and claims you receive, and the responses and payment schedules you owe, each with its deadline.</p>
-            </div>
+          <DropInLive />
+          <p className="mk-fine dp-note">Demo project, fictional parties. Every fact in the notice comes from its documents.</p>
+        </div>
+      </section>
+
+      {/* Astruct's computer */}
+      <section className="mk-sec mk-alt" id="computer">
+        <div className="mk-wrap">
+          <div className="mk-head mk-center mk-reveal">
+            <span className="mk-kicker">Computer</span>
+            <h2 className="mk-h2">Astruct works on its own computer.</h2>
+            <p className="mk-lede">It opens your documents, searches them and drafts in Word, so every answer and notice rests on the project record.</p>
           </div>
+          <ComputerLive />
         </div>
       </section>
 
@@ -244,12 +361,11 @@ export default function HomePage() {
       </section>
 
       {/* Security */}
-      <section className="mk-sec" id="security">
+      <section className="mk-sec mk-sec-tight" id="security">
         <div className="mk-wrap">
           <div className="mk-head mk-reveal">
             <span className="mk-kicker">Security</span>
             <h2 className="mk-h2">Your project data stays yours.</h2>
-            <p className="mk-lede">Commercial correspondence is sensitive. Astruct is built so it stays where it should, and only the right people see it.</p>
           </div>
           <div className="mk-sec-grid mk-reveal">
             {SECURITY.map((s) => (
@@ -259,7 +375,7 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-          <p style={{ marginTop: 36 }}><Link className="mk-link" href="/security">How Astruct handles your data<IArrow /></Link></p>
+          <p style={{ marginTop: 32 }}><Link className="mk-link" href="/security">How Astruct handles your data<IArrow /></Link></p>
         </div>
       </section>
 
