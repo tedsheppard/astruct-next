@@ -144,7 +144,7 @@ export default function HomePage() {
           <div className="mk-feature-copy mk-reveal">
             <h2 className="mk-h2">Search across thousands of project documents.</h2>
             <p className="mk-body mk-feature-body">
-              Use Boolean operators or plain English, across documents and every email. Every result lands on the page.
+              Use <span className="mk-green">Boolean</span> operators or plain English, across documents and every email. Every result lands on the page.
             </p>
             <Bullets items={[
               'AND, OR, NOT, “exact phrases”, brackets and wildcards',
@@ -164,7 +164,7 @@ export default function HomePage() {
       <section className="mk-sec mk-feature-sec" id="draft">
         <div className="mk-wrap mk-feature">
           <div className="mk-feature-copy mk-reveal">
-            <h2 className="mk-h2">Automatically produce correspondence on your letterhead and in your style.</h2>
+            <h2 className="mk-h2">Automatically produce correspondence <span className="mk-grad-word">on your letterhead and in your style.</span></h2>
             <p className="mk-body mk-feature-body">
               Letters, emails, variation notices, notices of delay and EOT claims, drafted from the project’s facts and
               the governing clause. Astruct draws on your past project correspondence to match your style, and tightens it.
