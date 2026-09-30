@@ -33,7 +33,7 @@
 .wl-foot { margin-top: 22px; font-size: 14px; color: var(--ink-3); }
 .wl-dot { margin: 0 10px; }
 
-/* Loading skeleton (three seconds), then the page fades in */
+/* Loading skeleton (2.2 seconds), then the page fades in */
 .wl-real { width: 100%; display: flex; justify-content: center; }
 .wl-real.is-in { animation: wl-in .5s ease both; }
 @keyframes wl-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }

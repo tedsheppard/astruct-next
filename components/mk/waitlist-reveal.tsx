@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react'
 
-// The waitlist page loads behind a skeleton for three seconds, then fades in.
+// The waitlist page loads behind a skeleton for 2.2 seconds, then fades in.
 // Without JavaScript the page shows straight away (see the noscript style).
 export default function WaitlistReveal({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false)
   useEffect(() => {
-    const t = setTimeout(() => setReady(true), 3000)
+    const t = setTimeout(() => setReady(true), 2200)
     return () => clearTimeout(t)
   }, [])
   return (
