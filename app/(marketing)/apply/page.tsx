@@ -14,7 +14,6 @@ export default function ApplyPage() {
     <div className="mk-wrap">
       <div className="mk-apply">
         <div className="mk-apply-aside">
-          <span className="mk-kicker">Private pilot</span>
           <h1 className="mk-h2">Start on one live project, with us.</h1>
           <p className="mk-lede">
             The pilot is a guided start for a small number of Australian contractors. Four short steps. It takes about

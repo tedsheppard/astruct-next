@@ -77,11 +77,10 @@ export default function HomePage() {
       <section className="mk-hero">
         <div className="mk-field mk-field-hero" aria-hidden="true"><i /><i /><i /><i /><i /></div>
         <div className="mk-wrap">
-          <p className="mk-hero-over">End to end, built for Australian construction</p>
           <h1 className="mk-h1 mk-hero-h1">Frontier AI for <span className="mk-grad">Australian construction contracts.</span></h1>
           <p className="mk-lede">
-            Answers with the page they came from. Search across thousands of project documents. Notices and EOT claims on
-            your letterhead. An agent that watches project mail for directions and delays.
+            End to end, built for Australian construction. Answers with the page they came from, search across thousands
+            of project documents, notices and EOT claims on your letterhead, and an agent that watches project mail.
           </p>
           <div className="mk-cta-row">
             <a className="mk-btn" href={SIGNUP_URL}>Start free trial</a>

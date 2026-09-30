@@ -5,7 +5,6 @@ export function LegalPage({ title, updated, intro, sections }: { title: string; 
     <>
       <section className="mk-page-head">
         <div className="mk-wrap">
-          <span className="mk-kicker">Legal</span>
           <h1 className="mk-h2">{title}</h1>
           <p className="mk-fine" style={{ marginTop: 18 }}>Last updated {updated}</p>
         </div>

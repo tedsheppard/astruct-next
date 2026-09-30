@@ -30,7 +30,6 @@ export default function PricingPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(ITEMS)) }} />
       <section className="mk-page-head">
         <div className="mk-wrap">
-          <span className="mk-kicker">Pricing</span>
           <h1 className="mk-h1" style={{ fontSize: 'clamp(48px, 7.4vw, 96px)' }}>One plan.<br />Start free.</h1>
           <p className="mk-lede">Try Astruct on a live project for 30 days with 100 credits. Your card is not charged during the trial, and we’ll email you 5 days before it ends. Then one price per user, with credits included.</p>
         </div>

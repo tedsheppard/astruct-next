@@ -67,7 +67,6 @@ export default function SecurityPage() {
     <>
       <section className="mk-page-head">
         <div className="mk-wrap">
-          <span className="mk-kicker">Security</span>
           <h1 className="mk-h1" style={{ fontSize: 'clamp(48px, 7.4vw, 96px)' }}>Your project data<br />stays yours.</h1>
           <p className="mk-lede">
             Commercial correspondence is some of the most sensitive material on a project. Here is exactly where it goes,

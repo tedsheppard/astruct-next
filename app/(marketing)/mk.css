@@ -597,7 +597,7 @@ fieldset.mk-field { border: 0; margin: 0 0 22px; padding: 0; min-width: 0; }
   --f-violet: rgba(160, 130, 255, 0.45);
   --f-amber: rgba(255, 190, 90, 0.50);
   --f-rose: rgba(255, 130, 165, 0.42);
-  --field-opacity: 0.78;
+  --field-opacity: 0.62;
   --lg-bg: rgba(255, 255, 255, 0.42);
   --lg-hi: rgba(255, 255, 255, 0.95);
   --lg-rim: rgba(255, 255, 255, 0.55);
@@ -617,7 +617,7 @@ html.dark .mk {
   --f-violet: rgba(130, 90, 255, 0.38);
   --f-amber: rgba(230, 150, 40, 0.30);
   --f-rose: rgba(240, 90, 140, 0.30);
-  --field-opacity: 0.85;
+  --field-opacity: 0.68;
   --lg-bg: rgba(30, 30, 36, 0.46);
   --lg-hi: rgba(255, 255, 255, 0.16);
   --lg-rim: rgba(255, 255, 255, 0.10);
@@ -637,7 +637,7 @@ html.dark .mk {
     --f-violet: rgba(130, 90, 255, 0.38);
     --f-amber: rgba(230, 150, 40, 0.30);
     --f-rose: rgba(240, 90, 140, 0.30);
-    --field-opacity: 0.85;
+    --field-opacity: 0.68;
     --lg-bg: rgba(30, 30, 36, 0.46);
     --lg-hi: rgba(255, 255, 255, 0.16);
     --lg-rim: rgba(255, 255, 255, 0.10);
