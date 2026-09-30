@@ -37,7 +37,7 @@ const SECTIONS: LegalSection[] = [
         <p>We use personal information to:</p>
         <ul>
           <li>provide and operate Astruct, including reading your connected sources, detecting issues, linking evidence, computing deadlines and preparing drafts for your review;</li>
-          <li>respond to pilot applications and enquiries, and set up and support your account;</li>
+          <li>respond to waitlist sign-ups, pilot applications and enquiries, and set up and support your account;</li>
           <li>meter credit usage, administer plans and process payments;</li>
           <li>keep Astruct secure and detect misuse; and</li>
           <li>meet our legal obligations.</li>
@@ -51,7 +51,7 @@ const SECTIONS: LegalSection[] = [
     h: '3. Where it is stored',
     body: (
       <p>
-        Your account, Your Content and pilot applications are stored in Australia, in Sydney. The application runs in
+        Your account, Your Content, waitlist sign-ups and pilot applications are stored in Australia, in Sydney. The application runs in
         Sydney. Data is encrypted in transit and at rest.
       </p>
     ),
@@ -112,9 +112,11 @@ const SECTIONS: LegalSection[] = [
     body: (
       <p>
         We use essential cookies to operate the website and keep you signed in to the app. On this website we use the
-        Meta Pixel to measure visits and pilot applications from our advertising. It records page views and, when you
-        submit a pilot application, the fact that an application was made. It does not receive your answers. You can
-        block or clear cookies in your browser.
+        Meta Pixel to measure visits, waitlist sign-ups and pilot applications from our advertising. It records page
+        views and, when you join the waitlist or submit a pilot application, the fact that you did. It does not receive
+        your answers. If you arrive from an ad, we keep the ad parameters in the link (such as utm_campaign) in your
+        browser for up to 30 days and store them with your waitlist entry, so we know which ad brought you. You can
+        block or clear cookies and site data in your browser.
       </p>
     ),
   },
@@ -125,7 +127,7 @@ const SECTIONS: LegalSection[] = [
       <p>
         We keep personal information for as long as we need it to provide Astruct and for legitimate business and legal
         purposes. Your Content is kept until you delete it or your organisation&rsquo;s account is closed, subject to short
-        backup cycles. You can ask us to delete a pilot application at any time.
+        backup cycles. You can ask us to delete a waitlist entry or pilot application at any time.
       </p>
     ),
   },
@@ -162,7 +164,7 @@ export default function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy policy"
-      updated="30 September 2026"
+      updated="1 October 2026"
       intro={
         <p>
           This policy explains how Astruct (<strong>we</strong>, <strong>us</strong>, <strong>our</strong>) collects, uses,
