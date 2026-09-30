@@ -29,7 +29,7 @@ export async function proxy(request: NextRequest) {
     }
 
     // Marketing public paths
-    const marketingPaths = ['/', '/landing', '/apply', '/pricing', '/security', '/contact', '/support', '/legal', '/brand', '/media', '/sitemap.xml', '/robots.txt', '/manifest.webmanifest']
+    const marketingPaths = ['/', '/landing', '/apply', '/signup-waitlist', '/pricing', '/security', '/contact', '/support', '/legal', '/brand', '/media', '/sitemap.xml', '/robots.txt', '/manifest.webmanifest']
     const isMarketingPath = marketingPaths.some(p => path === p || path.startsWith(p + '/'))
 
     // Root on main domain → landing page
@@ -40,8 +40,12 @@ export async function proxy(request: NextRequest) {
     }
 
     // Login/register/signup on main domain → the app
-    if (path === '/login' || path === '/register' || path === '/signup') {
-      return NextResponse.redirect(new URL(`https://app.astruct.io${path === '/register' ? '/signup' : path}`, request.url))
+    // Sign-ups are paused: /signup and /register go to the waitlist; login goes to the app
+    if (path === '/register' || path === '/signup') {
+      return NextResponse.redirect(new URL('/signup-waitlist', request.url))
+    }
+    if (path === '/login') {
+      return NextResponse.redirect(new URL('https://app.astruct.io/login', request.url))
     }
 
     // Non-marketing paths on main domain → redirect to app subdomain
