@@ -7,12 +7,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { FINAL, typed, typedEnd, useLoop } from './core'
 import { Mark } from '../mark'
+import { ContractCover, ContractPage22, LetterPage } from './letter'
 
 const W = 760
 const H = 520
 
 const Q = 'SC 9(b)'
-const PARA = 'SI-014 states that it involves no change to the Subcontract Sum. Under Special Condition SC 9(b), that statement does not relieve Arcline of the requirement to give this Variation Notice, and Arcline does not accept it.'
+const PARA = 'SI-014 states that it involves no change to the subcontract sum. Under Special Condition SC 9(b), that statement does not relieve Arcline of the requirement to give this notice, and Arcline does not accept it.'
 
 // Timeline (ms)
 const T_OPEN = 1700
@@ -22,7 +23,7 @@ const T_ENTER = typedEnd(Q, T_TYPE, 120) + 250
 const T_FOUND = T_ENTER + 500
 const T_POINT = T_FOUND + 900
 const T_DOC = T_POINT + 1500
-const T_DRAFT = T_DOC + 700
+const T_DRAFT = T_DOC + 1400
 const T_DRAFTED = typedEnd(PARA, T_DRAFT, 22)
 const T_OUT = T_DRAFTED + 5200
 const LEN = T_OUT + 600
@@ -33,11 +34,11 @@ const PATH: [number, number, number][] = [
   [600, 112, 140], // the subcontract in the tree
   [2300, 637, 117], // the search box
   [T_ENTER + 300, 637, 117],
-  [T_FOUND + 200, 470, 292], // the highlighted clause
+  [T_FOUND + 200, 500, 402], // the highlighted clause
   [T_POINT + 400, 130, 308], // the draft in the tree
-  [T_DOC + 400, 330, 318], // into the editor, para 3
+  [T_DOC + 200, 330, 340], // into the editor, para 3
 ]
-const CLICKS = [1300, 1500, T_SEARCH_CLICK, T_POINT + 1100, T_DOC + 500]
+const CLICKS = [1300, 1500, T_SEARCH_CLICK, T_POINT + 1100, T_DOC + 1150]
 
 export const STEPS = [
   { at: T_OPEN, s: 'Opened Subcontract HV2291-SC-014.pdf' },
@@ -137,27 +138,9 @@ export function ComputerLive() {
                       </span>
                     </div>
                     <div className="cm-sheetwrap">
-                      {!found ? (
-                        <div className="cm-sheet cm-cover" key="p1">
-                          <small>Execution version</small>
-                          <b>SUBCONTRACT</b>
-                          <span>No. HV2291-SC-014</span>
-                          <span>Kestrel Street Mixed-Use, Stage 2</span>
-                          <span>Façade Package</span>
-                          <i /><i /><i />
-                          <small>Harrow &amp; Vale Constructions Pty Ltd and Arcline Façades Pty Ltd</small>
-                        </div>
-                      ) : (
-                        <div className="cm-sheet cm-p22" key="p22">
-                          <small className="cm-run">Subcontract No. HV2291-SC-014 · Page 22 of 28</small>
-                          <b>SC 9 Time bars generally</b>
-                          <p>(a) The parties acknowledge that the times for giving notices and Claims in Special Conditions SC 7 and SC 8 are reasonable, having regard to the nature of the Subcontract Works and the Subcontractor’s knowledge of its own work.</p>
-                          <p><mark className="cm-hit"><em>(b)</em> A statement in a Direction, site instruction, meeting minute or other document that a Direction involves “no change to the Subcontract Sum”, “no cost” or “no time” does not relieve the Subcontractor of the requirement to give a Variation Notice or Delay Notice</mark> if the Subcontractor considers that the Direction involves a Variation or a Qualifying Cause of Delay.</p>
-                          <p>(c) Correspondence that foreshadows a possible Claim, or records that a matter is “under review”, is not a Variation Notice or Delay Notice unless it satisfies the requirements of SC 7 or SC 8 (as applicable) and is given in accordance with clause 7 as amended.</p>
-                          <b>SC 10 Delay costs</b>
-                          <p>Clause 17.7 is amended by adding at the end: “Delay costs are payable only for Qualifying Causes of Delay referred to in clause 17.4(b) or (c)&hellip;</p>
-                        </div>
-                      )}
+                      <div className="cm-ct" key={found ? 'p22' : 'p1'}>
+                        {found ? <ContractPage22 hit={found} /> : <ContractCover />}
+                      </div>
                     </div>
                   </>
                 )}
@@ -169,13 +152,21 @@ export function ComputerLive() {
                       <span className="cm-saved">Saved</span>
                     </div>
                     <div className="cm-sheetwrap">
-                      <div className="cm-sheet cm-docpage" key="doc">
-                        <b className="cm-doc-h">Variation Notice V-06: Site Instruction SI-014</b>
-                        <p><span>1.</span>Arcline gives notice under Special Condition SC 8.1 that it considers the Direction in SI-014 to be a Variation.</p>
-                        <p><span>2.</span>SI-014 was received by email on Friday 25 September 2026 at 3.12 pm, and directs a change to the façade bracket system at slab edges L4 to L9.</p>
-                        <p className="cm-typing"><span>3.</span><span>{para}{!fin && t >= T_DRAFT && t < T_DRAFTED && <i className="lv-caret" />}
-                          {(fin || t >= T_DRAFTED) && <em className="cm-cite lv-pop">SC 9(b) · p 22</em>}</span>
-                        </p>
+                      <div className={`cm-docpage${fin || t >= T_DRAFT - 500 ? ' is-down' : ''}`}>
+                        <LetterPage
+                          refNo="ARC-KS2-L-042"
+                          date="29 September 2026"
+                          subject={['Kestrel Street Mixed-Use, Stage 2: Subcontract HV2291-SC-014 (Façade Package)', 'Variation Notice under Special Condition SC 8.1: Site Instruction SI-014 (Arcline variation V-06)']}
+                          sign={false}
+                          paras={[
+                            { h: 'The Direction.', body: 'On Friday 25 September 2026 at 3.12 pm, Craig Pellow, Site Manager, issued Site Instruction SI-014 by email. It directs Arcline to change the façade bracket system at slab edges L4 to L9 to Detail 7/A-512 Rev C.' },
+                            { h: 'Notice.', body: 'Arcline gives notice under Special Condition SC 8.1 that it considers the Direction in SI-014 to be a Variation.' },
+                            ...(fin || t >= T_DRAFT ? [{
+                              h: 'Statement in SI-014.',
+                              body: <>{para}{!fin && t < T_DRAFTED && <i className="lv-caret" />}{(fin || t >= T_DRAFTED) && <em className="cm-cite lv-pop">SC 9(b) · p 22</em>}</>,
+                            }] : []),
+                          ]}
+                        />
                       </div>
                     </div>
                   </>

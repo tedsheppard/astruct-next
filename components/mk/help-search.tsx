@@ -85,7 +85,7 @@ export function HelpSearch({ items, children }: { items: HelpIndexItem[]; childr
               {results.map(({ it }) => (
                 <li key={it.slug}>
                   <Link href={`/support/${it.slug}`}>
-                    <span className="mk-chip" data-c={it.c}>{it.categoryTitle}</span>
+                    <small className="mk-help-res-cat">{it.categoryTitle}</small>
                     <b>{it.title}</b>
                     <span>{snippet(it.text, terms) || it.summary}</span>
                   </Link>

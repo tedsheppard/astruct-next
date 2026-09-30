@@ -152,3 +152,98 @@ export function DelayNoticePages({ upto = 99 }: { upto?: number }) {
     </>
   )
 }
+
+export type LetterPara = { h: string; body: React.ReactNode }
+
+/**
+ * Page 1 of any Arcline letter to Harrow & Vale, laid out as the Delay
+ * Notice is: letterhead, addressee and reference table, salutation, subject
+ * bar, numbered paragraphs and (optionally) the signature block.
+ */
+export function LetterPage({ refNo, date, subject, paras, sign = true, className }: {
+  refNo: string
+  date: string
+  subject: string[]
+  paras: LetterPara[]
+  sign?: boolean
+  className?: string
+}) {
+  return (
+    <div className={`lt-page${className ? ` ${className}` : ''}`}>
+      <Letterhead />
+      <div className="lt-meta">
+        <div className="lt-to">
+          <span>Rebecca Lindqvist</span>
+          <span>Main Contractor’s Representative</span>
+          <span>Harrow &amp; Vale Constructions Pty Ltd</span>
+          <span>Level 7, 212 Tarrant Lane</span>
+          <span>Brisbane City QLD 4000</span>
+        </div>
+        <dl className="lt-refs">
+          <dt>Our ref</dt><dd>{refNo}</dd>
+          <dt>Subcontract</dt><dd>HV2291-SC-014</dd>
+          <dt>Date</dt><dd>{date}</dd>
+        </dl>
+      </div>
+      <p className="lt-by">By email: rebecca.lindqvist@harrowvale.example; contracts@harrowvale.example</p>
+      <p>Dear Rebecca</p>
+      <p className="lt-subj">{subject.map((s, i) => <span key={i}>{s}{i < subject.length - 1 && <br />}</span>)}</p>
+      <ol className="lt-ol">
+        {paras.map((p) => <li key={p.h}><b>{p.h}</b> {p.body}</li>)}
+      </ol>
+      {sign && (
+        <div className="lt-sign">
+          <p>Yours faithfully</p>
+          <svg className="lt-sig" viewBox="0 0 160 44" aria-hidden="true"><path d="M4 30c10-18 18-24 22-20s-8 22-2 22 14-26 20-24-4 20 2 20 10-12 16-12 2 10 8 10 12-8 20-8 10 6 18 4 16-6 24-8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <b>Maya Brennan</b>
+          <span>Commercial Manager</span>
+          <span>for and on behalf of {ARC.name}</span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+/** The subcontract's cover, as an amended Australian Standard subcontract's cover is laid out. */
+export function ContractCover() {
+  return (
+    <div className="ct-page ct-cover">
+      <div className="ct-tr">
+        <span>Subcontract No. HV2291-SC-014</span>
+        <span>Amended from AS 4903-2000</span>
+        <span>Execution version · 19 January 2026</span>
+      </div>
+      <div className="ct-works">
+        <b>Kestrel Street Mixed-Use, Stage 2</b>
+        <span>Façade Package: unitised curtain wall and aluminium cladding</span>
+        <span>118 Kestrel Street, Fortitude Valley QLD 4006</span>
+      </div>
+      <div className="ct-parties">
+        <div><b>Harrow &amp; Vale Constructions Pty Ltd</b><span>ABN 69 117 079 060</span><em>Main Contractor</em></div>
+        <div><b>Arcline Façades Pty Ltd</b><span>ABN 16 359 830 862</span><em>Subcontractor</em></div>
+      </div>
+      <div className="ct-title">
+        <b>Subcontract conditions</b>
+        <span>General Conditions of Subcontract HV-SC 2024, with Annexures Part A to D</span>
+      </div>
+    </div>
+  )
+}
+
+/** Page 22 of the subcontract: Special Condition SC 9, with (b) highlighted when `hit`. */
+export function ContractPage22({ hit }: { hit: boolean }) {
+  return (
+    <div className="ct-page ct-body">
+      <div className="ct-run"><span>Subcontract No. HV2291-SC-014</span><span>Annexure Part B: Special Conditions</span></div>
+      <div className="ct-cl ct-cont"><span /><p>If the Subcontractor fails to do so, the Subcontractor is not entitled to any adjustment to the Subcontract Sum or other Claim arising from the Direction, and the Direction is taken not to be a Variation.</p></div>
+      <div className="ct-cl"><span>SC 8.5</span><p><b>Response.</b> Within 10 Business Days after receiving the Variation Particulars, the Main Contractor’s Representative must notify the Subcontractor whether it accepts that the Direction is a Variation.</p></div>
+      <div className="ct-h"><span>SC 9</span><b>Time bars generally</b></div>
+      <div className="ct-sub"><span>(a)</span><p>The parties acknowledge that the times for giving notices and Claims in Special Conditions SC 7 and SC 8 are reasonable, having regard to the nature of the Subcontract Works and the Subcontractor’s knowledge of its own work.</p></div>
+      <div className="ct-sub"><span>(b)</span><p><mark className={hit ? 'ct-hit is-on' : 'ct-hit'}>A statement in a Direction, site instruction, meeting minute or other document that a Direction involves “no change to the Subcontract Sum”, “no cost” or “no time” does not relieve the Subcontractor of the requirement to give a Variation Notice or Delay Notice</mark> if the Subcontractor considers that the Direction involves a Variation or a Qualifying Cause of Delay.</p></div>
+      <div className="ct-sub"><span>(c)</span><p>Correspondence that foreshadows a possible Claim, or records that a matter is “under review”, is not a Variation Notice or Delay Notice unless it satisfies the requirements of SC 7 or SC 8 (as applicable) and is given in accordance with clause 7 as amended.</p></div>
+      <div className="ct-h"><span>SC 10</span><b>Delay costs</b></div>
+      <div className="ct-cl ct-cont"><span /><p>Clause 17.7 is amended by adding at the end: “Delay costs are payable only for Qualifying Causes of Delay referred to in clause 17.4(b) or (c)…</p></div>
+      <div className="ct-foot">22</div>
+    </div>
+  )
+}

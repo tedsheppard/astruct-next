@@ -11,22 +11,22 @@ const PROMPT = 'Draft me a notice of delay for the crane outage and late Level 6
 const TYPES = ['PDF', 'DOCX', 'XLSX', 'MSG', 'EML', 'ZIP', 'Drawing register']
 const TOTAL = 4812
 
-// Timeline (ms)
-const GRAB = 700
-const MOVE = 1100
-const DROP = 2500
-const COUNT = 2700
-const COUNT_END = 5200
-const TYPE = 5700
-const SEND = typedEnd(PROMPT, TYPE, 34) + 300
-const WRITE = SEND + 500
-const BLOCK_MS = 430
+// Timeline (ms): about 15.5 s a loop
+const GRAB = 350
+const MOVE = 550
+const DROP = 1450
+const COUNT = 1550
+const COUNT_END = 3000
+const TYPE = 3250
+const SEND = typedEnd(PROMPT, TYPE, 20) + 200
+const WRITE = SEND + 300
+const BLOCK_MS = 250
 const BLOCKS = 15
 const WRITTEN = WRITE + BLOCKS * BLOCK_MS
-const SCROLL = WRITE + 9 * BLOCK_MS + 300
-const BACK = 23600
-const OUT = 25200
-const LEN = 26000
+const SCROLL = WRITE + 9 * BLOCK_MS + 250
+const BACK = 14000
+const OUT = 14900
+const LEN = 15500
 
 const STACK = [
   { n: 'Contract', k: 'folder' },
@@ -38,9 +38,9 @@ const STACK = [
 
 const STEPS = [
   { at: WRITE, s: 'Read Subcontract HV2291-SC-014: SC 7.1, p 20' },
-  { at: WRITE + 900, s: 'Found the crane emails of 23 September' },
-  { at: WRITE + 1800, s: 'Checked Programme Rev 8 for the critical path' },
-  { at: WRITE + 2700, s: 'Drafting on the Arcline letterhead' },
+  { at: WRITE + 500, s: 'Found the crane emails of 23 September' },
+  { at: WRITE + 1000, s: 'Checked Programme Rev 8 for the critical path' },
+  { at: WRITE + 1500, s: 'Drafting on the Arcline letterhead' },
 ]
 
 function FolderIcon({ k }: { k: string }) {
@@ -55,7 +55,7 @@ export function DropInLive() {
   const move = prog(t, MOVE, DROP)
   const dropped = t >= DROP
   const count = fin ? TOTAL : Math.round(TOTAL * prog(t, COUNT, COUNT_END))
-  const prompt = fin || t >= SEND ? PROMPT : typed(PROMPT, t, TYPE, 34)
+  const prompt = fin || t >= SEND ? PROMPT : typed(PROMPT, t, TYPE, 20)
   const sent = fin || t >= SEND
   const upto = fin ? 99 : t < WRITE ? 0 : Math.floor((t - WRITE) / BLOCK_MS) + 1
   const scrolled = !fin && t >= SCROLL && t < BACK
@@ -80,7 +80,7 @@ export function DropInLive() {
             <div className="dp-meter" aria-hidden="true"><i style={{ transform: `scaleX(${fin ? 1 : prog(t, COUNT, COUNT_END)})` }} /></div>
             <div className="dp-types">
               {TYPES.map((x, i) => (
-                <span key={x} className={`dp-type lv-chip${fin || t >= COUNT + 250 + i * 260 ? ' is-in' : ''}`}>{x}</span>
+                <span key={x} className={`dp-type lv-chip${fin || t >= COUNT + 150 + i * 170 ? ' is-in' : ''}`}>{x}</span>
               ))}
             </div>
           </div>

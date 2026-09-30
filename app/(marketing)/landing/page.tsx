@@ -15,12 +15,6 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
 }
 
-const CAPS = [
-  { id: 'ask', c: 'teal', label: 'Ask', line: 'Answers from your contract, with the page.' },
-  { id: 'search', c: 'blue', label: 'Search', line: 'Boolean or plain English, across 5,000 documents.' },
-  { id: 'draft', c: 'violet', label: 'Draft', line: 'Letters, notices and EOT claims, as Word files.' },
-  { id: 'watch', c: 'amber', label: 'Watch', line: 'Directions and delays, flagged as mail arrives.' },
-]
 
 // Every form and Act here is one Astruct reads when you give it the contract;
 // it works from the document itself, so amended and bespoke forms read the same way.
@@ -45,50 +39,7 @@ const CONTRACTS: [string, string][] = [
   ['MBA', 'Residential contracts'],
   ['Bespoke', 'and amended contracts'],
 ]
-const LAWS: [string, string][] = [
-  ['BIF Act 2017', 'Qld'],
-  ['SOP Act 1999', 'NSW'],
-  ['SOP Act 2002', 'Vic'],
-  ['SOP Act 2021', 'WA'],
-  ['SOP Act 2009', 'SA'],
-  ['SOP Act 2009', 'Tas'],
-  ['SOP Act 2009', 'ACT'],
-  ['Construction Contracts (Security of Payments) Act 2004', 'NT'],
-  ['QBCC Act 1991', 'Qld'],
-  ['Home Building Act 1989', 'NSW'],
-  ['Domestic Building Contracts Act 1995', 'Vic'],
-  ['Australian Consumer Law', 'Cth'],
-]
 
-const WHO: { c: string; label: string; jobs: string[] }[] = [
-  {
-    c: 'teal', label: 'Head contractors',
-    jobs: [
-      'Give variation and delay notices to the principal on time',
-      'Check subcontractor notices and claims against their subcontracts',
-      'Give payment schedules inside the security of payment deadlines',
-      'Draft EOT claims with the programme and correspondence behind them',
-    ],
-  },
-  {
-    c: 'amber', label: 'Subcontractors',
-    jobs: [
-      'Catch directions that change your scope, even when they say “no change”',
-      'Give variation notices, delay notices and EOT claims before the time bar',
-      'Know when the payment schedule is due back on your payment claim',
-      'Find what was agreed in years of site mail',
-    ],
-  },
-  {
-    c: 'violet', label: 'Developers and principals',
-    jobs: [
-      'Respond to variation and EOT claims within the time the contract allows',
-      'Test each claim against the contract, the programme and the record',
-      'Keep every notice given and received, with its clause and deadline',
-      'Draft directions, responses and letters to your builder',
-    ],
-  },
-]
 
 const SECURITY: { title: string; body: string }[] = [
   { title: 'Stored in Australia', body: 'Your projects, mail and documents are stored in Australia, in Sydney, and never used to train models.' },
@@ -126,7 +77,7 @@ export default function HomePage() {
       <section className="mk-hero">
         <div className="mk-field mk-field-hero" aria-hidden="true"><i /><i /><i /><i /><i /></div>
         <div className="mk-wrap">
-          <span className="mk-pill mk-glass-pill">End to end, built for Australian construction</span>
+          <p className="mk-hero-over">End to end, built for Australian construction</p>
           <h1 className="mk-h1 mk-hero-h1">Frontier AI for <span className="mk-grad">Australian construction contracts.</span></h1>
           <p className="mk-lede">
             Answers with the page they came from. Search across thousands of project documents. Notices and EOT claims on
@@ -137,14 +88,6 @@ export default function HomePage() {
             <Link className="mk-link" href="#ask">See what it does<IArrow /></Link>
           </div>
           <p className="mk-fine mk-hero-fine">{TRIAL_LINE}</p>
-          <nav className="mk-caps" aria-label="What Astruct does">
-            {CAPS.map((c) => (
-              <a key={c.id} href={`#${c.id}`} className="mk-cap">
-                <span className="mk-chip" data-c={c.c}>{c.label}</span>
-                <span className="mk-cap-line">{c.line}</span>
-              </a>
-            ))}
-          </nav>
           <div className="mk-hero-stage">
             <div className="mk-bezel">
               <HeroLoop label="A 15-second explainer on the demo project. Ask: a question about SI-014, answered with the Variation Notice due Fri 2 Oct at 5:00 pm, citing SC 8.1 on p 21 and SC 9(b) on p 22. Search: (bracket* OR fixing) w/5 &quot;L4&quot; across 4,812 documents. Draft: Variation Notice V-06 as a Word file. Watch: SI-014 flagged as a variation direction outside the Scope of Works in Annexure C, notice due Fri 2 Oct at 5:00 pm." />
@@ -158,37 +101,16 @@ export default function HomePage() {
         <div className="mk-wrap">
           <div className="mk-marquee-head mk-reveal">
             <h2 id="reads">Reads the contracts you actually sign.</h2>
-            <p>Standard forms, subcontracts, amendments and the law around them.</p>
+            <p>Standard forms, their subcontracts and the amendments that change them.</p>
           </div>
         </div>
         <Marquee items={CONTRACTS} dur={70} />
-        <Marquee items={LAWS} rev law dur={80} />
-      </section>
-
-      {/* One AI for the whole contract */}
-      <section className="mk-sec mk-alt mk-one" id="who">
-        <div className="mk-wrap">
-          <div className="mk-head mk-reveal">
-            <span className="mk-kicker">Who it’s for</span>
-            <h2 className="mk-h2">One AI for the whole contract.</h2>
-            <p className="mk-lede">For builders, subcontractors and developers. End to end, built for Australian construction.</p>
-          </div>
-          <div className="mk-one-grid mk-reveal">
-            {WHO.map((w) => (
-              <div className="mk-one-card" key={w.label}>
-                <span className="mk-chip" data-c={w.c}>{w.label}</span>
-                <ul>{w.jobs.map((j) => <li key={j}>{j}</li>)}</ul>
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* Ask */}
       <section className="mk-sec mk-feature-sec" id="ask">
         <div className="mk-wrap mk-feature">
           <div className="mk-feature-copy mk-reveal">
-            <span className="mk-chip mk-chip-lg" data-c="teal">Ask</span>
             <h2 className="mk-h2">Ask a question. Get an answer that’s actually for construction.</h2>
             <p className="mk-body mk-feature-body">
               Answers come from your contract, correspondence and project documents, with the page for each point.
@@ -208,7 +130,6 @@ export default function HomePage() {
       <section className="mk-sec mk-feature-sec mk-alt" id="search">
         <div className="mk-wrap mk-feature mk-feature-flip">
           <div className="mk-feature-copy mk-reveal">
-            <span className="mk-chip mk-chip-lg" data-c="blue">Search</span>
             <h2 className="mk-h2">Search every document. Boolean or plain English.</h2>
             <p className="mk-body mk-feature-body">
               Up to 5,000 documents per project, and every email. Use Boolean operators or plain English. Every result
@@ -232,7 +153,6 @@ export default function HomePage() {
       <section className="mk-sec mk-feature-sec" id="draft">
         <div className="mk-wrap mk-feature">
           <div className="mk-feature-copy mk-reveal">
-            <span className="mk-chip mk-chip-lg" data-c="violet">Draft</span>
             <h2 className="mk-h2">Draft the letter. On your letterhead.</h2>
             <p className="mk-body mk-feature-body">
               Letters, emails, variation notices, notices of delay and EOT claims, drafted from the project’s facts and
@@ -252,7 +172,6 @@ export default function HomePage() {
       <section className="mk-sec mk-feature-sec mk-alt" id="watch">
         <div className="mk-wrap mk-feature mk-feature-flip">
           <div className="mk-feature-copy mk-reveal">
-            <span className="mk-chip mk-chip-lg" data-c="amber">Watch</span>
             <h2 className="mk-h2">Don’t get time-barred.</h2>
             <p className="mk-body mk-feature-body">
               The agent reads project mail as it arrives. It compares each direction with your scope of work, flags likely
@@ -276,7 +195,6 @@ export default function HomePage() {
       <section className="mk-sec" id="drop-in">
         <div className="mk-wrap">
           <div className="mk-head mk-center mk-reveal">
-            <span className="mk-kicker">Documents to notice</span>
             <h2 className="mk-h2">Drop in the whole project.</h2>
             <p className="mk-lede">Up to 5,000 documents per project. Ask for a notice and Astruct drafts it from the record, on your letterhead.</p>
           </div>
@@ -289,7 +207,6 @@ export default function HomePage() {
       <section className="mk-sec mk-alt" id="computer">
         <div className="mk-wrap">
           <div className="mk-head mk-center mk-reveal">
-            <span className="mk-kicker">Computer</span>
             <h2 className="mk-h2">Astruct works on its own computer.</h2>
             <p className="mk-lede">It opens your documents, searches them and drafts in Word, so every answer and notice rests on the project record.</p>
           </div>
@@ -301,7 +218,6 @@ export default function HomePage() {
       <section className="mk-sec" id="see-it-work">
         <div className="mk-wrap">
           <div className="mk-head mk-center mk-reveal">
-            <span className="mk-kicker">See it work</span>
             <h2 className="mk-h2">From one email to a notice, ready for review.</h2>
             <p className="mk-lede">A walkthrough on the demo project: a fictional façade subcontract in Fortitude Valley, Brisbane, and the site instruction that changed its brackets.</p>
           </div>
@@ -320,7 +236,6 @@ export default function HomePage() {
       <section className="mk-sec mk-alt" id="integrations">
         <div className="mk-wrap">
           <div className="mk-head mk-reveal">
-            <span className="mk-chip mk-chip-lg" data-c="rose">Integrations</span>
             <h2 className="mk-h2">Works where your project already lives.</h2>
             <p className="mk-lede">Connect your sources once. Astruct keeps reading them and files what arrives to the right project.</p>
           </div>
@@ -364,7 +279,6 @@ export default function HomePage() {
       <section className="mk-sec mk-sec-tight" id="security">
         <div className="mk-wrap">
           <div className="mk-head mk-reveal">
-            <span className="mk-kicker">Security</span>
             <h2 className="mk-h2">Your project data stays yours.</h2>
           </div>
           <div className="mk-sec-grid mk-reveal">
@@ -383,7 +297,6 @@ export default function HomePage() {
       <section className="mk-sec mk-alt" id="pricing">
         <div className="mk-wrap">
           <div className="mk-head mk-reveal">
-            <span className="mk-kicker">Pricing</span>
             <h2 className="mk-h2">One plan. Try it free for 30 days.</h2>
             <p className="mk-lede">Use Astruct on a live project for 30 days with 100 credits. Your card is not charged during the trial, and we’ll email you 5 days before it ends.</p>
           </div>

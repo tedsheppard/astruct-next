@@ -26,8 +26,7 @@ export default function SupportPage() {
       <section className="mk-help-hero">
         <div className="mk-field mk-field-help" aria-hidden="true"><i /><i /><i /></div>
         <div className="mk-wrap">
-          <span className="mk-kicker">Help centre</span>
-          <h1 className="mk-h2">How can we help?</h1>
+                    <h1 className="mk-h2">How can we help?</h1>
           <p className="mk-lede">Everything you need to set up Astruct, connect your project, and get good answers, searches and drafts.</p>
         </div>
       </section>
@@ -48,8 +47,8 @@ export default function SupportPage() {
                 if (!list.length) return null
                 return (
                   <section className="mk-help-cat" key={c.id} id={c.id} aria-labelledby={`h-${c.id}`}>
-                    <span className="mk-chip" data-c={c.c}>{c.title}</span>
-                    <p className="mk-help-cat-blurb" id={`h-${c.id}`}>{c.blurb}</p>
+                    <h2 className="mk-help-cat-h" id={`h-${c.id}`}>{c.title}</h2>
+                    <p className="mk-help-cat-blurb">{c.blurb}</p>
                     <ul>
                       {list.map((a) => (
                         <li key={a.slug}><Link href={`/support/${a.slug}`}>{a.title}</Link></li>

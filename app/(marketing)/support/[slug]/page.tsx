@@ -77,7 +77,6 @@ export default async function HelpArticlePage({ params }: { params: Promise<{ sl
         <nav className="mk-crumbs" aria-label="Breadcrumb">
           <Link href="/support">Help centre</Link><IChevron /><Link href={`/support#${cat.id}`}>{cat.title}</Link>
         </nav>
-        <span className="mk-chip" data-c={cat.c}>{cat.title}</span>
         <h1 className="mk-help-h1">{a.title}</h1>
         <p className="mk-help-summary">{a.summary}</p>
         {video && (
