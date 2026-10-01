@@ -2,7 +2,8 @@ import Link from 'next/link'
 
 // The Astruct mark and wordmark (October 2026), drawn from the owner's
 // artwork as exact vector outlines, in currentColor so they follow the theme.
-// Source of truth: launch/brand-2026-10/{mark,wordmark,lockup}.svg.
+// Source of truth: launch/brand-2026-10/{mark,wordmark}.svg. Never set the two
+// together (launch/brand-2026-10/USAGE.txt).
 export const MARK_PATH =
   'M0 348.82L173.63 34.87C200.05-12.91 290.94-10.1 315.13 34.21L486.91 348.82L405.77 348.82L253.48 60.49C249.84 53.58 239.98 53.5 236.21 60.33L77.25 348.82ZM249.15 101.97L218.21 160.78L267.58 257.45L147.2 257.45L115.07 315.12L270.52 315.12C317.22 315.12 340.83 272.57 325.4 243.86Z'
 export const MARK_VIEWBOX = '0 0 486.91 348.82'
@@ -27,10 +28,11 @@ export function Wordmark({ className }: { className?: string }) {
   )
 }
 
+// Owner rule: the mark and the wordmark are never used together. Where the
+// brand name is shown it is the wordmark alone; the mark alone is for icons.
 export function Brand() {
   return (
     <Link href="/" className="mk-brand" aria-label="Astruct home">
-      <Mark />
       <Wordmark />
     </Link>
   )
