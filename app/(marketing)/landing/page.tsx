@@ -100,7 +100,7 @@ export default function HomePage() {
           <p className="mk-fine mk-hero-fine">{TRIAL_LINE}</p>
           <div className="mk-hero-stage">
             <div className="mk-bezel">
-              <HeroLoop label="A 15-second explainer on the demo project. Ask: a question about SI-014, answered with the Variation Notice due Fri 2 Oct at 5:00 pm, citing SC 8.1 on p 21 and SC 9(b) on p 22. Search: (bracket* OR fixing) w/5 &quot;L4&quot; across 4,812 documents. Draft: Variation Notice V-06 as a Word file. Watch: SI-014 flagged as a variation direction outside the Scope of Works in Annexure C, notice due Fri 2 Oct at 5:00 pm." />
+              <HeroLoop label="A 15-second film on the demo project. It opens on Frontier AI for construction, then the camera moves through the project documents. Ask: a question about SI-014, answered with the Variation Notice due Fri 2 Oct at 5:00 pm and the subcontract page it relies on, SC 8.1 on p 21. Search: (bracket* OR fixing) w/5 &quot;L4&quot; across 4,812 documents. Draft: Variation Notice V-06 on Arcline letterhead, as a Word file. Watch: SI-014 arrives and is flagged as a variation direction outside the Scope of Works in Annexure C, notice due Fri 2 Oct at 5:00 pm. It ends on Frontier AI for Australian construction contracts." />
             </div>
           </div>
         </div>
