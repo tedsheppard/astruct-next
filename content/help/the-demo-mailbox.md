@@ -24,4 +24,4 @@ It comes with a mailbox labelled **Demo mailbox (synthetic)**. The demo mailbox 
 
 - The demo mailbox never sends mail and never reads your mailbox.
 - Nothing in the demo is real advice about a real contract.
-- To ask for the demo project on your account, email hello@astruct.io.
+- To ask for the demo project on your account, email info@astruct.io.

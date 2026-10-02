@@ -1,4 +1,5 @@
-import { type NextRequest } from 'next/server'
+import { after, type NextRequest } from 'next/server'
+import { sendWaitlistAlert } from '@/lib/email'
 import { EMAIL_RE, clip, insertLead } from '@/lib/leads'
 
 export const dynamic = 'force-dynamic'
@@ -101,9 +102,14 @@ export async function POST(req: NextRequest) {
   if (!result.ok) {
     console.error('[waitlist] not stored', result.code)
     return Response.json(
-      { error: 'We could not save that just now. Please try again, or email hello@astruct.io.' },
+      { error: 'We could not save that just now. Please try again, or email info@astruct.io.' },
       { status: 503 },
     )
   }
+  // Tell the team straight away; never holds up the visitor's response.
+  const answers: Record<string, string | null> = details
+    ? { Role: one(b.role, ROLES), 'Company size': one(b.companySize, SIZES), 'Live projects': one(b.projects, PROJECTS), 'Mail': one(b.mail, MAIL), Contracts: forms.join(', ') || null, States: states.join(', ') || null, 'Biggest pain': clip(b.pain, 4000) }
+    : {}
+  after(() => sendWaitlistAlert({ step: details ? 'details' : 'contact', name, email, company, source: sourceOf(attribution(b.attribution)), answers }).then(() => undefined, (e) => console.error('[waitlist] alert failed', e)))
   return Response.json({ success: true })
 }

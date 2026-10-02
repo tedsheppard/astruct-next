@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
   if (!result.ok) {
     console.error('[pilot] application not stored', result.code)
     return Response.json(
-      { error: 'We could not save your application just now. Please try again, or email hello@astruct.io.' },
+      { error: 'We could not save your application just now. Please try again, or email info@astruct.io.' },
       { status: 503 },
     )
   }

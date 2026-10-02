@@ -23,4 +23,4 @@ Your projects, mail, documents and drafts are stored in Australia, in Sydney.
 
 Turn on two-step verification in **Settings > Security** with an authenticator app. You can change your password there too.
 
-More detail is on the [security page](/security). For a security questionnaire, email hello@astruct.io.
+More detail is on the [security page](/security). For a security questionnaire, email info@astruct.io.

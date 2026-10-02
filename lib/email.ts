@@ -1,7 +1,7 @@
 import { Resend } from 'resend'
 
 const FROM_DEFAULT = process.env.RESEND_FROM || 'Astruct <hello@astruct.io>'
-const REPLY_TO = process.env.RESEND_REPLY_TO || 'support@astruct.io'
+const REPLY_TO = process.env.RESEND_REPLY_TO || 'info@astruct.io'
 
 let cached: Resend | null = null
 function client(): Resend | null {
@@ -64,7 +64,7 @@ function shell(title: string, body: string): string {
     </div>
     <div style="padding:18px 28px;border-top:1px solid #e8e3d8;font-size:12px;color:#888;">
       Astruct — AI contract intelligence for Australian construction.<br>
-      <a href="https://astruct.io" style="color:#888;">astruct.io</a> · <a href="mailto:support@astruct.io" style="color:#888;">support@astruct.io</a>
+      <a href="https://astruct.io" style="color:#888;">astruct.io</a> · <a href="mailto:info@astruct.io" style="color:#888;">info@astruct.io</a>
     </div>
   </div>
 </body></html>`
@@ -201,4 +201,32 @@ export async function sendUsageThreshold({
     ? `You've used 80% of the included AI allowance on "${contractName}". Overage kicks in automatically at $0.10 per 10k tokens. Manage at https://app.astruct.io/settings/billing.`
     : `You've used your full included allowance on "${contractName}". Overage is now billing at $0.10 per 10k tokens against your monthly cap.`
   return send({ to, subject, html: shell(subject, body), text })
+}
+
+// ─── Waitlist alert (to the team, each time someone joins) ────────────
+export type WaitlistAlert = {
+  step: 'contact' | 'details'
+  name: string | null
+  email: string
+  company: string | null
+  source: string | null
+  answers?: Record<string, string | null>
+}
+
+/** Tells the team someone joined the waitlist (or added their details). */
+export async function sendWaitlistAlert(a: WaitlistAlert) {
+  const to = process.env.WAITLIST_ALERT_TO || 'info@astruct.io'
+  const when = new Date().toLocaleString('en-AU', { timeZone: 'Australia/Brisbane', dateStyle: 'medium', timeStyle: 'short' })
+  const rows: [string, string | null][] = a.step === 'contact'
+    ? [['Name', a.name], ['Email', a.email], ['Company', a.company], ['Came from', a.source], ['When', when]]
+    : [['Email', a.email], ...Object.entries(a.answers || {}), ['When', when]]
+  const filled = rows.filter(([, v]) => v)
+  const subject = a.step === 'contact'
+    ? `Waitlist: ${a.name || a.email}${a.company ? `, ${a.company}` : ''}`
+    : `Waitlist details: ${a.email}`
+  const lead = a.step === 'contact' ? 'Someone joined the Astruct waitlist.' : 'A waitlist sign-up added their details.'
+  const table = filled.map(([k, v]) => `<tr><td style="padding:4px 12px 4px 0;color:#888;vertical-align:top;">${escape(k)}</td><td style="padding:4px 0;">${escape(String(v))}</td></tr>`).join('')
+  const html = shell(subject, `<p>${lead}</p><table style="border-collapse:collapse;font-size:14px;">${table}</table><p style="margin-top:20px;"><a href="https://app.astruct.io/waitlist">Open the waitlist</a></p>`)
+  const text = `${lead}\n\n${filled.map(([k, v]) => `${k}: ${v}`).join('\n')}\n\nhttps://app.astruct.io/waitlist`
+  return send({ to, subject, html, text, replyTo: a.email })
 }

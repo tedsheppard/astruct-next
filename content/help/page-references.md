@@ -25,4 +25,4 @@ When Astruct quotes a document as evidence, the quote is the document’s own wo
 
 ## If a reference looks wrong
 
-Open the source and check. If the page doesn’t support the answer, tell Astruct in the chat. It will look again. And let us know at hello@astruct.io so we can improve it.
+Open the source and check. If the page doesn’t support the answer, tell Astruct in the chat. It will look again. And let us know at info@astruct.io so we can improve it.

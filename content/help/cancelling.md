@@ -23,6 +23,6 @@ Your subscription stops renewing. Any pay-as-you-go credits you have already use
 
 ## Your data
 
-Cancelling doesn’t delete your projects straight away. If you want your data deleted, or want a copy first, email hello@astruct.io.
+Cancelling doesn’t delete your projects straight away. If you want your data deleted, or want a copy first, email info@astruct.io.
 
-If something isn’t working for you, we’d like to hear why at hello@astruct.io.
+If something isn’t working for you, we’d like to hear why at info@astruct.io.

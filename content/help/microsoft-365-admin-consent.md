@@ -34,4 +34,4 @@ Your administrator can remove Astruct at any time in the Microsoft Entra admin c
 - **“Need admin approval”** when someone connects: the approval above hasn’t been given yet.
 - **The publisher is shown as unverified**: this is expected while Microsoft completes publisher verification. The link and the permissions are the same.
 
-Still stuck? Email hello@astruct.io and we’ll help your administrator through it.
+Still stuck? Email info@astruct.io and we’ll help your administrator through it.

@@ -13,7 +13,7 @@ Google reviews every app that reads Gmail before it can be used by anyone. Until
 
 ## Joining the pilot
 
-Email hello@astruct.io from your work address and tell us which Google accounts you want to connect. We’ll let you know when they are added.
+Email info@astruct.io from your work address and tell us which Google accounts you want to connect. We’ll let you know when they are added.
 
 ## Connecting once you’re added
 

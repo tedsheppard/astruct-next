@@ -4,7 +4,7 @@ import { EMAIL_RE, clip, insertLead } from '@/lib/leads'
 export const dynamic = 'force-dynamic'
 
 // General contact requests. The site itself now offers email only
-// (hello@astruct.io); this stays for anything that still posts here.
+// (info@astruct.io); this stays for anything that still posts here.
 // Private-pilot applications use /api/pilot/apply.
 export async function POST(request: NextRequest) {
   try {
@@ -30,10 +30,10 @@ export async function POST(request: NextRequest) {
     })
     if (!result.ok) {
       console.error('[leads] not stored', result.code)
-      return Response.json({ error: 'Something went wrong. Please email hello@astruct.io.' }, { status: 503 })
+      return Response.json({ error: 'Something went wrong. Please email info@astruct.io.' }, { status: 503 })
     }
     return Response.json({ success: true })
   } catch {
-    return Response.json({ error: 'Something went wrong. Please email hello@astruct.io.' }, { status: 500 })
+    return Response.json({ error: 'Something went wrong. Please email info@astruct.io.' }, { status: 500 })
   }
 }

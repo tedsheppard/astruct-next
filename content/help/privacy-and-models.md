@@ -23,4 +23,4 @@ Astruct drafts letters and notices for review. It never sends them. See [Nothing
 
 ## Your privacy rights
 
-How we handle personal information is set out in the [privacy policy](/legal/privacy). To ask about your data, email hello@astruct.io.
+How we handle personal information is set out in the [privacy policy](/legal/privacy). To ask about your data, email info@astruct.io.

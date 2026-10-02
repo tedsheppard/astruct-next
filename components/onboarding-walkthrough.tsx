@@ -26,7 +26,7 @@ const STEPS = [
   },
   {
     title: 'You\'re ready',
-    description: 'That\'s it. Upload your first contract and start asking questions. If you need help, email hello@astruct.io.',
+    description: 'That\'s it. Upload your first contract and start asking questions. If you need help, email info@astruct.io.',
   },
 ]
 

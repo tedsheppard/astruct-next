@@ -3,5 +3,5 @@ export const APP_ORIGIN = 'https://app.astruct.io'
 export const SIGNUP_URL = '/signup-waitlist'
 export const LOGIN_URL = `${APP_ORIGIN}/login`
 export const APPLY_HREF = '/apply'
-export const CONTACT_EMAIL = 'hello@astruct.io'
+export const CONTACT_EMAIL = 'info@astruct.io'
 export const SITE_ORIGIN = 'https://astruct.io'

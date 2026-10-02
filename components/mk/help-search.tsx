@@ -79,7 +79,7 @@ export function HelpSearch({ items, children }: { items: HelpIndexItem[]; childr
       </div>
       {terms.length > 0 ? (
         <div className="mk-help-results" aria-live="polite">
-          <p className="mk-fine">{results.length ? `${results.length} ${results.length === 1 ? 'article' : 'articles'}` : 'No articles match. Try fewer words, or email hello@astruct.io.'}</p>
+          <p className="mk-fine">{results.length ? `${results.length} ${results.length === 1 ? 'article' : 'articles'}` : 'No articles match. Try fewer words, or email info@astruct.io.'}</p>
           {results.length > 0 && (
             <ul>
               {results.map(({ it }) => (

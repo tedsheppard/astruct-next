@@ -961,10 +961,10 @@ export default function AssistantPage() {
                     <span className="font-medium text-foreground">Procore, Aconex, Asite</span> and other platforms.
                     If you&apos;d like to partner on this, reach out at{' '}
                     <a
-                      href="mailto:hello@astruct.io?subject=Integration%20partner%20program"
+                      href="mailto:info@astruct.io?subject=Integration%20partner%20program"
                       className="font-medium text-violet-700 underline underline-offset-2 hover:text-violet-800"
                     >
-                      hello@astruct.io
+                      info@astruct.io
                     </a>
                     {' '}— a discount on your subscription is on the table for design partners.
                   </div>
