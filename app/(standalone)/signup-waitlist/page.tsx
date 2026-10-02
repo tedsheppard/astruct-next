@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Wordmark } from '@/components/mk/mark'
+import { Mark, Wordmark } from '@/components/mk/mark'
 import WaitlistForm from '@/components/mk/waitlist-form'
 import WaitlistReveal from '@/components/mk/waitlist-reveal'
 import { MetaPixel } from '@/components/mk/client-bits'
@@ -23,6 +23,7 @@ export default function SignupWaitlistPage() {
       <WaitlistReveal>
       <main className="wl-main">
         <Link href="/" className="mk-brand wl-brand" aria-label="Astruct home">
+          <Mark />
           <Wordmark />
         </Link>
         <time className="wl-date" dateTime="2026-09-30">30 September 2026</time>

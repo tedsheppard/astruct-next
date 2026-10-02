@@ -5,7 +5,7 @@
 // Harrow & Vale Constructions). Everyone in it is fictional. Quotes are
 // verbatim from the pack. The frames are set at the demo's "now": Tuesday
 // 29 September 2026, mid-afternoon, Brisbane business days.
-import { Wordmark } from './mark'
+import { Mark, Wordmark } from './mark'
 import { GOutlook, GSharePoint, GUpload, IDoc, IMail, ISide } from './icons'
 
 const ISSUE_TITLE = 'SI-014 changes bracket system L4–L9'
@@ -190,7 +190,7 @@ export function IssueWindow() {
   return (
     <div className="ui ui-window">
       <aside className="ui-side">
-        <div className="ui-side-brand"><Wordmark /></div>
+        <div className="ui-side-brand"><Mark /><Wordmark /></div>
         <span className="ui-nav"><ISide.chat className="ui-ic" />New chat</span>
         <span className="ui-nav"><ISide.search className="ui-ic" />Search</span>
         <span className="ui-nav"><ISide.library className="ui-ic" />Library</span>
