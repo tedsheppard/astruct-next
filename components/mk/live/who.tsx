@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 
 const WHO = [
   { label: 'For builders', body: 'Give notices to the principal on time, check subcontractor claims against their subcontracts, and give payment schedules inside the security of payment deadlines.' },
-  { label: 'For subcontractors', body: 'Catch directions that change your scope, even when they say “no change”, and give variation notices, delay notices and EOT claims before the time bar.' },
+  { label: 'For subcontractors', body: 'Catch directions that change your scope, even when they say “no change”, and draft variation notices, delay notices and EOT claims from the evidence.' },
   { label: 'For developers', body: 'Check each variation and EOT claim against the contract, the programme and the correspondence, and respond within the time the contract allows.' },
 ]
 

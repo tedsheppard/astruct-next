@@ -289,15 +289,15 @@ export default function HomePage() {
       <section className="mk-sec mk-feature-sec mk-alt" id="watch">
         <div className="mk-wrap mk-feature mk-feature-flip">
           <div className="mk-feature-copy mk-reveal">
-            <h3 className="mk-h2">Notices before the time bar.</h3>
+            <h3 className="mk-h2">Watches the project mail.</h3>
             <p className="mk-body mk-feature-body">
               The agent reads project mail as it arrives. It compares each direction with your scope of work, flags likely
-              variations and potential delays, and works out the notice deadline from the clause. Upstream and downstream.
+              variations and potential delays, links the evidence and drafts the notice from the clause. Upstream and downstream.
             </p>
             <Bullets items={[
               'Directions compared against the scope of work automatically',
               'Potential delays flagged from mail, minutes and programme updates',
-              'Every deadline shows the clause it came from, and stays marked “check the clause” until you confirm the rule',
+              'Notices drafted from the clause and the evidence, ready for you to check',
             ]} />
             <p className="mk-fine mk-feature-note">New mail is picked up within about five minutes. Astruct only sees the mailboxes and folders you connect.</p>
           </div>
@@ -319,7 +319,7 @@ export default function HomePage() {
               <IssueWindow />
             </Walkthrough>
             <div className="mk-walk-steps" aria-label="What the walkthrough shows">
-              <span>Mail arrives</span><span>Direction flagged</span><span>Evidence linked</span><span>Clause and deadline</span><span>Notice drafted</span>
+              <span>Mail arrives</span><span>Direction flagged</span><span>Evidence linked</span><span>Clause found</span><span>Notice drafted</span>
             </div>
           </div>
         </div>
