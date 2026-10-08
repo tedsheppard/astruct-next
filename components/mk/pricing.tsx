@@ -44,8 +44,7 @@ export function PricingCards({ onPricingPage = false }: { onPricingPage?: boolea
           {INCLUDED.map((t) => <li key={t}><ICheck />{t}</li>)}
         </ul>
         <p className="mk-fine" style={{ marginBottom: 28 }}>
-          Each project is charged at the rate for its band, so {EXAMPLE_PROJECTS} projects cost AU$199 + 4 × AU$179 + 3 × AU$159
-          = {aud(EXAMPLE_TOTAL)} a month. Cancel any time in Settings &gt; Billing.
+          {`Each project is charged at the rate for its band, so ${EXAMPLE_PROJECTS} projects cost AU$199 + 4 × AU$179 + 3 × AU$159 = ${aud(EXAMPLE_TOTAL)} a month. Cancel any time in Settings > Billing.`}
         </p>
         <div className="mk-cta-row">
           <a className="mk-btn" href={SIGNUP_URL}>Get early access</a>

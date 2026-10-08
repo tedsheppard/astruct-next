@@ -12,7 +12,9 @@ export function PriceCalculator() {
   const [n, setN] = useState(EXAMPLE_PROJECTS)
   const id = useId()
   const q = quote(n)
-  const set = (v: number) => setN(Math.min(MAX, Math.max(1, Math.round(v) || 1)))
+  const clamp = (v: number) => Math.min(MAX, Math.max(1, Math.round(v) || 1))
+  const set = (v: number) => setN(clamp(v))
+  const step = (d: number) => setN((p) => clamp(p + d))
 
   return (
     <div className="mk-calc">
@@ -20,7 +22,7 @@ export function PriceCalculator() {
       <div className="mk-calc-row">
         <label htmlFor={`${id}-n`}>Projects</label>
         <div className="mk-calc-step">
-          <button type="button" aria-label="One fewer project" onClick={() => set(n - 1)} disabled={n <= 1}>−</button>
+          <button type="button" aria-label="One fewer project" onClick={() => step(-1)} disabled={n <= 1}>−</button>
           <input
             id={`${id}-n`}
             type="number"
@@ -30,7 +32,7 @@ export function PriceCalculator() {
             value={n}
             onChange={(e) => set(Number(e.target.value))}
           />
-          <button type="button" aria-label="One more project" onClick={() => set(n + 1)} disabled={n >= MAX}>+</button>
+          <button type="button" aria-label="One more project" onClick={() => step(1)} disabled={n >= MAX}>+</button>
         </div>
       </div>
       <input
