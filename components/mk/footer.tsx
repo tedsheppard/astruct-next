@@ -10,15 +10,15 @@ export default function Footer() {
         <div className="mk-footer-top">
           <div className="mk-footer-brand">
             <Brand />
-            <p>Frontier AI built for Australian construction contracts. Ask, search, draft, and an agent that watches your project mail.</p>
+            <p>Project Brain for Australian construction contracts. Search the whole project and draft from all of it.</p>
           </div>
           <div>
             <h4>Product</h4>
             <ul>
-              <li><Link href="/#ask">Ask</Link></li>
-              <li><Link href="/#search">Search</Link></li>
-              <li><Link href="/#draft">Draft</Link></li>
-              <li><Link href="/#watch">The agent</Link></li>
+              <li><Link href="/#search">Search everything</Link></li>
+              <li><Link href="/#draft">Draft from everything</Link></li>
+              <li><Link href="/#safe-ai">Safe AI</Link></li>
+              <li><Link href="/#company">One company account</Link></li>
               <li><Link href="/pricing">Pricing</Link></li>
               <li><Link href="/security">Security</Link></li>
             </ul>

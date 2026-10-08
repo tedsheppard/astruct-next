@@ -18,6 +18,7 @@ const RETIRED: [string, string][] = [
   ['/help', '/support'],
   ['/help/:path*', '/support/:path*'],
   ['/support/house-style-and-word-files', '/support/letterhead-and-word-files'],
+  ['/support/seats-and-credits', '/support/projects-and-users'],
   ['/about', '/'],
   ['/start', '/'],
   ['/platform', '/'],

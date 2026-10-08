@@ -1007,3 +1007,41 @@ html.dark .mk {
   .mk-play { top: auto; bottom: 18px; transform: translateX(-50%); height: 50px; font-size: 15px; }
   .mk-play:hover { transform: translateX(-50%) scale(1.03); }
 }
+
+/* Project Brain: the four parts under the hero, section kickers, marquee and company rows */
+.mk-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.mk-brain-caps { margin-top: clamp(36px, 5vw, 56px); }
+.mk-brain-caps .mk-cap-line { font-size: 14px; }
+.mk-head .mk-kicker { display: block; }
+.mk-marquee-head h3 { margin: 0; font-size: clamp(24px, 2.6vw, 32px); font-weight: 650; letter-spacing: -0.03em; }
+.mk-int-others-copy { flex: 1 1 320px; min-width: 0; }
+.mk-brain-rows { margin-top: clamp(48px, 7vw, 80px); }
+
+/* Pricing: the bands and the calculator */
+.mk-price-sub { margin: 12px 0 0; color: var(--ink-2); font-size: 16px; line-height: 1.5; }
+.mk-tiers { width: 100%; border-collapse: collapse; margin: 24px 0 4px; font-size: 16px; font-variant-numeric: tabular-nums; }
+.mk-tiers th, .mk-tiers td { padding: 12px 0; border-top: 1px solid var(--line); text-align: left; font-weight: 500; color: var(--ink-2); }
+.mk-tiers tr:last-child th, .mk-tiers tr:last-child td { border-bottom: 1px solid var(--line); }
+.mk-tiers td { text-align: right; color: var(--ink); font-weight: 600; white-space: nowrap; }
+.mk-tiers tr:first-child th, .mk-tiers tr:first-child td { color: var(--ink); }
+.mk-calc h3 { margin: 0 0 18px; }
+.mk-calc-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.mk-calc-row label { font-size: 15px; font-weight: 600; color: var(--ink); }
+.mk-calc-step { display: inline-flex; align-items: center; border-radius: 999px; background: var(--card); box-shadow: 0 0 0 1px var(--line); height: 40px; }
+.mk-calc-step button { width: 40px; height: 40px; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 20px; line-height: 1; cursor: pointer; border-radius: 999px; }
+.mk-calc-step button:disabled { color: var(--ink-3); cursor: default; }
+.mk-calc-step input { width: 46px; height: 40px; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 17px; font-weight: 650; text-align: center; font-variant-numeric: tabular-nums; -moz-appearance: textfield; appearance: textfield; }
+.mk-calc-step input::-webkit-outer-spin-button, .mk-calc-step input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.mk-calc-range { width: 100%; margin: 18px 0 6px; accent-color: var(--ink); }
+.mk-calc-total { display: grid; gap: 2px; margin-top: 10px; }
+.mk-calc-total .mk-big { margin: 0; font-variant-numeric: tabular-nums; }
+.mk-calc-unit { font-size: 14px; color: var(--ink-3); }
+.mk-calc-lines { list-style: none; margin: 16px 0 14px; padding: 0; display: grid; gap: 0; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+.mk-calc-lines li { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 14px; padding: 9px 0; border-top: 1px solid var(--line); color: var(--ink-2); }
+.mk-calc-lines li:last-child { border-bottom: 1px solid var(--line); }
+.mk-calc-lines b { font-weight: 600; color: var(--ink); min-width: 72px; text-align: right; }
+@media (max-width: 640px) {
+  .mk-calc-lines li { grid-template-columns: minmax(0, 1fr) auto; }
+  .mk-calc-lines li > span:nth-child(2) { grid-column: 1; grid-row: 2; font-size: 13px; color: var(--ink-3); margin-top: -4px; }
+  .mk-calc-lines b { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+}

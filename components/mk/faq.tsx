@@ -32,8 +32,8 @@ function qa(q: string, text: string, a?: React.ReactNode): QA {
 
 export const HOME_FAQ: QA[] = [
   qa(
-    'What does Astruct actually do?',
-    'Astruct is AI built for Australian construction contracts. You can ask questions and get answers from your contract and project documents with the page reference, search up to 5,000 documents per project with Boolean or plain-English queries, and draft letters, emails, variation notices, notices of delay and EOT claims as Word files. Its agent also reads project mail as it arrives and flags variation directions and potential delays, with the notice clause and deadline.',
+    'What is Project Brain?',
+    'Project Brain is everything Astruct has read on a project, in one place: up to 10,000 uploaded documents, Outlook and Gmail mailboxes, SharePoint, OneDrive and Google Drive folders, and web platforms such as Aconex and Procore that Astruct works in on the Astruct Computer. You can search it, ask it questions and get answers with the page reference, and draft letters, notices, variations and EOT claims from it as Word files. Its agent also reads project mail as it arrives and flags variation directions and potential delays, with the notice clause and deadline.',
   ),
   qa(
     'How is it different from ChatGPT or Copilot?',
@@ -75,18 +75,28 @@ export const HOME_FAQ: QA[] = [
     </p>,
   ),
   qa(
-    'How does the free trial work?',
-    'The trial runs for 30 days with 100 credits. You add a card when you sign up, and it is not charged during the trial. We’ll email you 5 days before your trial ends. After that it is AU$89.95 per user per month, ex GST, unless you cancel in Settings > Billing before the trial ends.',
+    'Can Astruct work in Aconex or Procore?',
+    'Yes, through the Astruct Computer, a cloud computer with its own browser. You sign in to the platform there yourself, and Astruct works through what your account can see, the way a person would, and brings what it finds back to the project. It does not need an API connection from the platform.',
   ),
   qa(
-    'What is a credit?',
-    'Credits measure the AI work Astruct does for you, such as answering questions, reading new mail and documents, and drafting. Each user’s subscription includes 100 credits a month, pooled across your organisation. Beyond that, credits are AU$1.00 each, billed monthly. You can see your usage at any time in Settings > Billing.',
+    'How is Astruct priced?',
+    `Per project, per month, with unlimited users. Your first project is AU$199, projects 2–5 are AU$179 each, 6–15 are AU$159 each, 16–30 are AU$139 each and every project from the 31st is AU$119. Each project is charged at the rate for its band, so 8 projects cost AU$199 + 4 × AU$179 + 3 × AU$159 = AU$1,392 a month. Prices are in Australian dollars and exclude GST.`,
+    <p>
+      Per project, per month, with unlimited users. Your first project is AU$199, projects 2–5 are AU$179 each, 6–15 are
+      AU$159 each, 16–30 are AU$139 each and every project from the 31st is AU$119. Each project is charged at the rate
+      for its band, so 8 projects cost AU$199 + 4 × AU$179 + 3 × AU$159 = AU$1,392 a month. Prices are in Australian
+      dollars and exclude GST. <Link href="/pricing">Work out your price</Link>.
+    </p>,
+  ),
+  qa(
+    'How does the free trial work?',
+    'The trial runs for 30 days. You add a card when you sign up, and it is not charged during the trial. We’ll email you 5 days before your trial ends. After that each project is billed at its per-project price, unless you cancel in Settings > Billing before the trial ends.',
   ),
   qa(
     'Where is our data stored?',
-    'In Australia, in Sydney. Model requests go to OpenAI under Zero Data Retention, and your data is never used to train models.',
+    'In Australia, in Sydney. Model requests go to OpenAI’s API under Zero Data Retention, and your data is never used to train models.',
     <p>
-      In Australia, in Sydney. Model requests go to OpenAI under Zero Data Retention, and your data is never used to
+      In Australia, in Sydney. Model requests go to OpenAI’s API under Zero Data Retention, and your data is never used to
       train models. More on the <Link href="/security">security page</Link>.
     </p>,
   ),

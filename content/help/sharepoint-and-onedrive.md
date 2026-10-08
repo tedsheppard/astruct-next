@@ -26,7 +26,7 @@ Astruct only reads the sites and libraries you can open yourself.
 
 ## What gets read
 
-PDFs, Word documents, spreadsheets and emails saved in the folder, the same as an upload. Each project can hold up to 5,000 documents. See [Bringing in documents](/support/bringing-in-documents).
+PDFs, Word documents, spreadsheets and emails saved in the folder, the same as an upload. Each project can hold up to 10,000 documents. See [Bringing in documents](/support/bringing-in-documents).
 
 ## Keeping in sync
 

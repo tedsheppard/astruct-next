@@ -24,7 +24,7 @@ export const HELP_CATEGORIES: HelpCategory[] = [
   { id: 'drafting', title: 'Drafting', blurb: 'Letters, emails, variation notices, notices of delay and EOT claims.', c: 'violet' },
   { id: 'agent', title: 'The agent', blurb: 'How Astruct watches mail, flags directions and delays, and works out deadlines.', c: 'amber' },
   { id: 'team', title: 'Team and access', blurb: 'Members, roles and who can search which mailbox.', c: 'rose' },
-  { id: 'billing', title: 'Billing', blurb: 'The trial, your card, seats, credits and cancelling.', c: 'ink' },
+  { id: 'billing', title: 'Billing', blurb: 'The trial, your card, per-project pricing and cancelling.', c: 'ink' },
   { id: 'security', title: 'Security and privacy', blurb: 'Where your data lives and how models use it.', c: 'ink' },
 ]
 

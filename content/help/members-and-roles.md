@@ -28,6 +28,6 @@ They get an email invitation. Until they accept, the invitation is listed under 
 
 Owners and admins can change a person’s role from the list, or remove them. A person who is removed loses access to the organisation’s projects straight away.
 
-## Seats
+## Users
 
-Each person in your organisation is a seat. See [Seats, credits and pay as you go](/support/seats-and-credits).
+There is no charge per person. Astruct is priced per project, and everyone in your organisation is included. See [Projects, users and pricing](/support/projects-and-users).

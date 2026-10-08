@@ -32,5 +32,3 @@ You can prepare the notice from the issue. Nothing is sent automatically.
 ## What it ignores
 
 Mail that uses commercial words without commercial effect, such as a *variation* to a meeting time or an *extension* for a safety document, isn’t raised as an issue.
-
-The agent’s reading uses credits. See [Seats, credits and pay as you go](/support/seats-and-credits).

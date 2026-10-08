@@ -1,11 +1,11 @@
 ---
 title: Bringing in documents
-summary: Upload files, whole folders and zips, up to 5,000 documents per project. Emails keep their attachments.
+summary: Upload files, whole folders and zips, up to 10,000 documents per project. Emails keep their attachments.
 category: getting-started
 order: 3
 keywords: upload documents folder zip pdf word excel email eml msg scanned ocr limit 5000 library
 ---
-A project can hold **up to 5,000 documents**. You can bring them in three ways, and mix them freely.
+A project can hold **up to 10,000 documents**. You can bring them in three ways, and mix them freely.
 
 ## Upload
 

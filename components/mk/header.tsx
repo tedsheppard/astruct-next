@@ -8,7 +8,7 @@ import { IClose, IMenu } from './icons'
 import { LOGIN_URL, SIGNUP_URL } from './links'
 
 const NAV = [
-  { href: '/#ask', label: 'Product' },
+  { href: '/#search', label: 'Product' },
   { href: '/pricing', label: 'Pricing' },
   { href: '/security', label: 'Security' },
   { href: '/support', label: 'Support' },

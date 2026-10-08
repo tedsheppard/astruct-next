@@ -47,16 +47,14 @@ const SECTIONS: LegalSection[] = [
     body: (
       <>
         <p>
-          New organisations can use Astruct free for 30 days with up to 100 credits. A card is required at sign-up and is
-          not charged during the trial. We will email you 5 days before your trial ends. Unless you cancel before the trial
-          ends (in Settings &gt; Billing), your subscription starts when the trial ends. Astruct is then billed per user per month at the price shown on our <Link href="/pricing">pricing page</Link>, in
-          Australian dollars excluding GST. Each user&rsquo;s subscription includes a monthly allowance of credits, pooled
-          across the organisation. Credits beyond the allowance are charged on a pay-as-you-go basis at the published rate,
-          billed monthly.
+          New organisations can use Astruct free for 30 days. A card is required at sign-up and is not charged during the
+          trial. We will email you 5 days before your trial ends. Unless you cancel before the trial ends (in Settings &gt;
+          Billing), your subscription starts when the trial ends. Astruct is then billed per project per month at the
+          prices shown on our <Link href="/pricing">pricing page</Link>, in Australian dollars excluding GST. Each project
+          is charged at the rate for its band. There is no charge per user.
         </p>
         <p>
-          Subscriptions renew monthly until cancelled. Unless the law requires otherwise, fees are not refundable and unused
-          credits do not carry over. We may change prices or plans for future periods and will give you reasonable notice
+          Subscriptions renew monthly until cancelled. Unless the law requires otherwise, fees are not refundable. We may change prices or plans for future periods and will give you reasonable notice
           of a material change.
         </p>
       </>
@@ -173,7 +171,7 @@ export default function TermsPage() {
   return (
     <LegalPage
       title="Terms of use"
-      updated="30 September 2026"
+      updated="8 October 2026"
       intro={
         <p>
           These terms are an agreement between you and Astruct (<strong>we</strong>, <strong>us</strong>, <strong>our</strong>)

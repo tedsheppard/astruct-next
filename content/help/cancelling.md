@@ -1,6 +1,6 @@
 ---
 title: Cancelling
-summary: Cancel any time in Settings > Billing and credits. Cancel during the trial and you are not charged.
+summary: Cancel any time in Settings > Billing. Cancel during the trial and you are not charged.
 category: billing
 order: 3
 keywords: cancel stop subscription end trial refund close account
@@ -9,7 +9,7 @@ You can cancel any time. Owners and admins manage the subscription.
 
 ## How to cancel
 
-1. Open **Settings > Billing and credits**.
+1. Open **Settings > Billing**.
 2. Choose to manage or cancel your subscription.
 3. Confirm.
 
@@ -19,7 +19,7 @@ Cancel before your trial ends and your card is **not charged**. We’ll email yo
 
 ## After the trial
 
-Your subscription stops renewing. Any pay-as-you-go credits you have already used are billed.
+Your subscription stops renewing.
 
 ## Your data
 

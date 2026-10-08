@@ -6,9 +6,9 @@ import { SITE_ORIGIN, CONTACT_EMAIL } from '@/components/mk/links'
 import './mk.css'
 import './live.css'
 
-const TITLE = 'Astruct: frontier AI built for Australian construction contracts'
+const TITLE = 'Astruct: Project Brain for Australian construction contracts'
 const DESCRIPTION =
-  'Ask questions of your contract with page references, search up to 5,000 project documents with Boolean or plain English, draft notices and EOT claims, and let the agent flag variation directions and delays. 30-day free trial.'
+  'Search the whole project, up to 10,000 documents, Outlook, Gmail, SharePoint, Google Drive, Aconex and Procore, and draft letters, notices, variations and EOT claims from it. Unlimited users, priced per project. 30-day free trial.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),
@@ -56,9 +56,9 @@ const ORG_JSONLD = {
       description: DESCRIPTION,
       offers: {
         '@type': 'Offer',
-        price: '89.95',
+        price: '199',
         priceCurrency: 'AUD',
-        description: 'Per user per month, excluding GST. Includes 100 credits per user per month. 30-day free trial with 100 credits; card required, not charged during the trial.',
+        description: 'Per project, per month, excluding GST, for the first project; projects 2–5 AU$179 each, 6–15 AU$159, 16–30 AU$139, 31 and over AU$119. Unlimited users. 30-day free trial; card required, not charged during the trial.',
       },
       publisher: { '@id': `${SITE_ORIGIN}/#org` },
     },

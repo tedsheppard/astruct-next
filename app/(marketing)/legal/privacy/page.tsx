@@ -23,7 +23,7 @@ const SECTIONS: LegalSection[] = [
           <li><strong>Account information</strong>: your name, email address, organisation and sign-in details when you create an account or are invited to one.</li>
           <li><strong>Project content</strong>: the contracts, documents, mail, drafts and other material you upload, or that Astruct reads from the mailboxes and folders you connect (<strong>Your Content</strong>). Your Content may contain personal information about you and other people, such as the names and contact details of people you correspond with.</li>
           <li><strong>Connected-account data</strong>: where you or your administrator connect a Microsoft 365 or Google account, the mail and files Astruct is permitted to read from it.</li>
-          <li><strong>Usage and billing data</strong>: your plan, credit usage and billing details (including the card you add when you start a trial), handled by our payment processor. We do not store full card numbers.</li>
+          <li><strong>Usage and billing data</strong>: your plan, usage and billing details (including the card you add when you start a trial), handled by our payment processor. We do not store full card numbers.</li>
           <li><strong>Technical data</strong>: device and browser type, IP address, log data and cookie identifiers.</li>
         </ul>
       </>
@@ -38,7 +38,7 @@ const SECTIONS: LegalSection[] = [
         <ul>
           <li>provide and operate Astruct, including reading your connected sources, detecting issues, linking evidence, computing deadlines and preparing drafts for your review;</li>
           <li>respond to waitlist sign-ups, pilot applications and enquiries, and set up and support your account;</li>
-          <li>meter credit usage, administer plans and process payments;</li>
+          <li>measure usage, administer plans and process payments;</li>
           <li>keep Astruct secure and detect misuse; and</li>
           <li>meet our legal obligations.</li>
         </ul>

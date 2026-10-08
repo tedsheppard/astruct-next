@@ -5,7 +5,7 @@ category: asking
 order: 2
 keywords: boolean search syntax operators and or not near w/n pre/n proximity wildcard phrase brackets query litigation
 ---
-**Search** in the sidebar searches every document and email in a project that you are allowed to see, up to 5,000 documents per project. Switch between **Boolean** and **Plain English** above the results.
+**Search** in the sidebar searches every document and email in a project that you are allowed to see, up to 10,000 documents per project. Switch between **Boolean** and **Plain English** above the results.
 
 Boolean search finds exactly what you describe. It is the right choice when you know the words that were used.
 

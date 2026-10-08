@@ -84,3 +84,16 @@ export const GUpload = ({ className }: P) => (
     <path d="M5 13.5v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
   </svg>
 )
+export const GDrive = ({ className }: P) => (
+  <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M8.6 3.5h6.8l6.1 10.6h-6.8L8.6 3.5Z" fill="#FBBC04" />
+    <path d="M2.5 14.1 5.9 20l6.1-10.6-3.4-5.9-6.1 10.6Z" fill="#0F9D58" />
+    <path d="M5.9 20h12.2l3.4-5.9H9.3L5.9 20Z" fill="#4285F4" />
+  </svg>
+)
+export const GComputer = ({ className }: P) => (
+  <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+    <rect x="3" y="4.5" width="18" height="12" rx="2" fill="none" stroke="currentColor" strokeWidth="1.8" />
+    <path d="M9 20h6M12 16.5V20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+  </svg>
+)
