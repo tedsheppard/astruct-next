@@ -1,1 +1,1 @@
-Astruct: frontier AI built for Australian construction contracts.
+Astruct: the project brain for Australian construction contracts.
