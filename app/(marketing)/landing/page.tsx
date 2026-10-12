@@ -147,7 +147,7 @@ export default function HomePage() {
         <div className="mk-wrap mk-feature">
           <div className="mk-feature-copy mk-reveal">
             <span className="mk-kicker">1. Reads the contract</span>
-            <h2 className="mk-h2">Drop in the contract. Astruct reads it in about a minute.</h2>
+            <h2 className="mk-h2">Your contract, read in about a minute.</h2>
             <p className="mk-body mk-feature-body">
               Head contract or subcontract, standard form or bespoke. Special conditions are read with the general
               conditions, so a replaced clause is never the one relied on.
