@@ -79,7 +79,7 @@ const SECTIONS: LegalSection[] = [
     body: (
       <p>
         Astruct uses third-party providers to run the service, including OpenAI (model processing in the United States,
-        under its business API terms), Supabase (storage in Sydney), Vercel (hosting) and Stripe (billing). When you
+        under its business API terms), Supabase (storage in Sydney), Vercel (hosting, partly in the United States) and Stripe (billing). When you
         connect a Microsoft 365, Google or Procore account, that provider&rsquo;s own terms also apply to your use of it. We are not responsible for the
         availability of third-party services.
       </p>

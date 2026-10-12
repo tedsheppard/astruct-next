@@ -52,7 +52,7 @@ const SECTIONS: LegalSection[] = [
     body: (
       <p>
         Your account, Your Content and trial requests are stored in Australia, in Sydney. Data is encrypted in transit and
-        at rest. AI processing takes place in the United States (section 4).
+        at rest. AI processing and parts of the hosting take place in the United States (sections 4 and 5).
       </p>
     ),
   },
@@ -73,7 +73,7 @@ const SECTIONS: LegalSection[] = [
     body: (
       <>
         <p>
-          We use these service providers: Supabase (database and file storage, Sydney), Vercel (hosting), OpenAI (model
+          We use these service providers: Supabase (database and file storage, Sydney), Vercel (hosting, partly in the United States), OpenAI (model
           processing, United States), Stripe (billing), Microsoft, Google and Procore (only for the accounts you connect),
           and Meta (website advertising measurement, see section 7). Each handles data under its own terms.
         </p>

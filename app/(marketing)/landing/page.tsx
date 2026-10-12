@@ -324,9 +324,9 @@ export default function HomePage() {
       <section className="mk-sec" id="security">
         <div className="mk-wrap">
           <div className="mk-head mk-reveal">
-            <h2 className="mk-h2">Your project data stays in Australia.</h2>
+            <h2 className="mk-h2">Your project data is stored in Australia.</h2>
             <p className="mk-lede">
-              Stored in Sydney. Model requests go to OpenAI under its business API terms and are not used for training.
+              Stored in Sydney. Model requests go to OpenAI in the United States under its business API terms and are not used for training.
               Nothing leaves until a person on your team presses Send.
             </p>
           </div>
