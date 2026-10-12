@@ -247,9 +247,11 @@ export function DraftLive() {
   const [ref, active] = useActive(0.35)
   const [idx, setIdx] = useState(2)
   const [paused, setPaused] = useState(false)
+  // The first document is in the HTML, complete. Only a change of tab composes.
+  const [moved, setMoved] = useState(false)
   useEffect(() => {
     if (!active || paused) return
-    const id = window.setInterval(() => setIdx((i) => (i + 1) % DOCS.length), 5200)
+    const id = window.setInterval(() => { setMoved(true); setIdx((i) => (i + 1) % DOCS.length) }, 6500)
     return () => window.clearInterval(id)
   }, [active, paused])
   const d = DOCS[idx]
@@ -263,14 +265,14 @@ export function DraftLive() {
             role="tab"
             aria-selected={i === idx}
             className={`dr-tab${i === idx ? ' is-on' : ''}${i === idx && active && !paused ? ' is-timing' : ''}`}
-            onClick={() => { setIdx(i); setPaused(true) }}
+            onClick={() => { setMoved(true); setIdx(i); setPaused(true) }}
           >
             {x.kind}
           </button>
         ))}
       </div>
       <div className="dr-canvas" role="tabpanel" aria-label={d.kind}>
-        <div className="dr-page lv-compose" key={d.kind}>
+        <div className={`dr-page${moved ? ' lv-compose' : ''}`} key={d.kind}>
           {d.email ? <EmailDraft /> : <LetterPage refNo={d.refNo} date={d.date} subject={d.subject} paras={d.paras} />}
         </div>
       </div>

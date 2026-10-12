@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { HeroLoop, Walkthrough } from '@/components/mk/media'
+import { Walkthrough } from '@/components/mk/media'
+import { ProjectBrain } from '@/components/mk/brain/project-brain'
 import { Clause, IssueWindow } from '@/components/mk/fragments'
 import { AskLive, DraftLive, SearchLive, WatchLive } from '@/components/mk/live/fragments'
 import { ReadLive } from '@/components/mk/live/read'
 import { DropInLive } from '@/components/mk/live/dropin'
-import { WhoScroll } from '@/components/mk/live/who'
 import { Faq, HOME_FAQ, faqJsonLd } from '@/components/mk/faq'
 import { GGmail, GOutlook, GSharePoint, GUpload, IArrow, ICheck } from '@/components/mk/icons'
 import { PricingCards } from '@/components/mk/pricing'
@@ -85,6 +85,24 @@ const COMPANY: { title: string; body: string }[] = [
   { title: 'Roles and access', body: 'Owners and admins invite people, set their roles and remove them. A person who is removed loses access to the company’s projects straight away.' },
 ]
 
+const WHO: { title: string; c: string; body: string; points: string[] }[] = [
+  {
+    title: 'Head contractors', c: 'teal',
+    body: 'Give notices to the principal on time, check subcontractor claims against their subcontracts, and give payment schedules inside the security of payment deadlines.',
+    points: ['Delay notices and EOT claims under the head contract', 'Subcontractor claims checked against each subcontract', 'Payment schedules inside the statutory time'],
+  },
+  {
+    title: 'Subcontractors', c: 'amber',
+    body: 'Catch directions that change your scope, even when they say “no change”, and draft variation notices, delay notices and EOT claims from the evidence.',
+    points: ['Directions compared against your scope of work', 'Variation notices before the time bar', 'Payment claims on the reference date'],
+  },
+  {
+    title: 'Developers', c: 'violet',
+    body: 'Check each variation and EOT claim against the contract, the programme and the correspondence, and respond within the time the contract allows.',
+    points: ['Claims checked against the contract and programme', 'The clause and page behind every answer', 'Responses inside the time the contract allows'],
+  },
+]
+
 function Bullets({ items }: { items: string[] }) {
   return (
     <ul className="mk-ticks">
@@ -112,24 +130,25 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(HOME_FAQ)) }} />
 
       {/* Hero: the project brain */}
-      <section className="mk-hero">
-        <div className="mk-field mk-field-hero" aria-hidden="true"><i /><i /><i /><i /><i /></div>
-        <div className="mk-wrap">
-          <h1 className="mk-h1 mk-hero-h1">The <span className="mk-grad">project brain</span> for Australian construction contracts.</h1>
-          <p className="mk-lede">
-            Drop in your contract and Astruct reads it in about a minute. Ask anything and the answer cites the clause and
-            page. It drafts the notice on your letterhead before the time bar, and reads the project mail for variations,
-            delays and claims.
-          </p>
-          <div className="mk-cta-row">
-            <a className="mk-btn" href={TRIAL_URL}>{CTA_LABEL}</a>
-            <Link className="mk-link" href="#read">See how it works<IArrow /></Link>
-          </div>
-          <p className="mk-fine mk-hero-fine">{TRIAL_LINE}</p>
-          <div className="mk-hero-stage">
-            <div className="mk-bezel">
-              <HeroLoop label="A short film on the demo project. Ask: a question about SI-014, answered with the Variation Notice due Fri 2 Oct at 5:00 pm and the subcontract page it relies on, SC 8.1 on p 21. Search: (bracket* OR fixing) w/5 &quot;L4&quot; across 4,812 documents. Draft: Variation Notice V-06 on Arcline letterhead, as a Word file. Mail: SI-014 arrives and is flagged as a variation direction outside the Scope of Works in Annexure C, notice due Fri 2 Oct at 5:00 pm." />
+      <section className="mk-hero2">
+        <div className="mk-field mk-field-hero2" aria-hidden="true"><i /><i /><i /></div>
+        <div className="mk-wrap mk-hero2-wrap">
+          <div className="mk-hero2-top">
+            <h1 className="mk-h1 mk-hero2-h1">The <span className="mk-grad">project brain</span> for Australian construction contracts.</h1>
+            <div className="mk-hero2-side">
+              <p className="mk-hero2-lede">
+                Astruct reads the contract, the correspondence and the project mail, and shows what needs a notice and
+                when. Every answer cites the clause and page. The notice is drafted on your letterhead before the time bar.
+              </p>
+              <div className="mk-cta-row">
+                <a className="mk-btn" href={TRIAL_URL}>{CTA_LABEL}</a>
+                <Link className="mk-link" href="#read">See how it works<IArrow /></Link>
+              </div>
+              <p className="mk-fine">{TRIAL_LINE}</p>
             </div>
+          </div>
+          <div className="mk-hero2-stage">
+            <ProjectBrain />
           </div>
           <nav className="mk-caps mk-brain-caps" aria-label="The project brain">
             {BRAIN.map((b) => (
@@ -160,20 +179,19 @@ export default function HomePage() {
           </div>
           <div className="mk-panel mk-reveal"><ReadLive /></div>
         </div>
-      </section>
-
-      <section className="mk-marquee-sec" aria-labelledby="reads">
-        <div className="mk-wrap">
-          <div className="mk-marquee-head mk-reveal">
-            <h3 id="reads">Reads the contracts you actually sign.</h3>
-            <p>Standard forms, their subcontracts and the amendments that change them.</p>
+          <div className="mk-marquee-in">
+            <div className="mk-wrap">
+              <div className="mk-marquee-head">
+                <h3 id="reads">Reads the contracts you actually sign.</h3>
+                <p>Standard forms, their subcontracts and the amendments that change them.</p>
+              </div>
+            </div>
+            <Marquee items={CONTRACTS} dur={70} />
           </div>
-        </div>
-        <Marquee items={CONTRACTS} dur={70} />
       </section>
 
       {/* 2. Answers with the clause */}
-      <section className="mk-sec mk-feature-sec mk-alt" id="ask">
+      <section className="mk-sec mk-feature-sec" id="ask">
         <div className="mk-wrap mk-feature mk-feature-flip">
           <div className="mk-feature-copy mk-reveal">
             <span className="mk-kicker">2. Answers with the clause</span>
@@ -192,7 +210,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mk-sec mk-feature-sec" id="search">
+      <section className="mk-sec mk-feature-sec mk-sec-follow" id="search">
         <div className="mk-wrap mk-feature">
           <div className="mk-feature-copy mk-reveal">
             <h3 className="mk-h2">Search thousands of documents.</h3>
@@ -230,7 +248,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mk-sec mk-feature-sec" id="letterhead">
+      <section className="mk-sec mk-feature-sec mk-alt mk-sec-follow" id="letterhead">
         <div className="mk-wrap mk-feature">
           <div className="mk-feature-copy mk-reveal">
             <h3 className="mk-h2">On your letterhead, <span className="mk-grad-word">as a Word file.</span></h3>
@@ -248,7 +266,7 @@ export default function HomePage() {
       </section>
 
       {/* 4. Reads the project mail */}
-      <section className="mk-sec mk-feature-sec mk-alt" id="watch">
+      <section className="mk-sec mk-feature-sec" id="watch">
         <div className="mk-wrap mk-feature mk-feature-flip">
           <div className="mk-feature-copy mk-reveal">
             <span className="mk-kicker">4. Reads the project mail</span>
@@ -272,7 +290,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mk-sec" id="sources">
+      <section className="mk-sec mk-sec-follow" id="sources">
         <div className="mk-wrap">
           <div className="mk-head mk-reveal">
             <h3 className="mk-h2">What Astruct reads.</h3>
@@ -344,7 +362,7 @@ export default function HomePage() {
       </section>
 
       {/* One company account */}
-      <section className="mk-sec mk-alt" id="company">
+      <section className="mk-sec mk-sec-follow" id="company">
         <div className="mk-wrap">
           <div className="mk-head mk-reveal">
             <h2 className="mk-h2">Everyone in the company, on one account.</h2>
@@ -364,14 +382,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mk-sec" id="who">
+      {/* Who it is for */}
+      <section className="mk-sec mk-alt" id="who">
         <div className="mk-wrap">
-          <WhoScroll />
+          <div className="mk-head">
+            <h2 className="mk-h2">Built for the people who give and answer the notices.</h2>
+            <p className="mk-lede">Project managers, contract administrators and commercial managers, on either side of the contract.</p>
+          </div>
+          <div className="mk-who">
+            {WHO.map((w) => (
+              <div className="mk-who-card" key={w.title}>
+                <span className="mk-chip" data-c={w.c}>{w.title}</span>
+                <p className="mk-who-body">{w.body}</p>
+                <Bullets items={w.points} />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Pricing */}
-      <section className="mk-sec mk-alt" id="pricing">
+      <section className="mk-sec" id="pricing">
         <div className="mk-wrap">
           <div className="mk-head mk-reveal">
             <h2 className="mk-h2">Priced per project. Every user included.</h2>
@@ -382,7 +413,7 @@ export default function HomePage() {
       </section>
 
       {/* FAQ */}
-      <section className="mk-sec" id="faq">
+      <section className="mk-sec mk-alt" id="faq">
         <div className="mk-wrap mk-narrow">
           <div className="mk-head mk-reveal">
             <h2 className="mk-h2">Questions</h2>

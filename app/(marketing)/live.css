@@ -384,11 +384,11 @@ html.dark .mk .dr-canvas::after { background: linear-gradient(transparent, #1c1d
 }
 
 /* ── Scroll-driven stages: a tall track with a sticky stage ──────────── */
-.sc-track { position: relative; height: 320vh; }
-.sc-track-cm { height: 300vh; }
-.sc-stage { position: sticky; top: 76px; height: calc(100vh - 76px); display: flex; flex-direction: column; justify-content: center; }
-.sc-stage > .dp, .sc-stage > .cm { margin-top: 0; width: 100%; }
-.sc-stage .dp-viewer { max-height: calc(100vh - 150px); }
+.sc-track { position: relative; }
+.sc-track-cm { height: auto; }
+.sc-stage { position: static; display: block; }
+.sc-stage > .dp, .sc-stage > .cm { width: 100%; }
+.sc-stage .dp-viewer { max-height: 760px; }
 @media (max-width: 900px), (prefers-reduced-motion: reduce) {
   .sc-track, .sc-track-cm { height: auto; }
   .sc-stage { position: static; height: auto; display: block; }

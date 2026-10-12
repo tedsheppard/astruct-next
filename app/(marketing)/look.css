@@ -1,0 +1,73 @@
+/* astruct.io, 12 Oct 2026: the established look. Loaded last.
+   One section rhythm, a tighter type scale, nothing hidden behind an
+   animation: what the page shows on first paint is the finished page. */
+
+/* Rhythm: one padding for every section; a section that continues the one
+   above it on the same background starts close to it. */
+.mk-sec { padding: clamp(72px, 8.5vw, 120px) 0; }
+.mk-sec-follow { padding-top: clamp(8px, 2vw, 24px); }
+.mk-h2 { font-size: clamp(34px, 4.4vw, 56px); line-height: 1.04; letter-spacing: -0.04em; }
+.mk-feature-copy .mk-h2 { font-size: clamp(32px, 3.7vw, 48px); }
+.mk-lede { font-size: clamp(18px, 1.6vw, 21px); }
+.mk-head .mk-lede { margin-top: 18px; }
+.mk-feature .mk-panel { min-height: 0; }
+.mk-panel { min-height: 0; }
+.mk-feature-body { margin-top: 18px; }
+
+/* Content is never hidden waiting for a scroll trigger. */
+.mk-js .mk-reveal, .mk-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.mk-hero2 { position: relative; padding: clamp(36px, 5vw, 64px) 0 clamp(64px, 7vw, 96px); overflow: clip; }
+.mk-hero2-wrap { position: relative; z-index: 1; max-width: calc(1280px + 2 * var(--gutter)); }
+.mk-hero2-top { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(28px, 4vw, 64px); align-items: end; }
+.mk-hero2-h1 { font-size: clamp(42px, 5.6vw, 80px); line-height: 1.0; letter-spacing: -0.045em; text-wrap: balance; }
+.mk-hero2-side { display: grid; gap: 22px; padding-bottom: 6px; }
+.mk-hero2-lede { margin: 0; font-size: clamp(17px, 1.35vw, 19px); line-height: 1.5; color: var(--ink-2); letter-spacing: -0.012em; text-wrap: pretty; }
+.mk-hero2-side .mk-cta-row { gap: 12px 24px; }
+.mk-hero2-side .mk-fine { margin-top: -8px; }
+.mk-hero2-stage { position: relative; margin-top: clamp(28px, 4vw, 52px); padding: clamp(18px, 2.4vw, 32px) clamp(18px, 2.4vw, 36px) clamp(14px, 1.6vw, 20px); border-radius: 32px; background: color-mix(in srgb, var(--bg-2) 72%, transparent); box-shadow: inset 0 0 0 1px var(--line-2); }
+.mk-field-hero2 { inset: 0; }
+.mk-field-hero2 i { opacity: 0.55; }
+.mk-field-hero2 i:nth-child(1) { width: 34vw; height: 34vw; left: -6%; top: 30%; background: var(--f-teal); }
+.mk-field-hero2 i:nth-child(2) { width: 32vw; height: 32vw; right: -4%; top: 22%; background: var(--f-violet); }
+.mk-field-hero2 i:nth-child(3) { width: 26vw; height: 26vw; left: 38%; top: 46%; background: var(--f-blue); }
+.mk-hero2 .mk-brain-caps { max-width: none; margin-top: 16px; }
+@media (max-width: 960px) {
+  .mk-hero2-top { grid-template-columns: 1fr; align-items: start; gap: 22px; }
+  .mk-hero2-stage { padding: 22px 14px 14px; border-radius: 26px; }
+}
+@media (max-width: 640px) {
+  .mk-hero2 { padding-top: 24px; }
+  .mk-hero2-h1 { font-size: clamp(38px, 10.4vw, 48px); }
+  .mk-hero2-side .mk-cta-row { flex-direction: row; justify-content: flex-start; }
+  .mk-hero2-stage { margin-left: calc(-1 * var(--gutter) + 8px); margin-right: calc(-1 * var(--gutter) + 8px); }
+}
+
+/* ── Contract forms marquee, now inside the Reads section ─────────────── */
+.mk-marquee-in { margin-top: clamp(56px, 7vw, 88px); }
+.mk-marquee-in .mk-marquee-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 24px; margin-bottom: 20px; }
+.mk-marquee-in .mk-marquee-head p { margin: 0; color: var(--ink-3); font-size: 15px; }
+
+/* ── Who it is for ────────────────────────────────────────────────────── */
+.mk-who { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: clamp(36px, 5vw, 56px); }
+.mk-who-card { background: var(--card); border-radius: 24px; padding: clamp(22px, 2.6vw, 32px); box-shadow: 0 0 0 1px var(--line-2), var(--shadow-card); display: flex; flex-direction: column; align-items: flex-start; }
+.mk-who-body { margin: 18px 0 0; font-size: 17px; line-height: 1.5; color: var(--ink); letter-spacing: -0.012em; text-wrap: pretty; }
+.mk-who-card .mk-ticks { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); width: 100%; }
+.mk-who-card .mk-ticks li { font-size: 14.5px; }
+@media (max-width: 900px) { .mk-who { grid-template-columns: 1fr; } }
+
+/* ── Closing ──────────────────────────────────────────────────────────── */
+.mk-close .mk-h2 { font-size: clamp(36px, 5vw, 64px); }
+
+/* ── Live panels: alive without hiding anything ───────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .mk .ui-live .ui-dot, .mk .ui-int-status .ui-dot { animation: lk-pulse 2.4s ease-in-out infinite; }
+}
+@keyframes lk-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 40%, transparent); }
+  50% { box-shadow: 0 0 0 5px color-mix(in srgb, currentColor 0%, transparent); }
+}
+
+/* ── Inner pages ──────────────────────────────────────────────────────── */
+.mk-page-head { padding: clamp(48px, 7vw, 96px) 0 clamp(32px, 4vw, 56px); }

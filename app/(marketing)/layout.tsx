@@ -5,6 +5,8 @@ import { MetaPixel, Reveal } from '@/components/mk/client-bits'
 import { SITE_ORIGIN, CONTACT_EMAIL, TRIAL_LINE } from '@/components/mk/links'
 import './mk.css'
 import './live.css'
+import './brain.css'
+import './look.css'
 
 const TITLE = 'Astruct: the project brain for Australian construction contracts'
 const DESCRIPTION =
