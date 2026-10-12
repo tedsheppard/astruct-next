@@ -6,7 +6,7 @@ import { SITE_ORIGIN, CONTACT_EMAIL } from '@/components/mk/links'
 import './mk.css'
 import './live.css'
 
-const TITLE = 'Astruct: Project Brain for Australian construction contracts'
+const TITLE = 'Astruct: the project brain for Australian construction contracts'
 const DESCRIPTION =
   'Search the whole project, up to 10,000 documents, Outlook, Gmail, SharePoint, Google Drive, Aconex and Procore, and draft letters, notices, variations and EOT claims from it. Unlimited users, priced per project. 30-day free trial.'
 

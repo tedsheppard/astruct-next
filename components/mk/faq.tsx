@@ -32,8 +32,8 @@ function qa(q: string, text: string, a?: React.ReactNode): QA {
 
 export const HOME_FAQ: QA[] = [
   qa(
-    'What is Project Brain?',
-    'Project Brain is everything Astruct has read on a project, in one place: up to 10,000 uploaded documents, Outlook and Gmail mailboxes, SharePoint, OneDrive and Google Drive folders, and web platforms such as Aconex and Procore that Astruct works in on the Astruct Computer. You can search it, ask it questions and get answers with the page reference, and draft letters, notices, variations and EOT claims from it as Word files. Its agent also reads project mail as it arrives and flags variation directions and potential delays, with the notice clause and deadline.',
+    'What is the project brain?',
+    'The project brain is everything Astruct has read on a project, in one place: up to 10,000 uploaded documents, Outlook and Gmail mailboxes, SharePoint, OneDrive and Google Drive folders, and web platforms such as Aconex and Procore that Astruct works in on the Astruct Computer. You can search it, ask it questions and get answers with the page reference, and draft letters, notices, variations and EOT claims from it as Word files. Its agent also reads project mail as it arrives and flags variation directions and potential delays, with the notice clause and deadline.',
   ),
   qa(
     'How is it different from ChatGPT or Copilot?',

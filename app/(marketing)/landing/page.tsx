@@ -44,7 +44,7 @@ const CONTRACTS: [string, string][] = [
 
 const ic = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
 
-// The four parts of Project Brain, in this order everywhere on the page.
+// The four parts of the project brain, in this order everywhere on the page.
 const BRAIN: { n: string; href: string; c: string; title: string; line: string }[] = [
   { n: '1', href: '#search', c: 'teal', title: 'Search everything', line: 'Documents, Outlook and Gmail, SharePoint, Google Drive, Aconex and Procore.' },
   { n: '2', href: '#draft', c: 'violet', title: 'Draft from everything', line: 'Letters, notices, variations and claims from the whole record.' },
@@ -112,11 +112,11 @@ export default function HomePage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(HOME_FAQ)) }} />
 
-      {/* Hero: Project Brain */}
+      {/* Hero: the project brain */}
       <section className="mk-hero">
         <div className="mk-field mk-field-hero" aria-hidden="true"><i /><i /><i /><i /><i /></div>
         <div className="mk-wrap">
-          <h1 className="mk-h1 mk-hero-h1"><span className="mk-grad">Project Brain</span> for Australian construction contracts.</h1>
+          <h1 className="mk-h1 mk-hero-h1">The <span className="mk-grad">project brain</span> for Australian construction contracts.</h1>
           <p className="mk-lede">
             Astruct reads the whole project: up to 10,000 documents, Outlook and Gmail, SharePoint and Google Drive, and
             platforms like Aconex and Procore. Then it answers, searches and drafts from all of it.
@@ -131,7 +131,7 @@ export default function HomePage() {
               <HeroLoop label="A 15-second film on the demo project. It opens on Frontier AI for construction, then the camera moves through the project documents. Ask: a question about SI-014, answered with the Variation Notice due Fri 2 Oct at 5:00 pm and the subcontract page it relies on, SC 8.1 on p 21. Search: (bracket* OR fixing) w/5 &quot;L4&quot; across 4,812 documents. Draft: Variation Notice V-06 on Arcline letterhead, as a Word file. Watch: SI-014 arrives and is flagged as a variation direction outside the Scope of Works in Annexure C, notice due Fri 2 Oct at 5:00 pm. It ends on Frontier AI for Australian construction contracts." />
             </div>
           </div>
-          <nav className="mk-caps mk-brain-caps" aria-label="Project Brain">
+          <nav className="mk-caps mk-brain-caps" aria-label="The project brain">
             {BRAIN.map((b) => (
               <a className="mk-cap" href={b.href} key={b.n}>
                 <span className="mk-chip" data-c={b.c}>{b.n}. {b.title}</span>

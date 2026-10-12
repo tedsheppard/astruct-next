@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="mk-footer-top">
           <div className="mk-footer-brand">
             <Brand />
-            <p>Project Brain for Australian construction contracts. Search the whole project and draft from all of it.</p>
+            <p>The project brain for Australian construction contracts. Search the whole project and draft from all of it.</p>
           </div>
           <div>
             <h4>Product</h4>
