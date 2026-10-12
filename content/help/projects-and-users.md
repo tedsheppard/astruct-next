@@ -35,6 +35,6 @@ There is no charge per person. Everyone in your company account is included, on 
 
 ## Seeing your plan
 
-**Settings > Billing** shows your plan.
+**Settings > Billing and credits** shows your plan.
 
 All prices are in Australian dollars and exclude GST.

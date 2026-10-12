@@ -1,25 +1,24 @@
 ---
-title: The trial and your card
-summary: 30 days free. Your card is not charged during the trial, and we email you 5 days before it ends.
+title: Your free trial
+summary: Free for 30 days, with two projects and 100 credits. No card, and nothing charged when it ends.
 category: billing
 order: 1
-keywords: trial card charge reminder email free 30 days end
+keywords: trial card charge free 30 days end credits projects invite
 ---
-Your free trial lasts **30 days**.
+Your free trial lasts **30 days** from the day you accept the Free Trial Terms. It includes **two projects** and **100 credits**.
 
-## Your card
+## No card
 
-You add a card when you sign up. **It is not charged during the trial.** We ask for it up front so there is no gap in service if you decide to keep going.
+We don’t ask for a card, and nothing is charged when the trial ends. You only pay if you choose to start a company account.
 
-## The reminder
+## Credits
 
-**We’ll email you 5 days before your trial ends**, to the address you signed up with. The email says when the trial ends and what happens next.
+Credits are used when Astruct reads documents, answers questions or prepares drafts. If the credits or projects run out before the 30 days are up, you can keep reading what is already there, and start a company account to add more.
 
 ## When the trial ends
 
-- If you do nothing, your subscription starts and each project is billed at its per-project price, from AU$199 a month, ex GST, with unlimited users. See [Projects, users and pricing](/support/projects-and-users).
-- If you cancel before the trial ends, you are not charged. See [Cancelling](/support/cancelling).
+- Astruct stops doing new AI work. You can still sign in and read your projects and documents.
+- To carry on, start a company account in **Settings > Billing and credits**. Everything carries on where you left it. See [Projects, users and pricing](/support/projects-and-users).
+- If you don’t, your data is deleted 30 days after the trial ends.
 
-## When your trial ends
-
-You can see the date your trial ends in **Settings > Billing**.
+You can see the date your trial ends in **Settings > Billing and credits**.

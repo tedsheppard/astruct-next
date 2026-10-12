@@ -1,16 +1,16 @@
 ---
-title: How the agent watches mail
+title: How Astruct reads the project mail
 summary: Astruct reads project mail and documents as they arrive, and opens an issue when something has commercial consequences.
 category: agent
 order: 1
-keywords: agent watch monitor mail inbox issue detect proactive automatic
+keywords: watch monitor mail inbox outlook issue detect proactive automatic variation delay claim
 ---
-You don’t need to ask Astruct to look. Once a mailbox or folder is connected, the agent reads what arrives and tells you when something needs attention.
+You don’t need to ask Astruct to look. Once Outlook is connected, Astruct reads what arrives and tells you when something needs attention.
 
 ## What it reads
 
-- Mail in the mailboxes you connect, including attachments. New mail is picked up within about five minutes, sooner for Outlook when Microsoft notifies Astruct of a change.
-- Documents in connected SharePoint and OneDrive folders, and documents you upload.
+- Mail in the Outlook mailboxes you connect, including attachments. New mail is picked up within about five minutes, sooner when Microsoft notifies Astruct of a change.
+- Documents you upload.
 
 It only sees what you connect. Mail that goes to a mailbox you haven’t connected, or a letter that only arrives on paper, isn’t seen until you add it.
 

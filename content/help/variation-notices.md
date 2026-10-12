@@ -5,7 +5,7 @@ category: drafting
 order: 2
 keywords: variation notice direction site instruction claim particulars clause
 ---
-When the agent flags a direction as a possible variation, it opens an issue. From the issue, Astruct can draft the variation notice for you to review.
+When Astruct flags a direction as a possible variation, it opens an issue. From the issue, Astruct can draft the variation notice for you to review.
 
 ## What goes in
 

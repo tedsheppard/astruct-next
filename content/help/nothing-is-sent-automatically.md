@@ -1,11 +1,11 @@
 ---
 title: Nothing is sent automatically
-summary: Astruct drafts letters, notices and claims for review. A person on your team always sends them.
+summary: Astruct drafts letters, notices and claims for review. Nothing leaves until a person on your team presses Send.
 category: drafting
 order: 5
 keywords: send automatic review approve email outgoing safety
 ---
-Astruct never sends a letter, notice, claim or email on its own.
+Astruct never sends a letter, notice, claim or email on its own. Nothing leaves until a person on your team presses Send.
 
 Everything it drafts is marked **Prepared for review**. A person on your team reads it, makes any changes, and sends it through your normal process, whether that is email from Outlook, a document control system or a signed letter.
 
@@ -19,4 +19,4 @@ When you have sent a notice, open its issue and choose **Mark as sent**. The iss
 
 ## Connected mailboxes
 
-Connecting Outlook or Gmail lets Astruct read mail. Microsoft or Google may list a permission to send mail on the consent screen so that a person can choose to send from Astruct in future, but Astruct doesn’t send anything by itself.
+Connecting Outlook lets Astruct read mail. Microsoft lists a permission to send mail on the consent screen so that a person can choose to send from Astruct, but Astruct doesn’t send anything by itself.

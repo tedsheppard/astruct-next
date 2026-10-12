@@ -3,9 +3,9 @@ title: Admin consent for Microsoft 365
 summary: Your Microsoft 365 administrator approves Astruct once for the whole organisation, using one link.
 category: connecting
 order: 3
-keywords: admin consent approve it administrator entra azure tenant sharepoint shared mailbox permission blocked
+keywords: admin consent approve it administrator entra azure tenant shared mailbox permission blocked
 ---
-Some Microsoft 365 organisations need an administrator to approve an app before anyone can use it. Astruct needs this approval for **SharePoint** and **shared mailboxes**, and for any organisation that stops people approving apps themselves.
+Some Microsoft 365 organisations need an administrator to approve an app before anyone can use it. Astruct needs this approval for **shared mailboxes**, and for any organisation that stops people approving apps themselves.
 
 It is one link, opened once.
 

@@ -1,11 +1,11 @@
 ---
 title: Directions compared against scope
-summary: The agent checks each direction against your scope of work and flags the ones that look like variations.
+summary: Astruct checks each direction against your scope of work and flags the ones that look like variations.
 category: agent
 order: 2
 keywords: direction scope variation compare site instruction rfi drawing revision
 ---
-A direction rarely says *this is a variation*. It says *change the bracket system to Detail 7 Rev C*, or *proceed as directed, no change to the subcontract sum*. The agent compares what you are being told to do with what your contract says you agreed to do.
+A direction rarely says *this is a variation*. It says *change the bracket system to Detail 7 Rev C*, or *proceed as directed, no change to the subcontract sum*. Astruct compares what you are being told to do with what your contract says you agreed to do.
 
 ## How the comparison works
 
@@ -23,4 +23,4 @@ A direction that says *no change to the contract sum* or *no cost implication* i
 - Scope agreed outside the documents it can see, such as a phone call or a tender clarification that was never uploaded.
 - Whether you plan to accept the change without a claim. That decision stays with you.
 
-If the agent flags something that isn’t a variation, dismiss the issue. If it misses one, add it yourself from the project page and Astruct will link the evidence and find the clause.
+If Astruct flags something that isn’t a variation, dismiss the issue. If it misses one, add it yourself from the project page and Astruct will link the evidence and find the clause.

@@ -27,4 +27,4 @@ Turn either off at any time, or remove the access altogether.
 - Keep personal mailboxes private unless there is a reason to share them.
 - Review access when someone changes projects or leaves.
 
-The agent reads every connected mailbox to find issues for the projects it belongs to. Issues and their evidence are visible to people who can see the project. The quoted evidence is limited to the words needed to show the issue.
+Astruct reads every connected mailbox to find issues for the projects it belongs to. Issues and their evidence are visible to people who can see the project. The quoted evidence is limited to the words needed to show the issue.

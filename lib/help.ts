@@ -18,13 +18,13 @@ import path from 'node:path'
 export type HelpCategory = { id: string; title: string; blurb: string; c: 'teal' | 'blue' | 'violet' | 'amber' | 'rose' | 'ink' }
 
 export const HELP_CATEGORIES: HelpCategory[] = [
-  { id: 'getting-started', title: 'Getting started', blurb: 'Sign up, your trial, your first project and your documents.', c: 'teal' },
-  { id: 'connecting', title: 'Connecting', blurb: 'Outlook, SharePoint and OneDrive, admin consent, Gmail and the demo mailbox.', c: 'blue' },
+  { id: 'getting-started', title: 'Getting started', blurb: 'Your free trial, your first project and your documents.', c: 'teal' },
+  { id: 'connecting', title: 'Connecting', blurb: 'Outlook, admin consent, connections on request and the demo mailbox.', c: 'blue' },
   { id: 'asking', title: 'Asking and searching', blurb: 'Good questions, Boolean and plain-English search, page references.', c: 'teal' },
   { id: 'drafting', title: 'Drafting', blurb: 'Letters, emails, variation notices, notices of delay and EOT claims.', c: 'violet' },
-  { id: 'agent', title: 'The agent', blurb: 'How Astruct watches mail, flags directions and delays, and works out deadlines.', c: 'amber' },
+  { id: 'agent', title: 'Mail, variations and delays', blurb: 'How Astruct reads project mail, flags directions and delays, and works out deadlines.', c: 'amber' },
   { id: 'team', title: 'Team and access', blurb: 'Members, roles and who can search which mailbox.', c: 'rose' },
-  { id: 'billing', title: 'Billing', blurb: 'The trial, your card, per-project pricing and cancelling.', c: 'ink' },
+  { id: 'billing', title: 'Billing', blurb: 'Your free trial, per-project pricing and cancelling.', c: 'ink' },
   { id: 'security', title: 'Security and privacy', blurb: 'Where your data lives and how models use it.', c: 'ink' },
 ]
 

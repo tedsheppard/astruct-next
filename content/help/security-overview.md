@@ -7,7 +7,7 @@ keywords: security data storage australia sydney encryption access revoke
 ---
 ## In Australia
 
-Your projects, mail, documents and drafts are stored in Australia, in Sydney.
+Your projects, mail, documents and drafts are stored in Australia, in Sydney. Model requests are processed by OpenAI in the United States. See [Privacy and AI models](/support/privacy-and-models).
 
 ## Who can see what
 

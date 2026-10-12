@@ -1,25 +1,23 @@
 ---
 title: Cancelling
-summary: Cancel any time in Settings > Billing. Cancel during the trial and you are not charged.
+summary: Cancel a company account any time in Settings > Billing and credits. A free trial needs no cancelling.
 category: billing
 order: 3
 keywords: cancel stop subscription end trial refund close account
 ---
 You can cancel any time. Owners and admins manage the subscription.
 
-## How to cancel
+## During the free trial
 
-1. Open **Settings > Billing**.
-2. Choose to manage or cancel your subscription.
+There is nothing to cancel. The trial needs no card and nothing is charged when it ends. See [Your free trial](/support/trial-and-card).
+
+## Cancelling a company account
+
+1. Open **Settings > Billing and credits**.
+2. Choose **Manage billing**, then cancel your subscription.
 3. Confirm.
 
-## During the trial
-
-Cancel before your trial ends and your card is **not charged**. We’ll email you 5 days before the trial ends as a reminder.
-
-## After the trial
-
-Your subscription stops renewing.
+Your subscription stops renewing at the end of the period you have paid for.
 
 ## Your data
 

@@ -15,7 +15,7 @@ Your contract with the **principal** or **head contractor**. Here you are usuall
 - delay notices and EOT claims;
 - payment claims.
 
-The agent flags the directions and delays that start these clocks.
+Astruct flags the directions and delays that start these clocks.
 
 ## Downstream
 

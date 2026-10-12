@@ -47,10 +47,10 @@ const SECTIONS: LegalSection[] = [
     body: (
       <>
         <p>
-          New organisations can use Astruct free for 30 days. A card is required at sign-up and is not charged during the
-          trial. We will email you 5 days before your trial ends. Unless you cancel before the trial ends (in Settings &gt;
-          Billing), your subscription starts when the trial ends. Astruct is then billed per project per month at the
-          prices shown on our <Link href="/pricing">pricing page</Link>, in Australian dollars excluding GST. Each project
+          New organisations we invite can use Astruct free for 30 days, with two projects and 100 credits. No card is
+          needed and nothing is charged when the trial ends. The Free Trial Terms you accept with the invitation also
+          apply to the trial. To keep going, start a paid company account. Astruct is then billed per project per month
+          at the prices shown on our <Link href="/pricing">pricing page</Link>, in Australian dollars excluding GST. Each project
           is charged at the rate for its band. There is no charge per user.
         </p>
         <p>
@@ -78,9 +78,9 @@ const SECTIONS: LegalSection[] = [
     h: '5. Service providers and connections',
     body: (
       <p>
-        Astruct uses third-party providers to run the service, including OpenAI (model processing, under Zero Data
-        Retention), Supabase and Vercel (storage and hosting in Sydney) and Stripe (billing). When you connect a Microsoft
-        365 or Google account, that provider&rsquo;s own terms also apply to your use of it. We are not responsible for the
+        Astruct uses third-party providers to run the service, including OpenAI (model processing in the United States,
+        under its business API terms), Supabase (storage in Sydney), Vercel (hosting) and Stripe (billing). When you
+        connect a Microsoft 365, Google or Procore account, that provider&rsquo;s own terms also apply to your use of it. We are not responsible for the
         availability of third-party services.
       </p>
     ),
@@ -171,7 +171,7 @@ export default function TermsPage() {
   return (
     <LegalPage
       title="Terms of use"
-      updated="8 October 2026"
+      updated="13 October 2026"
       intro={
         <p>
           These terms are an agreement between you and Astruct (<strong>we</strong>, <strong>us</strong>, <strong>our</strong>)

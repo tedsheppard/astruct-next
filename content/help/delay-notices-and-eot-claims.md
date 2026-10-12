@@ -9,7 +9,7 @@ Most contracts ask for two things when you are delayed: a **notice** soon after 
 
 ## The delay notice
 
-When the agent flags a potential delay, it opens an issue with the evidence, such as an email saying a crane is out of service or a revised handover date. From the issue, prepare the notice. Astruct fills in:
+When Astruct flags a potential delay, it opens an issue with the evidence, such as an email saying a crane is out of service or a revised handover date. From the issue, prepare the notice. Astruct fills in:
 
 - the cause of delay and the facts behind it;
 - the date you became aware of it, with the email or document that shows it;

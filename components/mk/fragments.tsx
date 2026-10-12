@@ -6,7 +6,7 @@
 // verbatim from the pack. The frames are set at the demo's "now": Tuesday
 // 29 September 2026, mid-afternoon, Brisbane business days.
 import { Mark, Wordmark } from './mark'
-import { GOutlook, GSharePoint, GUpload, IDoc, IMail, ISide } from './icons'
+import { IDoc, IMail, ISide } from './icons'
 
 const ISSUE_TITLE = 'SI-014 changes bracket system L4–L9'
 
@@ -28,29 +28,6 @@ export function MailList() {
             <span className="ui-mail-from">{r.from}</span>
             <span className="ui-mail-time">{r.time}</span>
             <span className="ui-mail-subj">{r.subj}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-/** Beat 2: the live sources Astruct keeps reading. */
-export function Sources() {
-  const rows = [
-    { g: <GOutlook />, name: 'Maya Brennan', sub: 'Outlook · Microsoft 365', st: 'Synced 3 min ago' },
-    { g: <GOutlook />, name: 'Kestrel St commercial', sub: 'Shared mailbox · admin consent given', st: 'Synced 4 min ago' },
-    { g: <GSharePoint />, name: 'HV2291 / Commercial', sub: 'SharePoint document library', st: 'Synced 12 min ago' },
-    { g: <GUpload />, name: 'Uploads', sub: 'Subcontract HV2291-SC-014, Programme Rev 8', st: 'Indexed' },
-  ]
-  return (
-    <div className="ui">
-      <div className="ui-card">
-        {rows.map((r) => (
-          <div className="ui-src" key={r.name}>
-            <span className="ui-src-ic">{r.g}</span>
-            <span><b>{r.name}</b><small>{r.sub}</small></span>
-            <span className="ui-src-status"><i className="ui-dot" />{r.st}</span>
           </div>
         ))}
       </div>

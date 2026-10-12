@@ -19,11 +19,11 @@ const SECTIONS: LegalSection[] = [
       <>
         <p>We collect the following kinds of personal information:</p>
         <ul>
-          <li><strong>Contact and application details</strong> you give us on this website, for example when you apply for the private pilot or email us: your name, work email, company, role and your answers to the application questions.</li>
+          <li><strong>Contact and application details</strong> you give us on this website, for example when you request a free trial or email us: your name, work email, company, role and your answers to the request questions.</li>
           <li><strong>Account information</strong>: your name, email address, organisation and sign-in details when you create an account or are invited to one.</li>
           <li><strong>Project content</strong>: the contracts, documents, mail, drafts and other material you upload, or that Astruct reads from the mailboxes and folders you connect (<strong>Your Content</strong>). Your Content may contain personal information about you and other people, such as the names and contact details of people you correspond with.</li>
-          <li><strong>Connected-account data</strong>: where you or your administrator connect a Microsoft 365 or Google account, the mail and files Astruct is permitted to read from it.</li>
-          <li><strong>Usage and billing data</strong>: your plan, usage and billing details (including the card you add when you start a trial), handled by our payment processor. We do not store full card numbers.</li>
+          <li><strong>Connected-account data</strong>: where you or your administrator connect a Microsoft 365 account, or a Google or Procore account we set up on request, the mail and files Astruct is permitted to read from it.</li>
+          <li><strong>Usage and billing data</strong>: your plan, usage and billing details (including the card you add if you start a paid company account), handled by our payment processor. We do not store full card numbers.</li>
           <li><strong>Technical data</strong>: device and browser type, IP address, log data and cookie identifiers.</li>
         </ul>
       </>
@@ -37,7 +37,7 @@ const SECTIONS: LegalSection[] = [
         <p>We use personal information to:</p>
         <ul>
           <li>provide and operate Astruct, including reading your connected sources, detecting issues, linking evidence, computing deadlines and preparing drafts for your review;</li>
-          <li>respond to waitlist sign-ups, pilot applications and enquiries, and set up and support your account;</li>
+          <li>respond to trial requests and enquiries, and set up and support your account;</li>
           <li>measure usage, administer plans and process payments;</li>
           <li>keep Astruct secure and detect misuse; and</li>
           <li>meet our legal obligations.</li>
@@ -51,8 +51,8 @@ const SECTIONS: LegalSection[] = [
     h: '3. Where it is stored',
     body: (
       <p>
-        Your account, Your Content, waitlist sign-ups and pilot applications are stored in Australia, in Sydney. The application runs in
-        Sydney. Data is encrypted in transit and at rest.
+        Your account, Your Content and trial requests are stored in Australia, in Sydney. Data is encrypted in transit and
+        at rest. AI processing takes place in the United States (section 4).
       </p>
     ),
   },
@@ -62,9 +62,8 @@ const SECTIONS: LegalSection[] = [
     body: (
       <p>
         To read mail and documents, check issues and prepare drafts, Astruct sends the relevant parts of Your Content to
-        OpenAI&rsquo;s API. Our OpenAI account has Zero Data Retention, which means requests are processed and answered but
-        not retained by OpenAI, and OpenAI does not use them to train its models. This processing may take place outside
-        Australia, including in the United States.
+        OpenAI&rsquo;s API. OpenAI processes these requests in the United States under its business API terms, and does not
+        use data sent through its business API to train its models.
       </p>
     ),
   },
@@ -74,9 +73,9 @@ const SECTIONS: LegalSection[] = [
     body: (
       <>
         <p>
-          We use these service providers: Supabase (database and file storage, Sydney), Vercel (hosting, Sydney), OpenAI
-          (model processing, under Zero Data Retention), Stripe (billing), Microsoft and Google (only for the accounts you
-          connect), and Meta (website advertising measurement, see section 7). Each handles data under its own terms.
+          We use these service providers: Supabase (database and file storage, Sydney), Vercel (hosting), OpenAI (model
+          processing, United States), Stripe (billing), Microsoft, Google and Procore (only for the accounts you connect),
+          and Meta (website advertising measurement, see section 7). Each handles data under its own terms.
         </p>
         <p>
           Some providers may process data outside Australia. Where we disclose personal information overseas, we take
@@ -112,10 +111,10 @@ const SECTIONS: LegalSection[] = [
     body: (
       <p>
         We use essential cookies to operate the website and keep you signed in to the app. On this website we use the
-        Meta Pixel to measure visits, waitlist sign-ups and pilot applications from our advertising. It records page
-        views and, when you join the waitlist or submit a pilot application, the fact that you did. It does not receive
-        your answers. If you arrive from an ad, we keep the ad parameters in the link (such as utm_campaign) in your
-        browser for up to 30 days and store them with your waitlist entry, so we know which ad brought you. You can
+        Meta Pixel to measure visits and trial requests from our advertising. It records page views and, when you
+        request a trial, the fact that you did. It does not receive your answers. If you arrive from an ad, we keep the
+        ad parameters in the link (such as utm_campaign) in your browser for up to 30 days and store them with your trial
+        request, so we know which ad brought you. You can
         block or clear cookies and site data in your browser.
       </p>
     ),
@@ -127,7 +126,7 @@ const SECTIONS: LegalSection[] = [
       <p>
         We keep personal information for as long as we need it to provide Astruct and for legitimate business and legal
         purposes. Your Content is kept until you delete it or your organisation&rsquo;s account is closed, subject to short
-        backup cycles. You can ask us to delete a waitlist entry or pilot application at any time.
+        backup cycles. You can ask us to delete a trial request at any time.
       </p>
     ),
   },
@@ -164,7 +163,7 @@ export default function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy policy"
-      updated="1 October 2026"
+      updated="13 October 2026"
       intro={
         <p>
           This policy explains how Astruct (<strong>we</strong>, <strong>us</strong>, <strong>our</strong>) collects, uses,

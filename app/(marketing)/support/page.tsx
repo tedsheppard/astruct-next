@@ -7,7 +7,7 @@ import { CONTACT_EMAIL } from '@/components/mk/links'
 
 export const metadata: Metadata = {
   title: 'Help centre',
-  description: 'How to use Astruct: getting started, connecting Outlook and SharePoint, Boolean search, drafting notices, the agent, deadlines, team access, billing and security.',
+  description: 'How to use Astruct: your free trial, connecting Outlook, Boolean search, drafting notices, project mail, deadlines, team access, billing and security.',
   alternates: { canonical: '/support' },
 }
 

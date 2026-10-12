@@ -1,27 +1,29 @@
 ---
-title: Signing up and your free trial
-summary: Join the waitlist, then create your account and add a card that is not charged during the 30-day trial.
+title: Requesting a free trial
+summary: Request a trial and we email you an invite link. Free for 30 days, with two projects and 100 credits. No card.
 category: getting-started
 order: 1
-keywords: signup register account trial card free start reminder waitlist
+keywords: signup register account trial free start invite request link credits projects card
 ---
-We are onboarding customers in stages. Join the waitlist at [astruct.io/signup-waitlist](/signup-waitlist) and we’ll email you when your place is ready. You then sign up with your work email and add a card. Your card is not charged during the trial.
+Request a free trial at [astruct.io/request-trial](/request-trial). We read every request and email you an invite link. The link works for 14 days.
+
+Open the link, set a password and agree to the Free Trial Terms. Your trial starts then.
 
 ## What the trial includes
 
-- **30 days** of Astruct, with everything switched on: Ask, Search, Draft and the agent that watches your mail.
-- Up to 10,000 documents per project, and as many projects and users as you need.
+- **30 days** of Astruct: the contract read, Ask, Search, Draft, and Outlook mail read for variations, delays and claims.
+- **Two projects** and **100 credits**. Credits are used when Astruct reads documents, answers questions or prepares drafts.
+- As many users from your company as you need.
+- **No card.** Nothing is charged when the trial ends.
 
-## Why we ask for a card
+## When the trial ends
 
-So there is no gap if you decide to keep going. Nothing is charged during the trial. **We’ll email you 5 days before your trial ends**, so you have time to decide.
+Astruct stops doing new AI work, but you can still sign in and read your projects and documents. To carry on, start a company account in **Settings > Billing and credits**. See [Projects, users and pricing](/support/projects-and-users). If you don’t, your data is deleted 30 days after the trial ends.
 
-If you do nothing, your subscription starts when the trial ends, priced per project from AU$199 a month, ex GST, with unlimited users. See [Projects, users and pricing](/support/projects-and-users). If you don’t want to continue, cancel in **Settings > Billing** before the trial ends and you won’t be charged. See [Cancelling](/support/cancelling).
-
-## After you sign up
+## After you sign in
 
 1. Create your first project. See [Your first project](/support/your-first-project).
 2. Add the contract and the documents you already have. See [Bringing in documents](/support/bringing-in-documents).
-3. Connect your mailbox so the agent can start reading. See [Connecting Outlook](/support/connecting-outlook).
+3. Connect Outlook so Astruct can start reading your project mail. See [Connecting Outlook](/support/connecting-outlook).
 
 Want to look around before using your own project? Ask about the demo project. See [The demo mailbox](/support/the-demo-mailbox).

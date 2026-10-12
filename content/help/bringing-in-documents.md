@@ -1,11 +1,11 @@
 ---
 title: Bringing in documents
-summary: Upload files, whole folders and zips, up to 10,000 documents per project. Emails keep their attachments.
+summary: Upload files, whole folders and zips. A project can hold thousands of documents. Emails keep their attachments.
 category: getting-started
 order: 3
-keywords: upload documents folder zip pdf word excel email eml msg scanned ocr limit 5000 library
+keywords: upload documents folder zip pdf word excel email eml msg scanned ocr limit thousands library
 ---
-A project can hold **up to 10,000 documents**. You can bring them in three ways, and mix them freely.
+A project can hold **thousands of documents**. You can bring them in two ways, and mix them freely.
 
 ## Upload
 
@@ -18,13 +18,9 @@ Open the project and go to **Documents**. Drag files or whole folders onto it, o
 
 Astruct files each document into the project’s folders: Contract, Correspondence, Variations, Delays and EOTs, Notices, Claims, Programme, Site records, Drawings and Other.
 
-## Connect a folder
-
-Connect a SharePoint or OneDrive folder and Astruct keeps it in sync, so new revisions are picked up without anyone uploading them. See [SharePoint and OneDrive](/support/sharepoint-and-onedrive).
-
 ## Connect a mailbox
 
-Connect Outlook and attachments from project mail are filed as they arrive. See [Connecting Outlook](/support/connecting-outlook).
+Connect Outlook and attachments from project mail are filed as they arrive. See [Connecting Outlook](/support/connecting-outlook). SharePoint and Procore are available on request. See [Procore, Gmail and SharePoint](/support/connections-on-request).
 
 ## How long it takes
 

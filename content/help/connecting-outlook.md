@@ -5,7 +5,7 @@ category: connecting
 order: 1
 keywords: outlook microsoft 365 office mail mailbox connect shared exchange graph
 ---
-Connecting your mailbox is what lets the agent watch the project for you. Each person connects their own mailbox.
+Connecting your mailbox lets Astruct read the project mail for variations, delays and claims as it arrives. Each person connects their own mailbox.
 
 ## Connect your mailbox
 
