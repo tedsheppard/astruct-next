@@ -20,12 +20,13 @@
 /* ── Hero ─────────────────────────────────────────────────────────────── */
 .mk-hero2 { position: relative; padding: clamp(36px, 5vw, 64px) 0 clamp(64px, 7vw, 96px); overflow: clip; }
 .mk-hero2-wrap { position: relative; z-index: 1; max-width: calc(1280px + 2 * var(--gutter)); }
-.mk-hero2-top { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(28px, 4vw, 64px); align-items: end; }
-.mk-hero2-h1 { font-size: clamp(42px, 5.6vw, 80px); line-height: 1.0; letter-spacing: -0.045em; text-wrap: balance; }
-.mk-hero2-side { display: grid; gap: 22px; padding-bottom: 6px; }
+.mk-hero2-top { display: grid; gap: clamp(20px, 2.4vw, 32px); }
+.mk-hero2-h1 { font-size: clamp(40px, 5.2vw, 76px); line-height: 1.02; letter-spacing: -0.045em; text-wrap: balance; max-width: 1180px; }
+.mk-hero2-side { display: grid; grid-template-columns: minmax(0, 640px) auto; justify-content: space-between; align-items: end; gap: 18px 48px; }
+.mk-hero2-cta { display: grid; gap: 12px; justify-items: end; }
 .mk-hero2-lede { margin: 0; font-size: clamp(17px, 1.35vw, 19px); line-height: 1.5; color: var(--ink-2); letter-spacing: -0.012em; text-wrap: pretty; }
 .mk-hero2-side .mk-cta-row { gap: 12px 24px; }
-.mk-hero2-side .mk-fine { margin-top: -8px; }
+.mk-hero2-cta .mk-fine { margin: 0; }
 .mk-hero2-stage { position: relative; margin-top: clamp(28px, 4vw, 52px); padding: clamp(18px, 2.4vw, 32px) clamp(18px, 2.4vw, 36px) clamp(14px, 1.6vw, 20px); border-radius: 32px; background: color-mix(in srgb, var(--bg-2) 72%, transparent); box-shadow: inset 0 0 0 1px var(--line-2); }
 .mk-field-hero2 { inset: 0; }
 .mk-field-hero2 i { opacity: 0.55; }
@@ -34,7 +35,8 @@
 .mk-field-hero2 i:nth-child(3) { width: 26vw; height: 26vw; left: 38%; top: 46%; background: var(--f-blue); }
 .mk-hero2 .mk-brain-caps { max-width: none; margin-top: 16px; }
 @media (max-width: 960px) {
-  .mk-hero2-top { grid-template-columns: 1fr; align-items: start; gap: 22px; }
+  .mk-hero2-side { grid-template-columns: 1fr; }
+  .mk-hero2-cta { justify-items: start; }
   .mk-hero2-stage { padding: 22px 14px 14px; border-radius: 26px; }
 }
 @media (max-width: 640px) {
@@ -45,7 +47,7 @@
 }
 
 /* ── Contract forms marquee, now inside the Reads section ─────────────── */
-.mk-marquee-in { margin-top: clamp(56px, 7vw, 88px); }
+.mk-marquee-in { margin-top: clamp(48px, 5.5vw, 72px); }
 .mk-marquee-in .mk-marquee-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 24px; margin-bottom: 20px; }
 .mk-marquee-in .mk-marquee-head p { margin: 0; color: var(--ink-3); font-size: 15px; }
 
@@ -71,3 +73,7 @@
 
 /* ── Inner pages ──────────────────────────────────────────────────────── */
 .mk-page-head { padding: clamp(48px, 7vw, 96px) 0 clamp(32px, 4vw, 56px); }
+
+/* Drop-in: the finished state has no stack to drop, so the project card sits centred. */
+.mk .dp-drop { justify-content: center; min-height: 0; }
+.mk .dp-card.is-home { transform: none; }

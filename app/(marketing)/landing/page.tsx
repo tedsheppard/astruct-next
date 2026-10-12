@@ -140,11 +140,13 @@ export default function HomePage() {
                 Astruct reads the contract, the correspondence and the project mail, and shows what needs a notice and
                 when. Every answer cites the clause and page. The notice is drafted on your letterhead before the time bar.
               </p>
-              <div className="mk-cta-row">
-                <a className="mk-btn" href={TRIAL_URL}>{CTA_LABEL}</a>
-                <Link className="mk-link" href="#read">See how it works<IArrow /></Link>
+              <div className="mk-hero2-cta">
+                <div className="mk-cta-row">
+                  <a className="mk-btn" href={TRIAL_URL}>{CTA_LABEL}</a>
+                  <Link className="mk-link" href="#read">See how it works<IArrow /></Link>
+                </div>
+                <p className="mk-fine">{TRIAL_LINE}</p>
               </div>
-              <p className="mk-fine">{TRIAL_LINE}</p>
             </div>
           </div>
           <div className="mk-hero2-stage">
