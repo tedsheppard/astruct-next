@@ -68,6 +68,10 @@
 .lv-mailrow.is-in { grid-template-rows: 1fr; opacity: 1; }
 .ui-dl .lv-mailrow + .lv-mailrow .ui-dl-row { border-top: 1px solid var(--line); }
 .ui-dl .ui-dl-row { border-top: 0; }
+
+/* Read: the contract's particulars and notice periods, each row fading in where it will sit, so the panel never changes height */
+.ui-dl .lv-row + .lv-row .ui-dl-row { border-top: 1px solid var(--line); }
+.lv-read-sub { padding: 12px 16px 8px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .mk-stage[data-tone="warm"] { align-items: flex-start; min-height: 600px; }
 @media (max-width: 900px) { .mk-stage[data-tone="warm"] { min-height: 700px; } }
 .lv-flag { opacity: 0; transform: scale(.98); transform-origin: top left; transition: opacity .45s var(--ease), transform .5s var(--ease); }

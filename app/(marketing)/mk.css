@@ -207,6 +207,12 @@ html.dark body:has(.mk) { background: #0a0a0b; }
   .mk-menu-btn { display: inline-flex; }
   .mk-header-bar { gap: 10px; padding: 0 6px 0 14px; }
 }
+/* The header's call to action shortens on small phones so the bar never overflows. */
+.mk-cta-short { display: none; }
+@media (max-width: 420px) {
+  .mk-cta-full { display: none; }
+  .mk-cta-short { display: inline; }
+}
 
 /* ── Hero ───────────────────────────────────────────────────────────────── */
 .mk-hero { padding: clamp(64px, 10vw, 128px) 0 0; text-align: center; }
@@ -998,6 +1004,8 @@ html.dark .mk {
   .mk-help-body { font-size: 16px; }
 }
 @media (min-width: 901px) and (max-width: 1180px) { .mk-int { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* Two live sources side by side, with the on-request card across the row below. */
+@media (min-width: 901px) { .mk-int-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* Integrations cards stand out on the grey band; the walkthrough play control never covers the still's text */
 .mk-alt .mk-int-card { background: var(--card); }

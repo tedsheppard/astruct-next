@@ -1,10 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 
 /**
- * Website leads (private-pilot applications and contact requests) are stored in
- * the `leads` table of the astruct-app Supabase project (Sydney). The site writes
+ * Website leads (free-trial requests, stored as type 'waitlist', and contact
+ * requests; 'pilot' rows are from the retired pilot form) are stored in the
+ * `leads` table of the astruct-app Supabase project (Sydney). The site writes
  * with that project's public anon key; row-level security allows inserting a
- * pilot or contact lead and nothing else, so the key cannot read anything back.
+ * lead and nothing else, so the key cannot read anything back.
  * Schema: supabase/astruct-app/20260929_leads.sql.
  */
 export type LeadRow = {

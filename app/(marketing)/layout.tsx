@@ -2,13 +2,13 @@ import type { Metadata, Viewport } from 'next'
 import Header from '@/components/mk/header'
 import Footer from '@/components/mk/footer'
 import { MetaPixel, Reveal } from '@/components/mk/client-bits'
-import { SITE_ORIGIN, CONTACT_EMAIL } from '@/components/mk/links'
+import { SITE_ORIGIN, CONTACT_EMAIL, TRIAL_LINE } from '@/components/mk/links'
 import './mk.css'
 import './live.css'
 
 const TITLE = 'Astruct: the project brain for Australian construction contracts'
 const DESCRIPTION =
-  'Search the whole project, up to 10,000 documents, Outlook, Gmail, SharePoint, Google Drive, Aconex and Procore, and draft letters, notices, variations and EOT claims from it. Unlimited users, priced per project. 30-day free trial.'
+  'Drop in your contract and Astruct reads it in about a minute: contract sum, practical completion, LDs, payment claim dates and every notice period, with its clause. Every answer cites the clause and page. Notices drafted on your letterhead before the time bar. Outlook mail read for variations, delays and claims.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),
@@ -54,11 +54,18 @@ const ORG_JSONLD = {
       operatingSystem: 'Web',
       url: SITE_ORIGIN,
       description: DESCRIPTION,
+      featureList: [
+        'Reads construction contracts: contract sum, practical completion, liquidated damages, payment claim dates and notice periods, with the clause and page',
+        'Answers questions about the contract, citing the clause and page',
+        'Boolean and plain-English search across project documents and mail',
+        'Drafts variation notices, delay notices, EOT claims and letters on your letterhead as Word files',
+        'Reads Outlook mail for variations, delays and claims',
+      ],
       offers: {
         '@type': 'Offer',
         price: '199',
         priceCurrency: 'AUD',
-        description: 'Per project, per month, excluding GST, for the first project; projects 2–5 AU$179 each, 6–15 AU$159, 16–30 AU$139, 31 and over AU$119. Unlimited users. 30-day free trial; card required, not charged during the trial.',
+        description: `Per project, per month, excluding GST, for the first project; projects 2–5 AU$179 each, 6–15 AU$159, 16–30 AU$139, 31 and over AU$119. Unlimited users. ${TRIAL_LINE}`,
       },
       publisher: { '@id': `${SITE_ORIGIN}/#org` },
     },

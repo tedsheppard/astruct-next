@@ -203,7 +203,7 @@ export async function sendUsageThreshold({
   return send({ to, subject, html: shell(subject, body), text })
 }
 
-// ─── Waitlist alert (to the team, each time someone joins) ────────────
+// ─── Trial request alert (to the team, each time someone asks) ────────
 export type WaitlistAlert = {
   step: 'contact' | 'details'
   name: string | null
@@ -213,7 +213,7 @@ export type WaitlistAlert = {
   answers?: Record<string, string | null>
 }
 
-/** Tells the team someone joined the waitlist (or added their details). */
+/** Tells the team someone requested a free trial (or added their details). */
 export async function sendWaitlistAlert(a: WaitlistAlert) {
   const to = process.env.WAITLIST_ALERT_TO || 'info@astruct.io'
   const when = new Date().toLocaleString('en-AU', { timeZone: 'Australia/Brisbane', dateStyle: 'medium', timeStyle: 'short' })
@@ -222,9 +222,9 @@ export async function sendWaitlistAlert(a: WaitlistAlert) {
     : [['Email', a.email], ...Object.entries(a.answers || {}), ['When', when]]
   const filled = rows.filter(([, v]) => v)
   const subject = a.step === 'contact'
-    ? `Waitlist: ${a.name || a.email}${a.company ? `, ${a.company}` : ''}`
-    : `Waitlist details: ${a.email}`
-  const lead = a.step === 'contact' ? 'Someone joined the Astruct waitlist.' : 'A waitlist sign-up added their details.'
+    ? `Trial request: ${a.name || a.email}${a.company ? `, ${a.company}` : ''}`
+    : `Trial request details: ${a.email}`
+  const lead = a.step === 'contact' ? 'Someone requested a free trial of Astruct. Send them an invite.' : 'A trial request added their details.'
   const table = filled.map(([k, v]) => `<tr><td style="padding:4px 12px 4px 0;color:#888;vertical-align:top;">${escape(k)}</td><td style="padding:4px 0;">${escape(String(v))}</td></tr>`).join('')
   const html = shell(subject, `<p>${lead}</p><table style="border-collapse:collapse;font-size:14px;">${table}</table><p style="margin-top:20px;"><a href="https://app.astruct.io/waitlist">Open the waitlist</a></p>`)
   const text = `${lead}\n\n${filled.map(([k, v]) => `${k}: ${v}`).join('\n')}\n\nhttps://app.astruct.io/waitlist`

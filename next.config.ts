@@ -6,9 +6,13 @@ const RETIRED: [string, string][] = [
   ['/landing', '/'],
   ['/landing-legacy', '/'],
   ['/landing-payment-claims', '/'],
-  ['/book-a-demo', '/apply'],
-  ['/pilot', '/apply'],
-  ['/pilot-onboarding', '/apply'],
+  ['/book-a-demo', '/request-trial'],
+  ['/pilot', '/request-trial'],
+  ['/pilot-onboarding', '/request-trial'],
+  // The waitlist and the private pilot became the free-trial request. The app's
+  // sign-in page still links to /signup-waitlist, so this one must stay.
+  ['/signup-waitlist', '/request-trial'],
+  ['/apply', '/request-trial'],
   ['/main-contractors', '/'],
   ['/subcontractors', '/'],
   ['/features', '/'],

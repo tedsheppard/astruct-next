@@ -2,6 +2,11 @@
 
 import { useRef, useState } from 'react'
 import { readAttribution, trackPixel } from './client-bits'
+import { CTA_LABEL } from './links'
+
+// The free-trial request: contact details first, stored straight away as a
+// lead, then optional answers that help set the trial up. Posts to
+// /api/waitlist, which keeps the leads row type 'waitlist'.
 
 const ROLES = ['Head contractor', 'Subcontractor', 'Developer or principal', 'Consultant']
 const SIZES = ['1 to 20 people', '21 to 100 people', '101 to 500 people', 'More than 500 people']
@@ -51,7 +56,7 @@ function Toggles({ legend, options, value, onChange }: { legend: string; options
   )
 }
 
-export default function WaitlistForm() {
+export default function TrialRequestForm() {
   const started = useRef(Date.now())
   const [step, setStep] = useState<Step>('contact')
   const [busy, setBusy] = useState(false)
@@ -69,7 +74,7 @@ export default function WaitlistForm() {
     setBusy(true)
     try {
       await post({ ...next, website: f.get('website'), elapsed: Date.now() - started.current, referrer: document.referrer, attribution: readAttribution() })
-      trackPixel('Lead', { content_name: 'waitlist' })
+      trackPixel('Lead', { content_name: 'trial-request' })
       setWho(next)
       setStep('details')
     } catch (err) {
@@ -92,7 +97,7 @@ export default function WaitlistForm() {
         mail: f.get('mail') || null, contractForms: forms, states, pain: f.get('pain') || null,
         elapsed: Date.now() - started.current,
       })
-      trackPixel('CompleteRegistration', { content_name: 'waitlist-details' })
+      trackPixel('CompleteRegistration', { content_name: 'trial-request-details' })
       setStep('done')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'We could not save that just now. Please try again.')
@@ -107,8 +112,8 @@ export default function WaitlistForm() {
         <span className="wl-tick" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="22" height="22"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </span>
-        <p className="wl-done-h">You&rsquo;re on the waitlist.</p>
-        <p className="wl-done-p">We&rsquo;ll email <b>{who.email}</b> as soon as your place is ready.</p>
+        <p className="wl-done-h">Request received.</p>
+        <p className="wl-done-p">We&rsquo;ll email your invite link to <b>{who.email}</b>.</p>
       </div>
     )
   }
@@ -116,8 +121,8 @@ export default function WaitlistForm() {
   if (step === 'details') {
     return (
       <form className="wl-form wl-details" onSubmit={submitDetails} noValidate>
-        <p className="wl-step-h">You&rsquo;re on the list.</p>
-        <p className="wl-step-p">A few quick questions help us set you up sooner. All optional.</p>
+        <p className="wl-step-h">Thanks. We have your request.</p>
+        <p className="wl-step-p">A few quick questions help us set up your trial. All optional.</p>
         <div className="wl-grid">
           <Select name="role" label="You are a" options={ROLES} />
           <Select name="companySize" label="Company size" options={SIZES} />
@@ -158,7 +163,7 @@ export default function WaitlistForm() {
       <input className="wl-hp" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
       {error ? <p className="wl-err" role="alert">{error}</p> : null}
       <button className="mk-btn wl-btn" type="submit" disabled={busy}>
-        {busy ? 'Joining…' : 'Join the waitlist'}
+        {busy ? 'Sending…' : CTA_LABEL}
       </button>
     </form>
   )

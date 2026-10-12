@@ -8,8 +8,7 @@ export async function proxy(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/api/documents/upload') ||
       request.nextUrl.pathname.startsWith('/api/correspondence/upload') ||
       request.nextUrl.pathname.startsWith('/api/waitlist') ||
-      request.nextUrl.pathname.startsWith('/api/leads') ||
-      request.nextUrl.pathname.startsWith('/api/pilot')) {
+      request.nextUrl.pathname.startsWith('/api/leads')) {
     return NextResponse.next()
   }
 
@@ -29,7 +28,7 @@ export async function proxy(request: NextRequest) {
     }
 
     // Marketing public paths
-    const marketingPaths = ['/', '/landing', '/apply', '/signup-waitlist', '/pricing', '/security', '/contact', '/support', '/legal', '/brand', '/media', '/sitemap.xml', '/robots.txt', '/manifest.webmanifest']
+    const marketingPaths = ['/', '/landing', '/request-trial', '/pricing', '/security', '/contact', '/support', '/legal', '/brand', '/media', '/sitemap.xml', '/robots.txt', '/manifest.webmanifest']
     const isMarketingPath = marketingPaths.some(p => path === p || path.startsWith(p + '/'))
 
     // Root on main domain → landing page
@@ -40,9 +39,9 @@ export async function proxy(request: NextRequest) {
     }
 
     // Login/register/signup on main domain → the app
-    // Sign-ups are paused: /signup and /register go to the waitlist; login goes to the app
+    // Trials are by invite: /signup and /register go to the trial request form; login goes to the app
     if (path === '/register' || path === '/signup') {
-      return NextResponse.redirect(new URL('/signup-waitlist', request.url))
+      return NextResponse.redirect(new URL('/request-trial', request.url))
     }
     if (path === '/login') {
       return NextResponse.redirect(new URL('https://app.astruct.io/login', request.url))

@@ -28,9 +28,9 @@ const dmSerifDisplay = DM_Serif_Display({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://astruct.io'),
-  title: 'Astruct: frontier AI built for Australian construction contracts',
+  title: 'Astruct: the project brain for Australian construction contracts',
   description:
-    'Frontier AI built for Australian construction contracts: ask, search, draft, and an agent that flags variation directions and delays.',
+    'Astruct reads your construction contract, answers with the clause and page, drafts notices on your letterhead and reads Outlook mail for variations, delays and claims.',
 }
 
 export default function RootLayout({

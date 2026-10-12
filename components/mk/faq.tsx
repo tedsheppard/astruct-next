@@ -33,50 +33,54 @@ function qa(q: string, text: string, a?: React.ReactNode): QA {
 export const HOME_FAQ: QA[] = [
   qa(
     'What is the project brain?',
-    'The project brain is everything Astruct has read on a project, in one place: up to 10,000 uploaded documents, Outlook and Gmail mailboxes, SharePoint, OneDrive and Google Drive folders, and web platforms such as Aconex and Procore that Astruct works in on the Astruct Computer. You can search it, ask it questions and get answers with the page reference, and draft letters, notices, variations and EOT claims from it as Word files. Its agent also reads project mail as it arrives and flags variation directions and potential delays, with the notice clause and deadline.',
+    'Everything Astruct has read on a project, in one place: the contract and its special conditions, the drawings, programme and correspondence you upload, and the project mail in Outlook. Ask it anything and the answer cites the clause and page. Search it in Boolean or plain English. Draft letters, notices, variations and EOT claims from it as Word files on your letterhead.',
+  ),
+  qa(
+    'What does Astruct take from the contract?',
+    'Drop in the contract and Astruct reads it in about a minute. It sets out the contract sum, the date for practical completion, liquidated damages, the reference dates for payment claims, the time for payment schedules, and every notice period and time bar, each with its clause and page. Special conditions are read with the general conditions, so a replaced clause is not the one used.',
   ),
   qa(
     'How is it different from ChatGPT or Copilot?',
-    'General chat tools answer from whatever you paste in. Astruct works from your project: the contract with its special conditions, the drawings, the programme and every connected mailbox. Answers cite the document and page, search runs across every project document, and the agent watches mail without being asked.',
+    'General chat tools answer from whatever you paste in. Astruct works from your project: the contract with its special conditions, the drawings, the programme and the project mail. Every answer cites the clause and page, and search runs across every document in the project.',
   ),
   qa(
     'Which contracts does it work with?',
-    'The contract you give it. That includes AS 2124, AS 4000, AS 4300, AS 4902 and AS 4903 style head contracts and subcontracts, and bespoke or heavily amended forms. Special conditions and amendments are read with the rest, so a replaced clause is not used. It also works with security of payment law, such as SOPA and Queensland’s BIF Act.',
+    'The contract you give it. That includes AS 2124, AS 4000, AS 4300, AS 4902 and AS 4903 style head contracts and subcontracts, and bespoke or heavily amended forms. It also works with security of payment law, such as SOPA in NSW and Queensland’s BIF Act.',
   ),
   qa(
-    'How does the agent spot variations and delays?',
-    'As mail arrives, Astruct reads it for directions, instructions, RFI responses, revised drawings and programme changes. It compares each direction against the scope of work in your contract and flags the ones that look like variations, and flags events that may delay you. It works upstream, for notices you must give the principal or head contractor, and downstream, for notices and claims from your subcontractors.',
+    'How does it spot variations, delays and claims in the mail?',
+    'Connect Outlook and Astruct reads project mail as it arrives. It compares each direction with the scope of work in your contract and flags the ones that look like variations, flags events that may delay you, and picks up claims and payment schedules. It works upstream, for notices you must give the principal or head contractor, and downstream, for notices and claims from your subcontractors.',
   ),
   qa(
     'Can I rely on the deadlines it works out?',
-    'Each deadline shows the clause text it came from and how it was counted: the notice period, business or calendar days and your state’s public holidays. It stays marked “check the clause” until someone on your team confirms the rule for the project. Astruct only sees the mailboxes and folders you connect, so your team stays responsible for your notices. Astruct helps you give them on time.',
+    'Each deadline shows the clause text it came from and how it was counted: the notice period, business or calendar days and your state’s public holidays. It stays marked “check the clause” until someone on your team confirms the rule for the project. Astruct only reads the mailboxes you connect, so your team stays responsible for your notices. Astruct helps you give them on time.',
     <p>
       Each deadline shows the clause text it came from and how it was counted: the notice period, business or calendar
       days and your state’s public holidays. It stays marked “check the clause” until someone on your team confirms the
-      rule for the project. Astruct only sees the mailboxes and folders you connect, so your team stays responsible for
-      your notices. Astruct helps you give them on time. <Link href="/support/deadlines-and-check-the-clause">How deadlines are worked out</Link>.
+      rule for the project. Astruct only reads the mailboxes you connect, so your team stays responsible for your
+      notices. Astruct helps you give them on time. <Link href="/support/deadlines-and-check-the-clause">How deadlines are worked out</Link>.
     </p>,
   ),
   qa(
     'Does it send anything on our behalf?',
-    'No. Astruct drafts letters, notices and claims for review. It never sends them. You check the draft, download the .docx and send it through your normal process.',
+    'No. Astruct drafts letters, notices and claims for review. Nothing leaves until a person on your team presses Send, or downloads the .docx and sends it through your normal process.',
+  ),
+  qa(
+    'Which systems does it connect to?',
+    'Outlook, today: personal and shared Microsoft 365 mailboxes. Procore, Gmail and SharePoint are available on request. Tell us when you request your trial and we will set them up with you. Documents from anywhere else can be uploaded as files, folders or zips.',
   ),
   qa(
     'How quickly does it see new mail?',
-    'New mail is picked up within about five minutes. Outlook mailboxes can also notify Astruct when mail arrives, so a message is often picked up sooner. It is not instant.',
+    'New mail is picked up within about five minutes. Outlook can also notify Astruct when mail arrives, so a message is often picked up sooner. It is not instant.',
   ),
   qa(
     'What do we need from IT?',
-    'Each person can connect their own Outlook mailbox. Shared mailboxes and SharePoint need a Microsoft 365 administrator to approve Astruct once for your organisation, using a single link from Settings. Your admin also decides whose mailbox each person may search.',
+    'Each person can connect their own Outlook mailbox. Shared mailboxes need a Microsoft 365 administrator to approve Astruct once for your organisation, using a single link from Settings. Your admin also decides whose mailbox each person may search.',
     <p>
-      Each person can connect their own Outlook mailbox. Shared mailboxes and SharePoint need a Microsoft 365
-      administrator to approve Astruct once for your organisation, using a single link from Settings. Your admin also
-      decides whose mailbox each person may search. <Link href="/support/microsoft-365-admin-consent">Admin consent, step by step</Link>.
+      Each person can connect their own Outlook mailbox. Shared mailboxes need a Microsoft 365 administrator to approve
+      Astruct once for your organisation, using a single link from Settings. Your admin also decides whose mailbox each
+      person may search. <Link href="/support/microsoft-365-admin-consent">Admin consent, step by step</Link>.
     </p>,
-  ),
-  qa(
-    'Can Astruct work in Aconex or Procore?',
-    'Yes, through the Astruct Computer, a cloud computer with its own browser. You sign in to the platform there yourself, and Astruct works through what your account can see, the way a person would, and brings what it finds back to the project. It does not need an API connection from the platform.',
   ),
   qa(
     'How is Astruct priced?',
@@ -90,14 +94,15 @@ export const HOME_FAQ: QA[] = [
   ),
   qa(
     'How does the free trial work?',
-    'The trial runs for 30 days. You add a card when you sign up, and it is not charged during the trial. We’ll email you 5 days before your trial ends. After that each project is billed at its per-project price, unless you cancel in Settings > Billing before the trial ends.',
+    'Request a trial and we email you an invite link. The trial is free for 30 days, with two projects and 100 credits, and no card. Credits cover the work Astruct does for you: reading documents, answering questions and drafting. To keep going after 30 days, subscribe at the per-project price. Nothing is charged unless you do.',
   ),
   qa(
     'Where is our data stored?',
-    'In Australia, in Sydney. Model requests go to OpenAI’s API under Zero Data Retention, and your data is never used to train models.',
+    'In Australia, in Sydney. Model requests are processed by OpenAI in the United States under its business API terms, and are not used to train models. No letter or email leaves until a person on your team presses Send.',
     <p>
-      In Australia, in Sydney. Model requests go to OpenAI’s API under Zero Data Retention, and your data is never used to
-      train models. More on the <Link href="/security">security page</Link>.
+      In Australia, in Sydney. Model requests are processed by OpenAI in the United States under its business API
+      terms, and are not used to train models. No letter or email leaves until a person on your team presses Send. More
+      on the <Link href="/security">security page</Link>.
     </p>,
   ),
 ]

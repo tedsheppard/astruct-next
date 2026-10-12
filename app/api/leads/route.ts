@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 
 // General contact requests. The site itself now offers email only
 // (info@astruct.io); this stays for anything that still posts here.
-// Private-pilot applications use /api/pilot/apply.
+// Free-trial requests use /api/waitlist.
 export async function POST(request: NextRequest) {
   try {
     const b = (await request.json()) as Record<string, unknown>

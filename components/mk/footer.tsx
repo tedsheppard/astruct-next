@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Brand } from './mark'
 import { ThemeSwitch } from './client-bits'
-import { CONTACT_EMAIL, LOGIN_URL, SIGNUP_URL } from './links'
+import { CONTACT_EMAIL, CTA_LABEL, LOGIN_URL, TRIAL_URL } from './links'
 
 export default function Footer() {
   return (
@@ -10,15 +10,15 @@ export default function Footer() {
         <div className="mk-footer-top">
           <div className="mk-footer-brand">
             <Brand />
-            <p>The project brain for Australian construction contracts. Search the whole project and draft from all of it.</p>
+            <p>The project brain for Australian construction contracts. It reads the contract, cites the clause and drafts the notice.</p>
           </div>
           <div>
             <h4>Product</h4>
             <ul>
-              <li><Link href="/#search">Search everything</Link></li>
-              <li><Link href="/#draft">Draft from everything</Link></li>
-              <li><Link href="/#safe-ai">Safe AI</Link></li>
-              <li><Link href="/#company">One company account</Link></li>
+              <li><Link href="/#read">Reads the contract</Link></li>
+              <li><Link href="/#ask">Answers with the clause</Link></li>
+              <li><Link href="/#draft">Drafts the notice</Link></li>
+              <li><Link href="/#watch">Reads the project mail</Link></li>
               <li><Link href="/pricing">Pricing</Link></li>
               <li><Link href="/security">Security</Link></li>
             </ul>
@@ -36,8 +36,7 @@ export default function Footer() {
           <div>
             <h4>Get started</h4>
             <ul>
-              <li><a href={SIGNUP_URL}>Get early access</a></li>
-              <li><Link href="/apply">Private pilot</Link></li>
+              <li><a href={TRIAL_URL}>{CTA_LABEL}</a></li>
               <li><a href={LOGIN_URL}>Log in</a></li>
             </ul>
           </div>

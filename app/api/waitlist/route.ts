@@ -4,10 +4,12 @@ import { EMAIL_RE, clip, insertLead } from '@/lib/leads'
 
 export const dynamic = 'force-dynamic'
 
-// The sign-up waitlist (astruct.io/signup-waitlist), stored in `leads` as type
-// 'waitlist'. Two steps: the contact details first (meta.step 'contact'), then
-// optional follow-up answers (meta.step 'details'), matched by email. The site
-// can only insert, never read back, so the answers arrive as a second row.
+// Free-trial requests (astruct.io/request-trial), stored in `leads` as type
+// 'waitlist' (the type the leads table and the app's admin list already know).
+// Ted reads each request and sends the invite. Two steps: the contact details
+// first (meta.step 'contact'), then optional follow-up answers (meta.step
+// 'details'), matched by email. The site can only insert, never read back, so
+// the answers arrive as a second row.
 const ROLES = ['Head contractor', 'Subcontractor', 'Developer or principal', 'Consultant']
 const SIZES = ['1 to 20 people', '21 to 100 people', '101 to 500 people', 'More than 500 people']
 const PROJECTS = ['1 project', '2 to 5 projects', '6 to 20 projects', 'More than 20 projects']
@@ -38,14 +40,14 @@ function attribution(v: unknown): Record<string, string> | null {
 }
 
 function sourceOf(a: Record<string, string> | null) {
-  if (!a?.utm_source) return a?.fbclid ? 'ad:meta' : 'astruct.io/signup-waitlist'
+  if (!a?.utm_source) return a?.fbclid ? 'ad:meta' : 'astruct.io/request-trial'
   return ['ad', a.utm_source, a.utm_campaign, a.utm_content].filter(Boolean).join(':').slice(0, 100)
 }
 
 export async function POST(req: NextRequest) {
   const origin = req.headers.get('origin')
   if (origin && origin !== req.nextUrl.origin) {
-    return Response.json({ error: 'Please join through the Astruct website.' }, { status: 403 })
+    return Response.json({ error: 'Please use the form on the Astruct website.' }, { status: 403 })
   }
   const raw = await req.text()
   if (raw.length > 8_000) return Response.json({ error: 'That is too long.' }, { status: 413 })
@@ -96,7 +98,7 @@ export async function POST(req: NextRequest) {
     pain: details ? clip(b.pain, 4000) : null,
     source: sourceOf(attribution(b.attribution)),
     user_agent: req.headers.get('user-agent')?.slice(0, 400) || null,
-    meta: { form: 'signup-waitlist', version: '2026-09-30', step: details ? 'details' : 'contact', referrer: clip(b.referrer, 300), attribution: attribution(b.attribution) },
+    meta: { form: 'request-trial', version: '2026-10-13', step: details ? 'details' : 'contact', referrer: clip(b.referrer, 300), attribution: attribution(b.attribution) },
   })
 
   if (!result.ok) {

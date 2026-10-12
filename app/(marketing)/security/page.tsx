@@ -5,7 +5,7 @@ import { CONTACT_EMAIL } from '@/components/mk/links'
 export const metadata: Metadata = {
   title: 'Security',
   description:
-    'Stored in Sydney. OpenAI under Zero Data Retention. Never used for training. Mailbox access set by your admin. Drafts never sent automatically.',
+    'Stored in Sydney. Model requests processed by OpenAI in the United States under its business API terms and not used for training. Mailbox access set by your admin. Nothing leaves until a person on your team presses Send.',
   alternates: { canonical: '/security' },
 }
 
@@ -13,31 +13,30 @@ const ROWS: { h: string; p: React.ReactNode[] }[] = [
   {
     h: 'Stored in Australia',
     p: [
-      'Your projects, mail, documents and drafts are stored in Australia, in Sydney. The application that serves them runs in Sydney too.',
+      'Your projects, mail, documents and drafts are stored in Australia, in Sydney.',
       'Data is encrypted in transit and at rest.',
     ],
   },
   {
-    h: 'OpenAI, with Zero Data Retention',
+    h: 'Models run by OpenAI, in the United States',
     p: [
-      'Astruct uses OpenAI’s API to read mail and documents, check issues and prepare drafts. Our OpenAI account has Zero Data Retention: requests are processed and answered, then not kept by OpenAI.',
-      'Model processing may take place outside Australia. Nothing is stored there.',
+      'Astruct uses OpenAI’s API to read contracts, mail and documents, answer questions and prepare drafts. Model requests are processed by OpenAI in the United States, under its business API terms.',
     ],
   },
   {
     h: 'No training on your data',
-    p: ['Your mail, documents and drafts are never used to train models, by us or by OpenAI.'],
+    p: ['Under those terms, your contracts, mail, documents and drafts are not used to train models, by us or by OpenAI.'],
   },
   {
     h: 'Mailbox access set by your admin',
     p: [
-      'Each person can connect their own mailbox. Shared mailboxes and SharePoint libraries are connected with your Microsoft 365 administrator’s consent, given once for your organisation.',
+      'Each person can connect their own Outlook mailbox. Shared mailboxes are connected with your Microsoft 365 administrator’s consent, given once for your organisation.',
       'Your admin decides, one user at a time, whose mailbox each person may search and use with Astruct.',
     ],
   },
   {
-    h: 'Drafts are never sent automatically',
-    p: ['Astruct prepares notices and correspondence for review. A person on your team checks each one and sends it through your normal process.'],
+    h: 'Nothing leaves without a person',
+    p: ['Astruct prepares notices and correspondence for review. No letter or email leaves until a person on your team presses Send.'],
   },
   {
     h: 'Deadlines you can check',
@@ -46,14 +45,14 @@ const ROWS: { h: string; p: React.ReactNode[] }[] = [
   {
     h: 'You can switch it off',
     p: [
-      'Disconnect a mailbox or folder from Settings at any time. Your Microsoft 365 admin can also revoke Astruct’s consent in Microsoft Entra.',
+      'Disconnect a mailbox from Settings at any time. Your Microsoft 365 admin can also revoke Astruct’s consent in Microsoft Entra.',
       <>To have your organisation’s data deleted at the end of a trial or subscription, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</>,
     ],
   },
   {
     h: 'Who processes your data',
     p: [
-      'Supabase (database and file storage, Sydney). Vercel (application hosting, Sydney). OpenAI (model processing, under Zero Data Retention). Stripe (billing). Microsoft and Google, only for the accounts you connect.',
+      'Supabase (database and file storage, Sydney). Vercel (application hosting). OpenAI (model processing, United States). Stripe (billing). Microsoft, and Google or Procore where you ask us to connect them, only for the accounts you connect.',
     ],
   },
   {
