@@ -272,14 +272,19 @@ function buildBrain() {
     const k = 1 + 0.025 * Math.abs(Math.sin(a * 9))
     cbOutline.push(ell(a, k))
   }
-  // Folia: the bottom of the rim, repeated upward, clipped to the cerebellum.
+  // Folia: fine parallel arcs across the cerebellum, along its long axis, each
+  // a slice of one large circle so they stay evenly spaced. Drawn wider than
+  // the cerebellum and clipped to it, so every arc ends on the rim.
   const folia: Pt[][] = []
-  for (const dy of [11, 23, 36, 50]) {
+  const R = 240
+  for (let k = -6; k <= 6; k++) {
+    const r = R + k * 6.6
     const arc: Pt[] = []
-    for (let i = 0; i <= 30; i++) {
-      const a = Math.PI * (i / 30)
-      const p = ell(a, 1 + dy / 400)
-      arc.push({ x: p.x, y: p.y - dy })
+    for (let i = 0; i <= 24; i++) {
+      const x = -96 + (192 * i) / 24
+      const y = Math.sqrt(r * r - x * x) - R
+      // Rotate into the cerebellum's frame and place it.
+      arc.push({ x: cb.cx + x * Math.cos(rot) - y * Math.sin(rot), y: cb.cy + 6 + x * Math.sin(rot) + y * Math.cos(rot) })
     }
     folia.push(arc)
   }
@@ -318,9 +323,9 @@ export const SOURCES: Source[] = [
 ]
 
 export const OUTPUTS: Output[] = [
-  { kind: 'EOT claim', title: 'Due Thu 15 Oct, SC 7.2', meta: '3 days left · crane TC1, late L6 access', c: 'rose' },
+  { kind: 'EOT claim', title: 'Due Thu 15 Oct, SC 7.2', meta: '3 business days left · TC1, L6 access', c: 'rose' },
   { kind: 'Variation particulars', title: 'SI-014 façade brackets', meta: 'Due Mon 19 Oct · SC 8.2', c: 'amber' },
-  { kind: 'Payment claim', title: 'Reference date Sun 25 Oct', meta: 'Item 24 · BIF Act 2017 (Qld)', c: 'blue' },
+  { kind: 'Payment claim', title: 'PC-10, reference date 25 Oct', meta: 'Work to 25 Oct · BIF Act (Qld)', c: 'blue' },
   { kind: 'Delay notice', title: 'Given 29 Sep, on time', meta: 'SC 7.1 · ARC-KS2-L-041 · on file', c: 'teal' },
 ]
 

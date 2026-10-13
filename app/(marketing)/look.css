@@ -323,10 +323,6 @@
 .mk-faq-grid .mk-faq { margin-top: 0; }
 @media (max-width: 900px) { .mk-faq-grid { grid-template-columns: 1fr; } .mk-faq-side { position: static; } }
 
-/* ── Phones: the data path already says three of the six points ───────── */
-@media (max-width: 640px) {
-  #security .mk-sec-item:nth-child(1), #security .mk-sec-item:nth-child(2), #security .mk-sec-item:nth-child(4) { display: none; }
-}
 
 /* ── Backgrounds: a faint drawing-sheet grid instead of colour blobs ──── */
 .mk-field-close i, .wl-field i { display: none; }
@@ -361,4 +357,68 @@
 @media (max-width: 640px) {
   .mk .ui-dl-row { flex-direction: row; align-items: center; gap: 10px; }
   .mk .ui-dl-when { justify-items: end; grid-auto-flow: row; gap: 3px; text-align: right; }
+}
+
+/* ══ Round 2 critique, 13 Oct 2026 ═══════════════════════════════════════ */
+
+/* Hero: side by side only when both columns have room; below 1100px the
+   headline, then the intro, as on tablets. Top-aligned when side by side. */
+.mk-hero2-top { align-items: start; }
+.mk-hero2-side { padding-top: clamp(4px, 0.8vw, 12px); padding-bottom: 0; }
+@media (max-width: 1100px) {
+  .mk-hero2-top { grid-template-columns: 1fr; }
+  .mk-hero2-side { max-width: 720px; padding-top: 0; }
+}
+
+/* Walkthrough: it is a replay, and says so. */
+.ui-issue-head { display: flex; align-items: flex-start; gap: 14px; }
+.ui-replay { display: inline-flex; align-items: center; gap: 7px; height: 24px; padding: 0 10px; border-radius: 99px; font-size: 11.5px; font-weight: 600; color: var(--ink-2); background: var(--bg-3); box-shadow: inset 0 0 0 1px var(--line); white-space: nowrap; flex: none; align-self: flex-start; }
+.ui-replay i { width: 0; height: 0; border-style: solid; border-width: 4px 0 4px 6px; border-color: transparent transparent transparent currentColor; }
+.ui-issue-head .ui-replay { margin-top: 1px; }
+
+/* Phone walkthrough: the still takes its own height and the play control
+   gets a row of its own under the card. */
+@media (max-width: 640px) {
+  .mk-media-walk:not(.is-open) { aspect-ratio: auto; }
+  .mk-media-walk:not(.is-open) .mk-still-phone { position: relative; inset: auto; }
+  .mk-media-walk:not(.is-open) .mk-still-phone-pad { position: relative; inset: auto; padding: 16px 14px 84px; justify-content: flex-start; }
+  .mk-media-walk .mk-play { top: auto; bottom: 18px; }
+}
+
+/* Feature panels fill their column, so their outer edge sits on the container
+   edge like the nav, the hero frame and the register. */
+@media (min-width: 901px) {
+  .mk-feature .mk-panel > .ui { max-width: none; margin: 0; }
+}
+
+/* /security: the data path beside the headline, as on the landing. */
+.mk-secpage-top { align-items: center; }
+.mk-secpage-top .mk-lede { max-width: 620px; }
+
+/* /pricing: no empty band under the cards; the price card loses its colour
+   glow for the faint drawing-sheet grid used elsewhere. */
+.mk-pp-cards { padding-bottom: clamp(56px, 6vw, 88px); }
+.mk-field-price i { display: none; }
+.mk-field-price {
+  opacity: 1 !important;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--ink) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--ink) 6%, transparent) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: center;
+  -webkit-mask-image: radial-gradient(ellipse 55% 60% at 50% 50%, #000 0%, transparent 72%);
+  mask-image: radial-gradient(ellipse 55% 60% at 50% 50%, #000 0%, transparent 72%);
+}
+
+/* Phone hero: the brain shows in the first screen. Tighter copy, and the
+   brain sits above the source chips. */
+@media (max-width: 640px) {
+  .mk-hero2 { padding-top: 14px; }
+  .mk-hero2-h1 { font-size: clamp(34px, 9.4vw, 44px); }
+  .mk-hero2-top { gap: 14px; }
+  .mk-hero2-side { gap: 16px; }
+  .mk-hero2-lede { font-size: 16px; line-height: 1.45; }
+  .mk-hero2-stage { margin-top: 18px; padding-top: 14px; }
+  .pb-narrow { display: flex; flex-direction: column; }
+  .pb-n-brain { order: -1; margin: 0 auto 12px; width: min(86%, 380px); }
 }

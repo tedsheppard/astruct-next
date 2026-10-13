@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import { PricingCards } from '@/components/mk/pricing'
 import { Faq, faqJsonLd, type QA } from '@/components/mk/faq'
+import Link from 'next/link'
 import { TRIAL_LINE } from '@/components/mk/links'
+import { IArrow } from '@/components/mk/icons'
 
 export const metadata: Metadata = {
   title: 'Pricing',
@@ -42,14 +44,18 @@ export default function PricingPage() {
           </dl>
         </div>
       </section>
-      <section style={{ paddingBottom: 'clamp(96px, 12vw, 160px)' }}>
+      <section className="mk-pp-cards">
         <div className="mk-wrap" style={{ marginTop: -48 }}>
           <PricingCards onPricingPage />
         </div>
       </section>
       <section className="mk-sec mk-alt">
-        <div className="mk-wrap mk-narrow">
-          <h2 className="mk-h2">Pricing questions</h2>
+        <div className="mk-wrap mk-faq-grid">
+          <div className="mk-faq-side">
+            <h2 className="mk-h2">Pricing questions</h2>
+            <p className="mk-body">How the per-project price, the trial and billing work.</p>
+            <p><Link className="mk-link" href="/support">More answers in the help centre<IArrow /></Link></p>
+          </div>
           <Faq items={ITEMS} />
         </div>
       </section>

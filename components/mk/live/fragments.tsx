@@ -22,9 +22,9 @@ const ASK_A: Seg[] = [
   { s: 'Yes. SC 8.1 applies to any Direction you consider a Variation, including “a Direction stated to involve no change to the Subcontract Sum”. SC 9(b) confirms the statement does not relieve you of the notice.' },
   { s: '', sup: '1, 2' },
   { s: '', br: true },
-  { s: 'SI-014 was emailed on Fri 25 Sep at 3:12 pm, before 5:00 pm on a Business Day, so it was received that day.' },
+  { s: 'SI-014 was emailed on Fri 25 Sep at 3:12 pm, before 5:00 pm on a business day, so it was received that day.' },
   { s: '', sup: '3' },
-  { s: ' Five Business Days takes the Variation Notice to ' },
+  { s: ' Five business days takes the variation notice to ' },
   { s: 'Fri 2 Oct, 5:00 pm', b: true },
   { s: '.' },
 ]
@@ -170,31 +170,21 @@ type DraftDoc = {
   date: string
   subject: string[]
   paras: LetterPara[]
+  /** Where the document stands on Mon 12 Oct, the demo's today. */
+  status: string[]
 }
 const PROJ = 'Kestrel Street Mixed-Use, Stage 2: Subcontract HV2291-SC-014 (Façade Package)'
 const DOCS: DraftDoc[] = [
   {
-    kind: 'Letter', refNo: 'ARC-KS2-L-043', date: '29 September 2026',
-    subject: [PROJ, 'Tower crane TC1: request for maintenance and inspection records'],
+    kind: 'EOT claim', refNo: 'ARC-KS2-L-044', date: '12 October 2026',
+    subject: [PROJ, 'EOT Claim under Special Condition SC 7.2: tower crane TC1 and late access to the Level 6 slab edge'],
     paras: [
-      { h: 'Request.', body: 'Further to Arcline’s Delay Notice ARC-KS2-L-041, please provide the maintenance and inspection records for tower crane TC1 for the three months before 22 September 2026.' },
-      { h: 'Purpose.', body: 'Arcline needs the records to confirm whether the exception in Special Condition SC 11(c) applies to the outage.' },
-      { h: 'Level 6 access.', body: 'Please also confirm in writing that the Level 6 slab edge will be handed over on Tuesday 6 October 2026, free of edge forms, screens and back-props within 1.5 m of the edge (SC 12(a)).' },
+      { h: 'Claim.', body: 'Arcline claims an extension of time of 12 days to the Date for Practical Completion for the Qualifying Causes of Delay notified in ARC-KS2-L-041.' },
+      { h: 'Critical path.', body: 'The curtain wall units are top-hung and Programme Rev 8 has no float in the façade sequence. The Level 5 unit start moves from 1 October to 13 October 2026.' },
+      { h: 'Records.', body: 'Attached are the site diary for the week ending 25 September 2026, the crane schedule for week 39 and your emails of 23 and 28 September 2026.' },
+      { h: 'Continuing delay.', body: 'The delay is continuing. Arcline will update this claim every 10 Business Days, as SC 7.2(d) requires.' },
     ],
-  },
-  {
-    kind: 'Email', email: true, refNo: '', date: '', subject: ['RE: L6 slab edge handover – revised date'],
-    paras: [],
-  },
-  {
-    kind: 'Variation notice', refNo: 'ARC-KS2-L-042', date: '29 September 2026',
-    subject: [PROJ, 'Variation Notice under Special Condition SC 8.1: Site Instruction SI-014 (Arcline variation V-06)'],
-    paras: [
-      { h: 'The Direction.', body: 'On Friday 25 September 2026 at 3.12 pm, Craig Pellow, Site Manager, issued Site Instruction SI-014 by email. It directs Arcline to change the façade bracket system at slab edges L4 to L9 to Detail 7/A-512 Rev C.' },
-      { h: 'Notice.', body: 'Arcline gives notice under Special Condition SC 8.1 that it considers the Direction in SI-014 to be a Variation. Arcline does not agree that SI-014 involves no change to the Subcontract Sum.' },
-      { h: 'Why it is a Variation.', body: 'Annexure Part C, C3 includes A-512 Rev B, whose Detail 7 specifies FB-150 brackets with 2 × M12 anchors. Rev C changes the bracket and fixing system and requires work already carried out at L4 and L5 to be modified.' },
-      { h: 'Particulars.', body: 'Arcline will give its Variation Particulars under Special Condition SC 8.2 by Monday 19 October 2026.' },
-    ],
+    status: ['Prepared for review', 'Not sent', 'Due Thu 15 Oct'],
   },
   {
     kind: 'Notice of delay', refNo: 'ARC-KS2-L-041', date: '29 September 2026',
@@ -205,16 +195,33 @@ const DOCS: DraftDoc[] = [
       { h: 'Awareness.', body: 'Arcline first became aware of both causes on Wednesday 23 September 2026.' },
       { h: 'Estimate.', body: 'Arcline’s preliminary estimate is a delay to Practical Completion of not less than 12 days (7 Business Days).' },
     ],
+    status: ['Sent Tue 29 Sep', 'On time'],
   },
   {
-    kind: 'EOT claim', refNo: 'ARC-KS2-L-044', date: '15 October 2026',
-    subject: [PROJ, 'EOT Claim under Special Condition SC 7.2: tower crane TC1 and late access to the Level 6 slab edge'],
+    kind: 'Variation notice', refNo: 'ARC-KS2-L-042', date: '29 September 2026',
+    subject: [PROJ, 'Variation Notice under Special Condition SC 8.1: Site Instruction SI-014 (Arcline variation V-06)'],
     paras: [
-      { h: 'Claim.', body: 'Arcline claims an extension of time of 12 days to the Date for Practical Completion for the Qualifying Causes of Delay notified in ARC-KS2-L-041.' },
-      { h: 'Critical path.', body: 'The curtain wall units are top-hung and Programme Rev 8 has no float in the façade sequence. The Level 5 unit start moves from 1 October to 13 October 2026.' },
-      { h: 'Records.', body: 'Attached are the site diary for the week ending 25 September 2026, the crane schedule for week 39 and your emails of 23 and 28 September 2026.' },
-      { h: 'Continuing delay.', body: 'The delay is continuing. Arcline will update this claim every 10 Business Days, as SC 7.2(d) requires.' },
+      { h: 'The Direction.', body: 'On Friday 25 September 2026 at 3.12 pm, Craig Pellow, Site Manager, issued Site Instruction SI-014 by email. It directs Arcline to change the façade bracket system at slab edges L4 to L9 to Detail 7/A-512 Rev C.' },
+      { h: 'Notice.', body: 'Arcline gives notice under Special Condition SC 8.1 that it considers the Direction in SI-014 to be a Variation. Arcline does not agree that SI-014 involves no change to the Subcontract Sum.' },
+      { h: 'Why it is a Variation.', body: 'Annexure Part C, C3 includes A-512 Rev B, whose Detail 7 specifies FB-150 brackets with 2 × M12 anchors. Rev C changes the bracket and fixing system and requires work already carried out at L4 and L5 to be modified.' },
+      { h: 'Particulars.', body: 'Arcline will give its Variation Particulars under Special Condition SC 8.2 by Monday 19 October 2026.' },
     ],
+    status: ['Sent Tue 29 Sep', 'On time'],
+  },
+  {
+    kind: 'Letter', refNo: 'ARC-KS2-L-043', date: '29 September 2026',
+    subject: [PROJ, 'Tower crane TC1: request for maintenance and inspection records'],
+    paras: [
+      { h: 'Request.', body: 'Further to Arcline’s Delay Notice ARC-KS2-L-041, please provide the maintenance and inspection records for tower crane TC1 for the three months before 22 September 2026.' },
+      { h: 'Purpose.', body: 'Arcline needs the records to confirm whether the exception in Special Condition SC 11(c) applies to the outage.' },
+      { h: 'Level 6 access.', body: 'Please also confirm in writing that the Level 6 slab edge will be handed over on Tuesday 6 October 2026, free of edge forms, screens and back-props within 1.5 m of the edge (SC 12(a)).' },
+    ],
+    status: ['Sent Tue 29 Sep'],
+  },
+  {
+    kind: 'Email', email: true, refNo: '', date: '', subject: ['RE: L6 slab edge handover – revised date'],
+    paras: [],
+    status: ['Sent Tue 29 Sep'],
   },
 ]
 
@@ -245,7 +252,7 @@ function EmailDraft() {
 
 export function DraftLive() {
   const [ref, active] = useActive(0.35)
-  const [idx, setIdx] = useState(3)
+  const [idx, setIdx] = useState(0)
   const [paused, setPaused] = useState(false)
   // The first document is in the HTML, complete. Only a change of tab composes.
   const [moved, setMoved] = useState(false)
@@ -278,8 +285,7 @@ export function DraftLive() {
       </div>
       <div className="dr-bar">
         <span className="dr-file"><IDoc className="" />{d.email ? 'Draft email' : `${d.refNo}.docx`}</span>
-        <span className="dr-chip">Prepared for review</span>
-        <span className="dr-chip">Not sent</span>
+        {d.status.map((c) => <span className="dr-chip" key={c}>{c}</span>)}
       </div>
     </div>
   )
@@ -303,7 +309,7 @@ export function WatchLive() {
         <div className={`lv-mailrow${at(5200)}`}>
           <div className="ui-watch-row">
             <div className="ui-watch-mail">
-              <b>Rebecca Lindqvist</b><span className="ui-muted">Mon 1:20 pm</span>
+              <b>Rebecca Lindqvist</b><span className="ui-muted">Mon 28 Sep, 1:20 pm</span>
               <div className="ui-watch-subj">RE: L6 slab edge handover – revised date</div>
             </div>
             <div className={`ui-flag lv-flag${at(6200)}`} data-c="amber">
@@ -315,7 +321,7 @@ export function WatchLive() {
         <div className={`lv-mailrow${at(500)}`}>
           <div className="ui-watch-row">
             <div className="ui-watch-mail">
-              <b>Craig Pellow</b><span className="ui-muted">Fri 3:12 pm</span>
+              <b>Craig Pellow</b><span className="ui-muted">Fri 25 Sep, 3:12 pm</span>
               <div className="ui-watch-subj">SI-014 – Facade brackets L4-L9 to Detail 7/A-512 Rev C</div>
             </div>
             <div className={`ui-flag lv-flag${at(1500)}`} data-c="rose">
@@ -339,14 +345,14 @@ export function WatchLive() {
         <div className="ui-dl">
           <div className={`lv-mailrow${at(7200)}`}>
             <div className="ui-dl-row">
-              <span><b>Delay Notice</b><small>SC 7.1 · Subcontract p 20 · aware Wed 23 Sep</small></span>
-              <span className="ui-dl-when">Wed 30 Sep, 5:00 pm<span className="ui-tag">Check the clause</span></span>
+              <span><b>Delay notice</b><small>SC 7.1 · Subcontract p 20 · aware Wed 23 Sep</small></span>
+              <span className="ui-dl-when">Wed 30 Sep, 5:00 pm<span className="ui-tag ui-tag-accent">Given Tue 29 Sep</span></span>
             </div>
           </div>
           <div className={`lv-mailrow${at(3600)}`}>
             <div className="ui-dl-row">
-              <span><b>Variation Notice</b><small>SC 8.1 · Subcontract p 21 · received Fri 25 Sep</small></span>
-              <span className="ui-dl-when">Fri 2 Oct, 5:00 pm<span className="ui-tag">Check the clause</span></span>
+              <span><b>Variation notice</b><small>SC 8.1 · Subcontract p 21 · received Fri 25 Sep</small></span>
+              <span className="ui-dl-when">Fri 2 Oct, 5:00 pm<span className="ui-tag ui-tag-accent">Given Tue 29 Sep</span></span>
             </div>
           </div>
         </div>

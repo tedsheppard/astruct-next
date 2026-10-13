@@ -48,14 +48,18 @@ function BrainBody({ id }: { id: string }) {
       </g>
       <path className="pb-solid" d={b.cerebrum} />
       <path className="pb-hemi" d={b.cerebrum} fill={`url(#${id}-fill)`} />
-      <g className="pb-sulci" stroke={`url(#${id}-ink)`}>
-        {b.sulci.map((d, i) => <path key={i} d={d} />)}
-      </g>
-      <g className="pb-folds" stroke={`url(#${id}-ink)`}>
-        {b.folds.map((d, i) => <path key={i} d={d} />)}
-      </g>
-      <g className="pb-edges" stroke={`url(#${id}-ink)`}>
-        {b.edges.map(([p, q], i) => <line key={i} x1={p.x} y1={p.y} x2={q.x} y2={q.y} />)}
+      {/* Folds and mesh are clipped to the outline, so nothing pokes past the rim. */}
+      <clipPath id={`${id}-cr`}><path d={b.cerebrum} /></clipPath>
+      <g clipPath={`url(#${id}-cr)`}>
+        <g className="pb-sulci" stroke={`url(#${id}-ink)`}>
+          {b.sulci.map((d, i) => <path key={i} d={d} />)}
+        </g>
+        <g className="pb-folds" stroke={`url(#${id}-ink)`}>
+          {b.folds.map((d, i) => <path key={i} d={d} />)}
+        </g>
+        <g className="pb-edges" stroke={`url(#${id}-ink)`}>
+          {b.edges.map(([p, q], i) => <line key={i} x1={p.x} y1={p.y} x2={q.x} y2={q.y} />)}
+        </g>
       </g>
       <path className="pb-rim" d={b.cerebrum} stroke={`url(#${id}-ink)`} />
       <g className="pb-nodes" fill={`url(#${id}-ink)`}>
@@ -91,7 +95,7 @@ function Defs({ id }: { id: string }) {
 }
 
 const LABEL =
-  'The project brain on a demo project, Kestrel Street, Stage 2, with fictional parties. It reads the subcontract HV2291-SC-014, the correspondence, site instructions, programme, RFIs, drawings and Outlook, and shows the notices and time bars: an EOT claim due Thursday 15 October under SC 7.2, 3 days away; variation particulars for SI-014 due Monday 19 October under SC 8.2; a payment claim reference date of Sunday 25 October under Item 24; and the delay notice under SC 7.1, given on time on 29 September.'
+  'The project brain on a demo project, Kestrel Street, Stage 2, with fictional parties. It reads the subcontract HV2291-SC-014, the correspondence, site instructions, programme, RFIs, drawings and Outlook, and shows the notices and time bars: an EOT claim due Thursday 15 October under SC 7.2, 3 days away; variation particulars for SI-014 due Monday 19 October under SC 8.2; payment claim PC-10 with a reference date of 25 October under the BIF Act (Qld); and the delay notice under SC 7.1, given on time on 29 September.'
 
 export function ProjectBrain() {
   const b = BRAIN

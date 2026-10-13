@@ -2,10 +2,11 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Walkthrough } from '@/components/mk/media'
 import { ProjectBrain } from '@/components/mk/brain/project-brain'
-import { Clause, IssueWindow } from '@/components/mk/fragments'
+import { Clause, IssueWindow, Replay } from '@/components/mk/fragments'
 import { AskLive, DraftLive, SearchLive, WatchLive } from '@/components/mk/live/fragments'
 import { ReadLive } from '@/components/mk/live/read'
 import { NoticeRegister } from '@/components/mk/register'
+import { DataFlow } from '@/components/mk/data-flow'
 import { Faq, HOME_FAQ, faqJsonLd } from '@/components/mk/faq'
 import { GGmail, GOutlook, GSharePoint, GUpload, IArrow, ICheck } from '@/components/mk/icons'
 import { PricingCards } from '@/components/mk/pricing'
@@ -53,18 +54,6 @@ const BRAIN: { n: string; href: string; c: string; title: string; line: string }
 
 const SAFE: { title: string; body: string; icon: React.ReactNode }[] = [
   {
-    title: 'Stored in Sydney', body: 'Your projects, mail, documents and drafts are stored in Australia, in Sydney.',
-    icon: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" {...ic} /><circle cx="12" cy="10" r="2.4" {...ic} /></svg>,
-  },
-  {
-    title: 'Models run by OpenAI', body: 'Model requests are processed by OpenAI in the United States, under its business API terms.',
-    icon: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5.5c0 4.5-3 7.8-7 9.5-4-1.7-7-5-7-9.5V6z" {...ic} /><path d="M9 12l2 2 4-4" {...ic} /></svg>,
-  },
-  {
-    title: 'Not used for training', body: 'Under those terms, your documents, mail and drafts are not used to train models, by us or by OpenAI.',
-    icon: <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" {...ic} /><path d="M6 18 18 6" {...ic} /></svg>,
-  },
-  {
     title: 'Nothing leaves without a person', body: 'Astruct drafts. No letter or email leaves until a person on your team presses Send.',
     icon: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10 14" {...ic} /><path d="M21 3l-7 18-4-7-7-4z" {...ic} /></svg>,
   },
@@ -91,7 +80,7 @@ const WHO: { title: string; body: string; points: string[]; item: WhoItem }[] = 
     title: 'Head contractors',
     body: 'Give notices to the principal on time, check subcontractor claims against their subcontracts, and give payment schedules inside the security of payment deadlines.',
     points: ['Delay notices and EOT claims under the head contract', 'Subcontractor claims checked against each subcontract', 'Payment schedules inside the statutory time'],
-    item: { kind: 'Payment schedule', title: 'Arcline PC-09, due today', meta: 'Item 27 · 10 Business Days from Fri 25 Sep', c: 'blue' },
+    item: { kind: 'Payment schedule', title: 'Arcline PC-09, due today', meta: 'Item 27 · 10 business days from Fri 25 Sep', c: 'blue' },
   },
   {
     title: 'Subcontractors',
@@ -108,47 +97,13 @@ const WHO: { title: string; body: string; points: string[]; item: WhoItem }[] = 
 ]
 
 // The request and the steps beside the drafted letter (demo pack, fictional).
-const DRAFT_PROMPT = 'Draft me a notice of delay for the crane outage and late Level 6 access, on our letterhead'
+const DRAFT_PROMPT = 'Draft the EOT claim for the crane outage and late Level 6 access, on our letterhead'
 const DRAFT_STEPS = [
-  'Read Subcontract HV2291-SC-014: SC 7.1, p 20',
-  'Found the crane emails of 23 September',
+  'Read Subcontract HV2291-SC-014: SC 7.2, p 20',
+  'Linked Delay Notice ARC-KS2-L-041 of 29 September',
   'Checked Programme Rev 8 for the critical path',
-  'Drafted on the Arcline letterhead',
+  'Drafted on the Arcline letterhead, due Thu 15 Oct',
 ]
-
-/** Where the data goes: stored in Sydney, models in the US, nothing sent without a person. */
-function DataFlow() {
-  return (
-    <div className="df" role="img" aria-label="Your documents, mail and drafts are stored in Sydney. Model requests go to OpenAI in the United States and are not used for training. A letter or email leaves only when a person on your team presses Send.">
-      <div className="df-node">
-        <span className="df-k">Your team</span>
-        <b>Documents, mail and drafts</b>
-      </div>
-      <span className="df-arrow" aria-hidden="true" />
-      <div className="df-node is-main">
-        <span className="df-k"><i className="df-flag" aria-hidden="true" />Stored</span>
-        <b>Sydney, Australia</b>
-        <small>Projects, mail, documents, drafts</small>
-      </div>
-      <span className="df-arrow is-both" aria-hidden="true" />
-      <div className="df-node">
-        <span className="df-k">Model requests</span>
-        <b>OpenAI, United States</b>
-        <small>Business API terms · not used for training</small>
-      </div>
-      <span className="df-down" aria-hidden="true" />
-      <div className="df-node df-gate">
-        <span className="df-k">Only when</span>
-        <b>A person presses Send</b>
-      </div>
-      <span className="df-arrow df-arrow-2" aria-hidden="true" />
-      <div className="df-node df-out">
-        <span className="df-k">Then</span>
-        <b>The letter or email leaves</b>
-      </div>
-    </div>
-  )
-}
 
 function Bullets({ items }: { items: string[] }) {
   return (
@@ -358,17 +313,14 @@ export default function HomePage() {
 
       <section className="mk-sec" id="see-it-work">
         <div className="mk-wrap">
-          <div className="mk-head mk-center">
+          <div className="mk-head">
             <h3 className="mk-h2">From one email to a notice, ready for review.</h3>
-            <p className="mk-lede">A walkthrough on the demo project: Arcline’s façade subcontract in Fortitude Valley, Brisbane, and the site instruction that changed its brackets.</p>
+            <p className="mk-lede">A replay from Tue 29 Sep on the demo project: Arcline’s façade subcontract in Fortitude Valley, Brisbane, and the site instruction that changed its brackets. The notice went out that afternoon, three business days early.</p>
           </div>
           <div className="mk-walk">
-            <Walkthrough label="Astruct walkthrough on the demo project" phone={<div className="ui mk-still-phone-pad"><Clause /></div>}>
+            <Walkthrough label="Astruct walkthrough on the demo project, a replay from Tuesday 29 September" phone={<div className="ui mk-still-phone-pad"><Replay /><Clause /></div>}>
               <IssueWindow />
             </Walkthrough>
-            <div className="mk-walk-steps" aria-label="What the walkthrough shows">
-              <span>Mail arrives</span><span>Direction flagged</span><span>Evidence linked</span><span>Clause found</span><span>Notice drafted</span>
-            </div>
           </div>
         </div>
       </section>

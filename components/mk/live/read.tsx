@@ -19,18 +19,18 @@ const OUT = 14400
 type Row = { k: string; src: string; v: string; tag?: string }
 
 const FACTS: Row[] = [
-  { k: 'Subcontract Sum', src: 'Agreement cl 2 · p 2', v: '$4,862,540.00 ex GST' },
+  { k: 'Subcontract sum', src: 'Agreement cl 2 · p 2', v: '$4,862,540.00 ex GST' },
   { k: 'Practical completion', src: 'Item 12 · p 16', v: 'Fri 11 Dec 2026' },
   { k: 'Liquidated damages', src: 'Items 15 and 16 · p 16', v: '$3,850 a day, cap 10%' },
   { k: 'Payment claims', src: 'Item 24 · p 17', v: '25th of each month' },
-  { k: 'Payment schedule', src: 'Item 27 · p 17', v: '10 Business Days' },
+  { k: 'Payment schedule', src: 'Item 27 · p 17', v: '10 business days' },
 ]
 
 const NOTICES: Row[] = [
-  { k: 'Delay Notice', src: 'SC 7.1 · p 20', v: '5 Business Days' },
-  { k: 'EOT Claim', src: 'SC 7.2 · p 20', v: '15 Business Days' },
-  { k: 'Variation Notice', src: 'SC 8.1 · p 21', v: '5 Business Days', tag: 'Replaces GC 19.3' },
-  { k: 'Variation Particulars', src: 'SC 8.2 · p 21', v: '10 more Business Days' },
+  { k: 'Delay notice', src: 'SC 7.1 · p 20', v: '5 business days' },
+  { k: 'EOT claim', src: 'SC 7.2 · p 20', v: '15 business days' },
+  { k: 'Variation notice', src: 'SC 8.1 · p 21', v: '5 business days', tag: 'Replaces GC 19.3' },
+  { k: 'Variation particulars', src: 'SC 8.2 · p 21', v: '10 business days after the notice' },
 ]
 
 export function ReadLive() {

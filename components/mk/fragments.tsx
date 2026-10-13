@@ -92,8 +92,8 @@ export function Clause() {
         </div>
         <div className="ui-deadline-box">
           <div>
-            <div className="ui-deadline-calc">Received Fri 25 Sep, 3:12 pm · 5 Business Days · Brisbane</div>
-            <div className="ui-deadline-calc" style={{ marginTop: 6 }}>Variation Notice due</div>
+            <div className="ui-deadline-calc">Received Fri 25 Sep, 3:12 pm · 5 business days · Brisbane</div>
+            <div className="ui-deadline-calc" style={{ marginTop: 6 }}>Variation notice due</div>
             <div className="ui-deadline-date">Fri 2 Oct, 5:00 pm</div>
             <div className="ui-deadline-calc">Particulars due Mon 19 Oct (5 Oct is King’s Birthday)</div>
           </div>
@@ -115,7 +115,7 @@ export function StateHistory() {
     ['Fri 3:16 pm', 'Linked TR-0412 and A-512 Rev C'],
     ['Fri 3:17 pm', 'Deadline set from SC 8.1, marked check the clause'],
     ['Mon 9:44 am', 'Linked Tasman quote Q-26-1187'],
-    ['Tue 8:30 am', 'Variation Notice V-06 prepared for review'],
+    ['Tue 8:30 am', 'Variation notice V-06 prepared for review'],
   ]
   return (
     <div className="ui">
@@ -171,6 +171,11 @@ function INotice() {
   )
 }
 
+/** The walkthrough is a replay: the frames are as they stood on Tue 29 Sep, before the notice went. */
+export function Replay() {
+  return <span className="ui-replay"><i aria-hidden="true" />Replay · Tue 29 Sep, 2:40 pm</span>
+}
+
 /** The walkthrough still: the issue open, evidence and clause beside the prepared notice. */
 export function IssueWindow() {
   return (
@@ -188,9 +193,12 @@ export function IssueWindow() {
         <span className="ui-nav"><ISide.folder className="ui-ic" />Northgate Health Hub</span>
       </aside>
       <div className="ui-main" style={{ gap: 16 }}>
-        <div>
-          <div className="ui-muted" style={{ fontSize: 12 }}>Kestrel Street, Stage 2 · Issues · Variation</div>
-          <div className="ui-proj-title" style={{ marginTop: 4 }}>{ISSUE_TITLE}</div>
+        <div className="ui-issue-head">
+          <div>
+            <div className="ui-muted" style={{ fontSize: 12 }}>Kestrel Street, Stage 2 · Issues · Variation</div>
+            <div className="ui-proj-title" style={{ marginTop: 4 }}>{ISSUE_TITLE}</div>
+          </div>
+          <Replay />
         </div>
         <div className="ui-steps" style={{ maxWidth: 620 }}>
           {STEPS.map(([s, st]) => (
@@ -208,7 +216,7 @@ export function IssueWindow() {
             </div>
             <div className="ui-card">
               <div className="ui-pad" style={{ paddingBottom: 14 }}>
-                <div className="ui-clause-head"><span className="ui-kind">SC 8.1 · Variation Notice</span><span className="ui-tag">Check the clause</span></div>
+                <div className="ui-clause-head"><span className="ui-kind">SC 8.1 · Variation notice</span><span className="ui-tag">Check the clause</span></div>
                 <p className="ui-clause-text" style={{ fontSize: 13 }}>&ldquo;&hellip;the Subcontractor must, <mark>within 5 Business Days after receiving the Direction</mark>&hellip;&rdquo;</p>
               </div>
               <div className="ui-deadline-box">

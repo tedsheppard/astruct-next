@@ -8,7 +8,8 @@
 //   EOT Claim SC 7.2: aware Wed 23 Sep + 15 BD = Thu 15 Oct
 //   Variation Particulars SC 8.2: 10 BD after Fri 2 Oct = Mon 19 Oct
 //   Payment schedule Item 27: claim PC-09 of Fri 25 Sep + 10 BD = Mon 12 Oct
-//   Payment claim Item 24: reference date the 25th, Sun 25 Oct
+//   Payment claim Item 24: reference date the 25th, Sun 25 Oct (9 business days away)
+// "Time left" is always in business days, so it matches the dates above.
 
 type Tone = 'rose' | 'amber' | 'blue' | 'teal' | 'ink'
 type Row = {
@@ -32,27 +33,27 @@ const ROWS: Row[] = [
     status: 'Watching the mailbox', tone: 'blue',
   },
   {
-    notice: 'EOT Claim', about: 'Tower crane TC1 outage and late Level 6 access',
-    clause: 'SC 7.2', page: 'p 20', due: 'Thu 15 Oct, 5:00 pm', left: '3 days', leftSub: '3 business days', pct: 0.8,
+    notice: 'EOT claim', about: 'Tower crane TC1 outage and late Level 6 access',
+    clause: 'SC 7.2', page: 'p 20', due: 'Thu 15 Oct, 5:00 pm', left: '3 business days', leftSub: 'of 15, from Wed 23 Sep', pct: 0.8,
     status: 'Draft ready for review', tone: 'rose',
   },
   {
-    notice: 'Variation Particulars V-06', about: 'SI-014 façade brackets, L4 to L9',
-    clause: 'SC 8.2', page: 'p 21', due: 'Mon 19 Oct, 5:00 pm', left: '7 days', leftSub: '5 business days', pct: 0.5,
+    notice: 'Variation particulars V-06', about: 'SI-014 façade brackets, L4 to L9',
+    clause: 'SC 8.2', page: 'p 21', due: 'Mon 19 Oct, 5:00 pm', left: '5 business days', leftSub: 'of 10, from Fri 2 Oct', pct: 0.5,
     status: 'Quote Q-26-1187 linked', tone: 'amber',
   },
   {
     notice: 'Payment claim PC-10', about: 'Work to 25 October',
-    clause: 'Item 24', page: 'p 17', due: 'Sun 25 Oct', left: '13 days', leftSub: 'Reference date', pct: 0.55,
+    clause: 'Item 24', page: 'p 17', due: 'Sun 25 Oct', left: '9 business days', leftSub: 'Reference date, the 25th', pct: 0.55,
     status: 'Claim being prepared', tone: 'ink',
   },
   {
-    notice: 'Variation Notice V-06', about: 'SI-014 façade brackets, “no change to the subcontract sum”',
+    notice: 'Variation notice V-06', about: 'SI-014 façade brackets, “no change to the subcontract sum”',
     clause: 'SC 8.1', page: 'p 21', due: 'Fri 2 Oct', left: 'Given Tue 29 Sep', pct: 1,
     status: 'On time', tone: 'teal', done: true,
   },
   {
-    notice: 'Delay Notice', about: 'Tower crane TC1 outage and late Level 6 access',
+    notice: 'Delay notice', about: 'Tower crane TC1 outage and late Level 6 access',
     clause: 'SC 7.1', page: 'p 20', due: 'Wed 30 Sep', left: 'Given Tue 29 Sep', pct: 1,
     status: 'On time', tone: 'teal', done: true,
   },
@@ -62,7 +63,7 @@ const ROWS: Row[] = [
 const DAYS: { d: string; n: number; we?: boolean; mark?: { tone: Tone; label: string } }[] = [
   { d: 'M', n: 12, mark: { tone: 'blue', label: 'Payment schedule due' } },
   { d: 'T', n: 13 }, { d: 'W', n: 14 },
-  { d: 'T', n: 15, mark: { tone: 'rose', label: 'EOT Claim' } },
+  { d: 'T', n: 15, mark: { tone: 'rose', label: 'EOT claim' } },
   { d: 'F', n: 16 }, { d: 'S', n: 17, we: true }, { d: 'S', n: 18, we: true },
   { d: 'M', n: 19, mark: { tone: 'amber', label: 'Particulars V-06' } },
   { d: 'T', n: 20 }, { d: 'W', n: 21 }, { d: 'T', n: 22 }, { d: 'F', n: 23 },

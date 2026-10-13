@@ -157,7 +157,7 @@ export default function TrialRequestForm() {
         </label>
         <label className="wl-l wl-span">
           <span>Company</span>
-          <input className="mk-input" name="company" autoComplete="organization" placeholder="Head contractor, subcontractor or developer" required maxLength={200} />
+          <input className="mk-input" name="company" autoComplete="organization" placeholder="Arcline Façades Pty Ltd" required maxLength={200} />
         </label>
       </div>
       <input className="wl-hp" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
