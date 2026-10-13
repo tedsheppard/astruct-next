@@ -245,7 +245,7 @@ function EmailDraft() {
 
 export function DraftLive() {
   const [ref, active] = useActive(0.35)
-  const [idx, setIdx] = useState(2)
+  const [idx, setIdx] = useState(3)
   const [paused, setPaused] = useState(false)
   // The first document is in the HTML, complete. Only a change of tab composes.
   const [moved, setMoved] = useState(false)
@@ -277,7 +277,9 @@ export function DraftLive() {
         </div>
       </div>
       <div className="dr-bar">
-        <span><IDoc className="" />{d.email ? 'Draft email · Not sent' : `${d.refNo}.docx · Prepared for review · Not sent`}</span>
+        <span className="dr-file"><IDoc className="" />{d.email ? 'Draft email' : `${d.refNo}.docx`}</span>
+        <span className="dr-chip">Prepared for review</span>
+        <span className="dr-chip">Not sent</span>
       </div>
     </div>
   )

@@ -2,7 +2,7 @@
 // source, the brain and the four things it lights up, is in the HTML, so the
 // first paint is the finished picture. CSS then sends signals along the wires
 // and lights each item in turn; with reduced motion it simply stays still.
-import { BRAIN, H, OUTPUTS, OUT_H, OUT_W, OUT_X, SOURCES, SRC_H, SRC_W, W, outY, srcY, type Source } from './geometry'
+import { BRAIN, COL_Y, H, OUTPUTS, OUT_H, OUT_W, OUT_X, SOURCES, SRC_H, SRC_W, W, outY, srcY, type Source } from './geometry'
 
 const ln = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
 
@@ -32,23 +32,32 @@ function Glyph({ icon }: { icon: Source['icon'] }) {
   }
 }
 
-/** The brain itself: glow, hemispheres, folds, mesh and nodes. */
+/** The brain itself: glow, stem, cerebellum, cerebrum, folds, mesh and nodes. */
 function BrainBody({ id }: { id: string }) {
   const b = BRAIN
   return (
     <g className="pb-brain">
-      <ellipse className="pb-core" cx={b.centre.x} cy={b.centre.y} rx={b.box.w * 0.62} ry={b.box.h * 0.56} fill={`url(#${id}-core)`} />
-      <path className="pb-hemi" d={b.left} fill={`url(#${id}-fill)`} />
-      <path className="pb-hemi" d={b.right} fill={`url(#${id}-fill)`} />
+      <ellipse className="pb-core" cx={b.centre.x} cy={b.centre.y + 40} rx={b.box.w * 0.6} ry={b.box.h * 0.52} fill={`url(#${id}-core)`} />
+      <path className="pb-solid" d={b.stem} />
+      <path className="pb-lobe" d={b.stem} fill={`url(#${id}-fill)`} stroke={`url(#${id}-ink)`} />
+      <path className="pb-solid" d={b.cerebellum} />
+      <path className="pb-lobe" d={b.cerebellum} fill={`url(#${id}-fill)`} stroke={`url(#${id}-ink)`} />
+      <clipPath id={`${id}-cb`}><path d={b.cerebellum} /></clipPath>
+      <g className="pb-folia" stroke={`url(#${id}-ink)`} clipPath={`url(#${id}-cb)`}>
+        {b.folia.map((d, i) => <path key={i} d={d} />)}
+      </g>
+      <path className="pb-solid" d={b.cerebrum} />
+      <path className="pb-hemi" d={b.cerebrum} fill={`url(#${id}-fill)`} />
+      <g className="pb-sulci" stroke={`url(#${id}-ink)`}>
+        {b.sulci.map((d, i) => <path key={i} d={d} />)}
+      </g>
       <g className="pb-folds" stroke={`url(#${id}-ink)`}>
         {b.folds.map((d, i) => <path key={i} d={d} />)}
       </g>
       <g className="pb-edges" stroke={`url(#${id}-ink)`}>
         {b.edges.map(([p, q], i) => <line key={i} x1={p.x} y1={p.y} x2={q.x} y2={q.y} />)}
-        {b.bridges.map(([p, q], i) => <line key={`b${i}`} className="pb-bridge" x1={p.x} y1={p.y} x2={q.x} y2={q.y} />)}
       </g>
-      <path className="pb-rim" d={b.left} stroke={`url(#${id}-ink)`} />
-      <path className="pb-rim" d={b.right} stroke={`url(#${id}-ink)`} />
+      <path className="pb-rim" d={b.cerebrum} stroke={`url(#${id}-ink)`} />
       <g className="pb-nodes" fill={`url(#${id}-ink)`}>
         {b.nodes.map((n, i) => (
           <circle key={i} className={n.hub ? 'pb-hub' : undefined} cx={n.x} cy={n.y} r={n.r} style={n.hub ? { ['--d' as string]: `${n.d}s` } : undefined} />
@@ -82,17 +91,20 @@ function Defs({ id }: { id: string }) {
 }
 
 const LABEL =
-  'The project brain on a demo project. It reads the contract (AS 4000), correspondence, site instructions, programme, RFIs, drawings and Outlook, and lights up what needs action: a notice of delay due Friday 16 October under clause 34.2; a variation for SI-014 facade brackets, $48,200; a payment claim due Wednesday 28 October under clause 37.1; and an EOT claim window that closes in 3 days, under clause 34.3.'
+  'The project brain on a demo project, Kestrel Street, Stage 2, with fictional parties. It reads the subcontract HV2291-SC-014, the correspondence, site instructions, programme, RFIs, drawings and Outlook, and shows the notices and time bars: an EOT claim due Thursday 15 October under SC 7.2, 3 days away; variation particulars for SI-014 due Monday 19 October under SC 8.2; a payment claim reference date of Sunday 25 October under Item 24; and the delay notice under SC 7.1, given on time on 29 September.'
 
 export function ProjectBrain() {
   const b = BRAIN
+  const cx = b.box.x + b.box.w / 2
   return (
     <figure className="pb" role="img" aria-label={LABEL}>
       {/* Wide screens: one drawing, sources on the left, actions on the right. */}
       <svg className="pb-wide" viewBox={`0 0 ${W} ${H}`} aria-hidden="true">
         <Defs id="pbw" />
-        <text className="pb-col" x="2" y={Math.min(srcY(0), outY(0)) - 18}>What it reads</text>
-        <text className="pb-col" x={OUT_X + 2} y={Math.min(srcY(0), outY(0)) - 18}>What needs action</text>
+        <text className="pb-col" x="2" y={COL_Y}>What it reads</text>
+        <text className="pb-col" x={OUT_X + 2} y={COL_Y}>Notices and time bars · Mon 12 Oct</text>
+        <text className="pb-cap" x={cx} y={COL_Y} textAnchor="middle">Kestrel Street, Stage 2</text>
+        <text className="pb-cap-sub" x={cx} y={COL_Y + 20} textAnchor="middle">4,812 documents read · demo project, fictional parties</text>
 
         <g className="pb-wires">
           {b.wiresIn.map((w, i) => (
@@ -112,16 +124,14 @@ export function ProjectBrain() {
         </g>
 
         <BrainBody id="pbw" />
-        <text className="pb-cap" x={b.centre.x} y={b.box.y + b.box.h + 40} textAnchor="middle">Kestrel Street, Stage 2</text>
-        <text className="pb-cap-sub" x={b.centre.x} y={b.box.y + b.box.h + 60} textAnchor="middle">4,812 documents · read and current</text>
 
         {SOURCES.map((s, i) => (
           <g key={s.label} className="pb-src" transform={`translate(0 ${srcY(i)})`}>
             <rect className="pb-card" width={SRC_W} height={SRC_H} rx="14" />
-            <rect className="pb-ic-bg" x="12" y="12" width="32" height="32" rx="9" />
-            <g className="pb-ic" transform="translate(18 18)"><Glyph icon={s.icon} /></g>
-            <text className="pb-src-t" x="56" y="25">{s.label}</text>
-            <text className="pb-src-m" x="56" y="43">{s.meta}</text>
+            <rect className="pb-ic-bg" x="11" y="11" width="32" height="32" rx="9" />
+            <g className="pb-ic" transform="translate(17 17)"><Glyph icon={s.icon} /></g>
+            <text className="pb-src-t" x="55" y="24">{s.label}</text>
+            <text className="pb-src-m" x="55" y="42">{s.meta}</text>
             <circle className="pb-dot" cx={SRC_W} cy={SRC_H / 2} r="3.5" />
           </g>
         ))}
@@ -133,8 +143,8 @@ export function ProjectBrain() {
             <rect className="pb-bar" x="0" y="18" width="3.5" height={OUT_H - 36} rx="1.75" />
             <circle className="pb-kind-dot" cx="22" cy="27" r="4" />
             <text className="pb-kind" x="34" y="31.5">{o.kind}</text>
-            <text className="pb-out-t" x="18" y="59">{o.title}</text>
-            <text className="pb-out-m" x="18" y="80">{o.meta}</text>
+            <text className="pb-out-t" x="18" y="58">{o.title}</text>
+            <text className="pb-out-m" x="18" y="79">{o.meta}</text>
             <circle className="pb-dot" cx="0" cy={OUT_H / 2} r="3.5" />
           </g>
         ))}
@@ -142,6 +152,7 @@ export function ProjectBrain() {
 
       {/* Phones and narrow windows: the same picture, stacked. */}
       <div className="pb-narrow" aria-hidden="true">
+        <div className="pb-n-head"><b>Kestrel Street, Stage 2</b><span>4,812 documents read · demo project, fictional parties</span></div>
         <ul className="pb-n-src">
           {SOURCES.map((s) => (
             <li key={s.label}>
@@ -150,20 +161,11 @@ export function ProjectBrain() {
             </li>
           ))}
         </ul>
-        <svg className="pb-n-brain" viewBox={`${b.box.x - 30} ${b.box.y - 46} ${b.box.w + 60} ${b.box.h + 92}`}>
+        <svg className="pb-n-brain" viewBox={`${b.box.x - 12} ${b.box.y - 8} ${b.box.w + 24} ${b.box.h + 16}`}>
           <Defs id="pbn" />
-          <g className="pb-wires">
-            {[-120, -60, 0, 60, 120].map((dx, i) => (
-              <path key={i} className="pb-wire" d={`M${b.centre.x + dx * 1.3} ${b.box.y - 46}C${b.centre.x + dx * 1.3} ${b.box.y - 10} ${b.centre.x + dx * 0.6} ${b.box.y + 10} ${b.centre.x + dx * 0.6} ${b.box.y + 36}`} />
-            ))}
-            {[-90, -30, 30, 90].map((dx, i) => (
-              <g key={i} data-c={OUTPUTS[i].c}>
-                <path className="pb-wire pb-wire-out" d={`M${b.centre.x + dx * 0.7} ${b.box.y + b.box.h - 30}C${b.centre.x + dx * 0.7} ${b.box.y + b.box.h + 10} ${b.centre.x + dx * 1.5} ${b.box.y + b.box.h + 20} ${b.centre.x + dx * 1.5} ${b.box.y + b.box.h + 46}`} />
-              </g>
-            ))}
-          </g>
           <BrainBody id="pbn" />
         </svg>
+        <p className="pb-n-col">Notices and time bars · Mon 12 Oct</p>
         <ul className="pb-n-out">
           {OUTPUTS.map((o, i) => (
             <li key={o.kind} data-c={o.c} style={{ ['--d' as string]: `${i * 2.5}s` }}>
@@ -174,7 +176,6 @@ export function ProjectBrain() {
           ))}
         </ul>
       </div>
-      <figcaption className="pb-note">Demo project, fictional parties.</figcaption>
     </figure>
   )
 }

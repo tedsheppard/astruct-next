@@ -162,19 +162,28 @@ export function Notice() {
   )
 }
 
+function INotice() {
+  return (
+    <svg className="ui-ic" viewBox="0 0 16 16" aria-hidden="true">
+      <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M8 4.8V8l2.2 1.4" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 /** The walkthrough still: the issue open, evidence and clause beside the prepared notice. */
 export function IssueWindow() {
   return (
     <div className="ui ui-window">
       <aside className="ui-side">
         <div className="ui-side-brand"><Mark /><Wordmark /></div>
-        <span className="ui-nav"><ISide.chat className="ui-ic" />New chat</span>
-        <span className="ui-nav"><ISide.search className="ui-ic" />Search</span>
-        <span className="ui-nav"><ISide.library className="ui-ic" />Library</span>
-        <span className="ui-nav"><ISide.draft className="ui-ic" />Draft</span>
+        <div className="ui-side-proj"><ISide.folder className="ui-ic" /><span><b>Kestrel Street, Stage 2</b><small>Subcontract HV2291-SC-014</small></span></div>
+        <span className="ui-nav"><INotice />Notices<em className="ui-count is-hot">2 due</em></span>
+        <span className="ui-nav is-on"><ISide.draft className="ui-ic" />Issues<em className="ui-count">3</em></span>
         <span className="ui-nav"><ISide.mail className="ui-ic" />Mail</span>
-        <div className="ui-side-label">Projects</div>
-        <span className="ui-nav is-on"><ISide.folder className="ui-ic" />Kestrel Street, Stage 2</span>
+        <span className="ui-nav"><ISide.library className="ui-ic" />Library</span>
+        <span className="ui-nav"><ISide.search className="ui-ic" />Search</span>
+        <div className="ui-side-label">Other projects</div>
         <span className="ui-nav"><ISide.folder className="ui-ic" />Wharf Lane Apartments</span>
         <span className="ui-nav"><ISide.folder className="ui-ic" />Northgate Health Hub</span>
       </aside>

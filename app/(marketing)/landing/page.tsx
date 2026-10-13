@@ -5,7 +5,7 @@ import { ProjectBrain } from '@/components/mk/brain/project-brain'
 import { Clause, IssueWindow } from '@/components/mk/fragments'
 import { AskLive, DraftLive, SearchLive, WatchLive } from '@/components/mk/live/fragments'
 import { ReadLive } from '@/components/mk/live/read'
-import { DropInLive } from '@/components/mk/live/dropin'
+import { NoticeRegister } from '@/components/mk/register'
 import { Faq, HOME_FAQ, faqJsonLd } from '@/components/mk/faq'
 import { GGmail, GOutlook, GSharePoint, GUpload, IArrow, ICheck } from '@/components/mk/icons'
 import { PricingCards } from '@/components/mk/pricing'
@@ -85,23 +85,70 @@ const COMPANY: { title: string; body: string }[] = [
   { title: 'Roles and access', body: 'Owners and admins invite people, set their roles and remove them. A person who is removed loses access to the company’s projects straight away.' },
 ]
 
-const WHO: { title: string; c: string; body: string; points: string[] }[] = [
+type WhoItem = { kind: string; title: string; meta: string; c: 'rose' | 'amber' | 'blue' | 'teal' | 'violet' }
+const WHO: { title: string; body: string; points: string[]; item: WhoItem }[] = [
   {
-    title: 'Head contractors', c: 'teal',
+    title: 'Head contractors',
     body: 'Give notices to the principal on time, check subcontractor claims against their subcontracts, and give payment schedules inside the security of payment deadlines.',
     points: ['Delay notices and EOT claims under the head contract', 'Subcontractor claims checked against each subcontract', 'Payment schedules inside the statutory time'],
+    item: { kind: 'Payment schedule', title: 'Arcline PC-09, due today', meta: 'Item 27 · 10 Business Days from Fri 25 Sep', c: 'blue' },
   },
   {
-    title: 'Subcontractors', c: 'amber',
+    title: 'Subcontractors',
     body: 'Catch directions that change your scope, even when they say “no change”, and draft variation notices, delay notices and EOT claims from the evidence.',
     points: ['Directions compared against your scope of work', 'Variation notices before the time bar', 'Payment claims on the reference date'],
+    item: { kind: 'Variation notice', title: 'SI-014 given Tue 29 Sep, on time', meta: 'SC 8.1 · due Fri 2 Oct, 5:00 pm', c: 'teal' },
   },
   {
-    title: 'Developers', c: 'violet',
+    title: 'Developers',
     body: 'Check each variation and EOT claim against the contract, the programme and the correspondence, and respond within the time the contract allows.',
     points: ['Claims checked against the contract and programme', 'The clause and page behind every answer', 'Responses inside the time the contract allows'],
+    item: { kind: 'EOT claim received', title: '14 days claimed, crane outage', meta: 'AS 4000 cl 34.5 · decision due within 28 days', c: 'amber' },
   },
 ]
+
+// The request and the steps beside the drafted letter (demo pack, fictional).
+const DRAFT_PROMPT = 'Draft me a notice of delay for the crane outage and late Level 6 access, on our letterhead'
+const DRAFT_STEPS = [
+  'Read Subcontract HV2291-SC-014: SC 7.1, p 20',
+  'Found the crane emails of 23 September',
+  'Checked Programme Rev 8 for the critical path',
+  'Drafted on the Arcline letterhead',
+]
+
+/** Where the data goes: stored in Sydney, models in the US, nothing sent without a person. */
+function DataFlow() {
+  return (
+    <div className="df" role="img" aria-label="Your documents, mail and drafts are stored in Sydney. Model requests go to OpenAI in the United States and are not used for training. A letter or email leaves only when a person on your team presses Send.">
+      <div className="df-node">
+        <span className="df-k">Your team</span>
+        <b>Documents, mail and drafts</b>
+      </div>
+      <span className="df-arrow" aria-hidden="true" />
+      <div className="df-node is-main">
+        <span className="df-k"><i className="df-flag" aria-hidden="true" />Stored</span>
+        <b>Sydney, Australia</b>
+        <small>Projects, mail, documents, drafts</small>
+      </div>
+      <span className="df-arrow is-both" aria-hidden="true" />
+      <div className="df-node">
+        <span className="df-k">Model requests</span>
+        <b>OpenAI, United States</b>
+        <small>Business API terms · not used for training</small>
+      </div>
+      <span className="df-down" aria-hidden="true" />
+      <div className="df-node df-gate">
+        <span className="df-k">Only when</span>
+        <b>A person presses Send</b>
+      </div>
+      <span className="df-arrow df-arrow-2" aria-hidden="true" />
+      <div className="df-node df-out">
+        <span className="df-k">Then</span>
+        <b>The letter or email leaves</b>
+      </div>
+    </div>
+  )
+}
 
 function Bullets({ items }: { items: string[] }) {
   return (
@@ -163,11 +210,25 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* The register: what is due, from which clause, and how long is left */}
+      <section className="mk-sec mk-alt mk-sec-reg" id="register">
+        <div className="mk-wrap">
+          <div className="mk-reg-head">
+            <h2 className="mk-h2">Every notice, its clause and the days left.</h2>
+            <p className="mk-lede">
+              Astruct keeps the register for you. Each notice and time bar comes from the contract, each date is counted
+              in business days, and each one shows whether it went out on time.
+            </p>
+          </div>
+          <NoticeRegister />
+        </div>
+      </section>
+
       {/* 1. Reads the contract */}
-      <section className="mk-sec mk-feature-sec mk-alt" id="read">
+      <section className="mk-sec mk-feature-sec" id="read">
         <div className="mk-wrap mk-feature">
-          <div className="mk-feature-copy mk-reveal">
-            <span className="mk-kicker">1. Reads the contract</span>
+          <div className="mk-feature-copy">
+            <span className="mk-kicker" data-c="teal">1. Reads the contract</span>
             <h2 className="mk-h2">Your contract, read in about a minute.</h2>
             <p className="mk-body mk-feature-body">
               Head contract or subcontract, standard form or bespoke. Special conditions are read with the general
@@ -179,24 +240,24 @@ export default function HomePage() {
               'Every notice period and time bar, with its clause and page',
             ]} />
           </div>
-          <div className="mk-panel mk-reveal"><ReadLive /></div>
+          <div className="mk-panel"><ReadLive /></div>
         </div>
-          <div className="mk-marquee-in">
-            <div className="mk-wrap">
-              <div className="mk-marquee-head">
-                <h3 id="reads">Reads the contracts you actually sign.</h3>
-                <p>Standard forms, their subcontracts and the amendments that change them.</p>
-              </div>
+        <div className="mk-marquee-in">
+          <div className="mk-wrap">
+            <div className="mk-marquee-head">
+              <h3 id="reads">Reads the contracts you actually sign.</h3>
+              <p>Standard forms, their subcontracts and the amendments that change them.</p>
             </div>
-            <Marquee items={CONTRACTS} dur={70} />
           </div>
+          <Marquee items={CONTRACTS} dur={70} />
+        </div>
       </section>
 
       {/* 2. Answers with the clause */}
-      <section className="mk-sec mk-feature-sec" id="ask">
+      <section className="mk-sec mk-feature-sec mk-alt" id="ask">
         <div className="mk-wrap mk-feature mk-feature-flip">
-          <div className="mk-feature-copy mk-reveal">
-            <span className="mk-kicker">2. Answers with the clause</span>
+          <div className="mk-feature-copy">
+            <span className="mk-kicker" data-c="blue">2. Answers with the clause</span>
             <h2 className="mk-h2">Ask anything. Get the clause and the page.</h2>
             <p className="mk-body mk-feature-body">
               Ask in your own words. Astruct answers from the contract, its amendments and the correspondence, and cites
@@ -208,13 +269,10 @@ export default function HomePage() {
               'Every answer cites the clause and the page',
             ]} />
           </div>
-          <div className="mk-panel mk-reveal"><AskLive /></div>
+          <div className="mk-panel mk-panel-card"><AskLive /></div>
         </div>
-      </section>
-
-      <section className="mk-sec mk-feature-sec mk-sec-follow" id="search">
-        <div className="mk-wrap mk-feature">
-          <div className="mk-feature-copy mk-reveal">
+        <div className="mk-wrap mk-feature mk-feature-2" id="search">
+          <div className="mk-feature-copy">
             <h3 className="mk-h2">Search thousands of documents.</h3>
             <p className="mk-body mk-feature-body">
               One search runs across every document and email in the project that you are allowed to see, in Boolean or
@@ -227,51 +285,41 @@ export default function HomePage() {
             ]} />
             <p className="mk-fine mk-feature-note"><Link className="mk-link" href="/support/boolean-search">Boolean search reference<IArrow /></Link></p>
           </div>
-          <div className="mk-stage mk-reveal" data-tone="cool">
-            <div className="mk-field" aria-hidden="true"><i /><i /><i /></div>
-            <div className="mk-lg"><SearchLive /></div>
-          </div>
+          <div className="mk-panel mk-panel-card"><SearchLive /></div>
         </div>
       </section>
 
       {/* 3. Drafts the notice */}
-      <section className="mk-sec mk-alt" id="draft">
-        <div className="mk-wrap">
-          <div className="mk-head mk-center mk-reveal">
-            <span className="mk-kicker">3. Drafts the notice</span>
+      <section className="mk-sec mk-feature-sec" id="draft">
+        <div className="mk-wrap mk-feature mk-feature-draft">
+          <div className="mk-feature-copy">
+            <span className="mk-kicker" data-c="violet">3. Drafts the notice</span>
             <h2 className="mk-h2">The notice, on your letterhead, before the time bar.</h2>
-            <p className="mk-lede">
-              Variation notices, delay notices, EOT claims and letters, drafted in one click from the contract and the
-              evidence. The clause, dates, parties and references come from the project’s own documents.
-            </p>
-          </div>
-          <DropInLive />
-          <p className="mk-fine dp-note">Demo project, fictional parties. Every fact in the notice comes from its documents.</p>
-        </div>
-      </section>
-
-      <section className="mk-sec mk-feature-sec mk-alt mk-sec-follow" id="letterhead">
-        <div className="mk-wrap mk-feature">
-          <div className="mk-feature-copy mk-reveal">
-            <h3 className="mk-h2">On your letterhead, <span className="mk-grad-word">as a Word file.</span></h3>
             <p className="mk-body mk-feature-body">
-              Upload a letter your company has sent. Every draft from then on uses its letterhead, fonts and layout.
+              Variation notices, delay notices, EOT claims and letters, drafted from the contract and the evidence.
+              Upload a letter your company has sent and every draft uses its letterhead, fonts and layout.
             </p>
+            <div className="mk-ask-card ui" aria-label="The request and what Astruct did">
+              <div className="dp-sent">{DRAFT_PROMPT}</div>
+              <div className="dp-steps">
+                {DRAFT_STEPS.map((x) => <span key={x} className="dp-step is-in"><i />{x}</span>)}
+              </div>
+            </div>
             <Bullets items={[
-              'Particulars filled in from the project: references, dates, parties and the clause',
-              'Downloaded as .docx, ready to check and sign',
+              'The clause, dates, parties and references come from the project’s own documents',
+              'Downloaded as a Word file, ready to check and sign',
               'Nothing leaves until a person on your team presses Send',
             ]} />
           </div>
-          <div className="mk-panel mk-reveal"><DraftLive /></div>
+          <div className="mk-draft-panel"><DraftLive /></div>
         </div>
       </section>
 
       {/* 4. Reads the project mail */}
-      <section className="mk-sec mk-feature-sec" id="watch">
+      <section className="mk-sec mk-feature-sec mk-alt" id="watch">
         <div className="mk-wrap mk-feature mk-feature-flip">
-          <div className="mk-feature-copy mk-reveal">
-            <span className="mk-kicker">4. Reads the project mail</span>
+          <div className="mk-feature-copy">
+            <span className="mk-kicker" data-c="amber">4. Reads the project mail</span>
             <h2 className="mk-h2">Connect Outlook. Astruct reads the project mail.</h2>
             <p className="mk-body mk-feature-body">
               As mail arrives, Astruct reads it for variations, delays and claims. It compares each direction with your
@@ -285,51 +333,36 @@ export default function HomePage() {
             ]} />
             <p className="mk-fine mk-feature-note">New mail is picked up within about five minutes. Astruct reads only the mailboxes you connect.</p>
           </div>
-          <div className="mk-stage mk-reveal" data-tone="warm">
-            <div className="mk-field" aria-hidden="true"><i /><i /><i /></div>
-            <div className="mk-lg"><WatchLive /></div>
-          </div>
+          <div className="mk-panel mk-panel-card"><WatchLive /></div>
         </div>
-      </section>
-
-      <section className="mk-sec mk-sec-follow" id="sources">
         <div className="mk-wrap">
-          <div className="mk-head mk-reveal">
-            <h3 className="mk-h2">What Astruct reads.</h3>
-            <p className="mk-lede">The documents you add and the mail you connect. Every result lands on the page it came from.</p>
-          </div>
-          <div className="mk-int mk-int-2 mk-reveal">
-            <div className="mk-int-card">
-              <div className="mk-int-logos"><span className="mk-int-logo" style={{ color: 'var(--ink)' }}><GUpload /></span></div>
-              <h3>Your documents</h3>
-              <p>Thousands per project: the contract, drawings, programme and past correspondence. Upload files, whole folders or zips. Saved emails are read too.</p>
+          <div className="mk-srcs" id="sources" aria-label="What Astruct reads">
+            <div className="mk-src">
+              <span className="mk-int-logo" style={{ color: 'var(--ink)' }}><GUpload /></span>
+              <div><b>Your documents</b><span>The contract, drawings, programme and correspondence. Files, folders, zips and saved emails.</span></div>
               <span className="mk-int-status"><i className="ui-dot" />Live</span>
             </div>
-            <div className="mk-int-card">
-              <div className="mk-int-logos"><span className="mk-int-logo"><GOutlook /></span></div>
-              <h3>Outlook</h3>
-              <p>Personal and shared Microsoft 365 mailboxes. Shared mailboxes need your admin’s consent, given once with one link.</p>
+            <div className="mk-src">
+              <span className="mk-int-logo"><GOutlook /></span>
+              <div><b>Outlook</b><span>Personal and shared Microsoft 365 mailboxes. Shared ones need your admin’s consent, once.</span></div>
               <span className="mk-int-status"><i className="ui-dot" />Live</span>
             </div>
-            <div className="mk-int-card mk-int-others">
-              <div className="mk-int-logos"><span className="mk-int-logo"><GGmail /></span><span className="mk-int-logo"><GSharePoint /></span></div>
-              <div className="mk-int-others-copy">
-                <h3 style={{ marginTop: 0 }}>Procore, Gmail and SharePoint</h3>
-                <p style={{ marginTop: 6 }}>Available on request. Tell us when you request your trial and we will set them up with you.</p>
-              </div>
+            <div className="mk-src">
+              <span className="mk-int-logo mk-int-logo-2"><GGmail /><GSharePoint /></span>
+              <div><b>Procore, Gmail and SharePoint</b><span>Set up with you during the trial. Tell us when you request it.</span></div>
               <span className="mk-int-status is-request"><i className="ui-dot" />On request</span>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="mk-sec mk-alt" id="see-it-work">
+      <section className="mk-sec" id="see-it-work">
         <div className="mk-wrap">
-          <div className="mk-head mk-center mk-reveal">
+          <div className="mk-head mk-center">
             <h3 className="mk-h2">From one email to a notice, ready for review.</h3>
-            <p className="mk-lede">A walkthrough on the demo project: a fictional façade subcontract in Fortitude Valley, Brisbane, and the site instruction that changed its brackets.</p>
+            <p className="mk-lede">A walkthrough on the demo project: Arcline’s façade subcontract in Fortitude Valley, Brisbane, and the site instruction that changed its brackets.</p>
           </div>
-          <div className="mk-walk mk-reveal">
+          <div className="mk-walk">
             <Walkthrough label="Astruct walkthrough on the demo project" phone={<div className="ui mk-still-phone-pad"><Clause /></div>}>
               <IssueWindow />
             </Walkthrough>
@@ -341,16 +374,20 @@ export default function HomePage() {
       </section>
 
       {/* Security */}
-      <section className="mk-sec" id="security">
+      <section className="mk-sec mk-alt" id="security">
         <div className="mk-wrap">
-          <div className="mk-head mk-reveal">
-            <h2 className="mk-h2">Your project data is stored in Australia.</h2>
-            <p className="mk-lede">
-              Stored in Sydney. Model requests go to OpenAI in the United States under its business API terms and are not used for training.
-              Nothing leaves until a person on your team presses Send.
-            </p>
+          <div className="mk-sec-top">
+            <div className="mk-head">
+              <h2 className="mk-h2">Your project data is stored in Australia.</h2>
+              <p className="mk-lede">
+                Stored in Sydney. Model requests go to OpenAI in the United States under its business API terms and are
+                not used for training. Nothing leaves until a person on your team presses Send.
+              </p>
+              <p style={{ marginTop: 24 }}><Link className="mk-link" href="/security">How Astruct handles your data<IArrow /></Link></p>
+            </div>
+            <DataFlow />
           </div>
-          <div className="mk-sec-grid mk-reveal">
+          <div className="mk-sec-grid">
             {SAFE.map((s) => (
               <div className="mk-sec-item" key={s.title}>
                 <span className="mk-sec-ic">{s.icon}</span>
@@ -359,21 +396,42 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-          <p style={{ marginTop: 32 }}><Link className="mk-link" href="/security">How Astruct handles your data<IArrow /></Link></p>
         </div>
       </section>
 
-      {/* One company account */}
-      <section className="mk-sec mk-sec-follow" id="company">
+      {/* Who it is for */}
+      <section className="mk-sec" id="who">
         <div className="mk-wrap">
-          <div className="mk-head mk-reveal">
-            <h2 className="mk-h2">Everyone in the company, on one account.</h2>
-            <p className="mk-lede">
-              Unlimited users under one company account. Admins control who sees what, how drafts look and which
-              projects you pay for.
-            </p>
+          <div className="mk-head">
+            <h2 className="mk-h2">Built for the people who give and answer the notices.</h2>
+            <p className="mk-lede">Project managers, contract administrators and commercial managers, on either side of the contract.</p>
           </div>
-          <div className="mk-rows mk-brain-rows mk-reveal">
+          <div className="mk-who">
+            {WHO.map((w) => (
+              <div className="mk-who-card" key={w.title}>
+                <h3 className="mk-who-h">{w.title}</h3>
+                <div className="mk-who-item" data-c={w.item.c}>
+                  <span className="mk-who-k"><i />{w.item.kind}</span>
+                  <b>{w.item.title}</b>
+                  <span>{w.item.meta}</span>
+                </div>
+                <p className="mk-who-body">{w.body}</p>
+                <Bullets items={w.points} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing, with the company account */}
+      <section className="mk-sec mk-alt" id="pricing">
+        <div className="mk-wrap">
+          <div className="mk-head">
+            <h2 className="mk-h2">Priced per project. Every user included.</h2>
+            <p className="mk-lede">AU$199 a month for your first project, and less for each one after. {TRIAL_LINE}</p>
+          </div>
+          <PricingCards />
+          <div className="mk-company" id="company">
             {COMPANY.map((c) => (
               <div key={c.title}>
                 <h3>{c.title}</h3>
@@ -384,38 +442,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Who it is for */}
-      <section className="mk-sec mk-alt" id="who">
-        <div className="mk-wrap">
-          <div className="mk-head">
-            <h2 className="mk-h2">Built for the people who give and answer the notices.</h2>
-            <p className="mk-lede">Project managers, contract administrators and commercial managers, on either side of the contract.</p>
-          </div>
-          <div className="mk-who">
-            {WHO.map((w) => (
-              <div className="mk-who-card" key={w.title}>
-                <span className="mk-chip" data-c={w.c}>{w.title}</span>
-                <p className="mk-who-body">{w.body}</p>
-                <Bullets items={w.points} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing */}
-      <section className="mk-sec" id="pricing">
-        <div className="mk-wrap">
-          <div className="mk-head mk-reveal">
-            <h2 className="mk-h2">Priced per project. Every user included.</h2>
-            <p className="mk-lede">AU$199 a month for your first project, and less for each one after. {TRIAL_LINE}</p>
-          </div>
-          <PricingCards />
-        </div>
-      </section>
-
       {/* FAQ */}
-      <section className="mk-sec mk-alt" id="faq">
+      <section className="mk-sec" id="faq">
         <div className="mk-wrap mk-narrow">
           <div className="mk-head mk-reveal">
             <h2 className="mk-h2">Questions</h2>
@@ -426,7 +454,7 @@ export default function HomePage() {
       </section>
 
       {/* Close */}
-      <section className="mk-sec mk-close">
+      <section className="mk-sec mk-alt mk-close">
         <div className="mk-field mk-field-close" aria-hidden="true"><i /><i /><i /><i /></div>
         <div className="mk-wrap mk-reveal">
           <h2 className="mk-h2">Start with one project.</h2>
