@@ -149,15 +149,15 @@ export default function TrialRequestForm() {
       <div className="wl-grid wl-grid-3">
         <label className="wl-l">
           <span>Name</span>
-          <input className="mk-input" name="name" autoComplete="name" required maxLength={200} />
+          <input className="mk-input" name="name" autoComplete="name" placeholder="First and last name" required maxLength={200} />
         </label>
         <label className="wl-l">
           <span>Work email</span>
-          <input className="mk-input" name="email" type="email" autoComplete="email" required maxLength={254} />
+          <input className="mk-input" name="email" type="email" autoComplete="email" placeholder="you@yourcompany.com.au" required maxLength={254} />
         </label>
         <label className="wl-l wl-span">
           <span>Company</span>
-          <input className="mk-input" name="company" autoComplete="organization" required maxLength={200} />
+          <input className="mk-input" name="company" autoComplete="organization" placeholder="Head contractor, subcontractor or developer" required maxLength={200} />
         </label>
       </div>
       <input className="wl-hp" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />

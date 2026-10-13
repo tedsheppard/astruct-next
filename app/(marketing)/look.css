@@ -358,3 +358,7 @@
   .mk-company { gap: 14px; }
   .mk-company p { font-size: 14px; }
 }
+@media (max-width: 640px) {
+  .mk .ui-dl-row { flex-direction: row; align-items: center; gap: 10px; }
+  .mk .ui-dl-when { justify-items: end; grid-auto-flow: row; gap: 3px; text-align: right; }
+}
