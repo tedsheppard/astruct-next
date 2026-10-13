@@ -309,7 +309,7 @@
   .dr-page .em-body { padding: 16px 14px; }
   .mk-ask-card { margin-top: 22px; }
 }
-@media (max-width: 900px) { .mk-feature-draft { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .mk-feature-draft { grid-template-columns: minmax(0, 1fr); } }
 
 /* ── Walkthrough play control: top right of the frame, clear of the content ── */
 @media (min-width: 641px) {
@@ -349,3 +349,12 @@
 .mk-ph-facts dt { color: var(--ink-3); }
 .mk-ph-facts dd { margin: 0; color: var(--ink); font-weight: 550; }
 @media (max-width: 900px) { .mk-ph-grid { grid-template-columns: 1fr; } }
+
+/* ── Phones: shorter page. The audience cards keep their item and summary; pricing keeps the price. ── */
+@media (max-width: 640px) {
+  .mk-who-card .mk-ticks { display: none; }
+  #pricing .mk-price-side > .mk-price-mini:not(.mk-lg) { display: none; }
+  #pricing .mk-price-list { display: none; }
+  .mk-company { gap: 14px; }
+  .mk-company p { font-size: 14px; }
+}
