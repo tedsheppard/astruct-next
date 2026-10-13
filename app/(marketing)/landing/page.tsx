@@ -100,7 +100,7 @@ const WHO: { title: string; body: string; points: string[]; item: WhoItem }[] = 
 const DRAFT_PROMPT = 'Draft the EOT claim for the crane outage and late Level 6 access, on our letterhead'
 const DRAFT_STEPS = [
   'Read Subcontract HV2291-SC-014: SC 7.2, p 20',
-  'Linked Delay Notice ARC-KS2-L-041 of 29 September',
+  'Linked delay notice ARC-KS2-L-041 of 29 September',
   'Checked Programme Rev 8 for the critical path',
   'Drafted on the Arcline letterhead, due Thu 15 Oct',
 ]

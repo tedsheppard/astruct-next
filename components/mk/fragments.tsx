@@ -141,7 +141,7 @@ export function Notice() {
     <div className="ui">
       <div className="ui-card ui-doc">
         <div className="ui-doc-page">
-          <h5>Variation Notice</h5>
+          <h5>Variation notice</h5>
           <div className="ui-doc-grid">
             <span>Our ref</span><span>ARC-KS2-L-042 (V-06)</span>
             <span>To</span><span>Rebecca Lindqvist, Harrow &amp; Vale Constructions Pty Ltd</span>
