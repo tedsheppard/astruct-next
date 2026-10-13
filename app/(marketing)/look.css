@@ -309,3 +309,43 @@
   .dr-page .em-body { padding: 16px 14px; }
   .mk-ask-card { margin-top: 22px; }
 }
+@media (max-width: 900px) { .mk-feature-draft { grid-template-columns: 1fr; } }
+
+/* ── Walkthrough play control: top right of the frame, clear of the content ── */
+@media (min-width: 641px) {
+  .mk-media-walk .mk-play { top: 18px; bottom: auto; }
+}
+
+/* ── Questions: heading beside the list ───────────────────────────────── */
+.mk-faq-grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 32px clamp(40px, 6vw, 96px); align-items: start; }
+.mk-faq-side { position: sticky; top: 104px; display: grid; gap: 14px; }
+.mk-faq-side p { margin: 0; }
+.mk-faq-grid .mk-faq { margin-top: 0; }
+@media (max-width: 900px) { .mk-faq-grid { grid-template-columns: 1fr; } .mk-faq-side { position: static; } }
+
+/* ── Phones: the data path already says three of the six points ───────── */
+@media (max-width: 640px) {
+  #security .mk-sec-item:nth-child(1), #security .mk-sec-item:nth-child(2), #security .mk-sec-item:nth-child(4) { display: none; }
+}
+
+/* ── Backgrounds: a faint drawing-sheet grid instead of colour blobs ──── */
+.mk-field-close i, .wl-field i { display: none; }
+.mk-field-close, .wl-field {
+  opacity: 1 !important;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: center;
+  -webkit-mask-image: radial-gradient(ellipse 60% 70% at 50% 50%, #000 0%, transparent 75%);
+  mask-image: radial-gradient(ellipse 60% 70% at 50% 50%, #000 0%, transparent 75%);
+}
+.mk-field-close { inset: 0; }
+
+/* ── Pricing page head: the headline and the plain facts beside it ────── */
+.mk-ph-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 32px clamp(40px, 6vw, 96px); align-items: end; }
+.mk-ph-facts { margin: 0; display: grid; border-top: 1px solid var(--line); }
+.mk-ph-facts > div { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 15.5px; }
+.mk-ph-facts dt { color: var(--ink-3); }
+.mk-ph-facts dd { margin: 0; color: var(--ink); font-weight: 550; }
+@media (max-width: 900px) { .mk-ph-grid { grid-template-columns: 1fr; } }

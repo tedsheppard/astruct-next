@@ -103,7 +103,7 @@ const WHO: { title: string; body: string; points: string[]; item: WhoItem }[] = 
     title: 'Developers',
     body: 'Check each variation and EOT claim against the contract, the programme and the correspondence, and respond within the time the contract allows.',
     points: ['Claims checked against the contract and programme', 'The clause and page behind every answer', 'Responses inside the time the contract allows'],
-    item: { kind: 'EOT claim received', title: '14 days claimed, crane outage', meta: 'AS 4000 cl 34.5 · decision due within 28 days', c: 'amber' },
+    item: { kind: 'EOT claim received', title: '14 days claimed, wet weather', meta: 'AS 4000 cl 34.5 · decision due within 28 days', c: 'amber' },
   },
 ]
 
@@ -444,19 +444,20 @@ export default function HomePage() {
 
       {/* FAQ */}
       <section className="mk-sec" id="faq">
-        <div className="mk-wrap mk-narrow">
-          <div className="mk-head mk-reveal">
+        <div className="mk-wrap mk-faq-grid">
+          <div className="mk-faq-side">
             <h2 className="mk-h2">Questions</h2>
+            <p className="mk-body">What people ask before they start a trial.</p>
+            <p><Link className="mk-link" href="/support">More answers in the help centre<IArrow /></Link></p>
           </div>
           <Faq items={HOME_FAQ} />
-          <p style={{ marginTop: 32 }}><Link className="mk-link" href="/support">More answers in the help centre<IArrow /></Link></p>
         </div>
       </section>
 
       {/* Close */}
       <section className="mk-sec mk-alt mk-close">
         <div className="mk-field mk-field-close" aria-hidden="true"><i /><i /><i /><i /></div>
-        <div className="mk-wrap mk-reveal">
+        <div className="mk-wrap">
           <h2 className="mk-h2">Start with one project.</h2>
           <p className="mk-lede" style={{ marginTop: 22, marginLeft: 'auto', marginRight: 'auto', maxWidth: 620 }}>
             Drop in the contract, connect Outlook and ask your first question.

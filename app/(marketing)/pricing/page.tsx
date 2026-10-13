@@ -29,9 +29,17 @@ export default function PricingPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(ITEMS)) }} />
       <section className="mk-page-head">
-        <div className="mk-wrap">
-          <h1 className="mk-h1" style={{ fontSize: 'clamp(40px, 5.4vw, 72px)' }}>Per project.<br />Every user included.</h1>
-          <p className="mk-lede">AU$199 a month for your first project, and less for each one after. Add as many people as you like. {TRIAL_LINE}</p>
+        <div className="mk-wrap mk-ph-grid">
+          <div>
+            <h1 className="mk-h1" style={{ fontSize: 'clamp(40px, 5.4vw, 72px)' }}>Per project.<br />Every user included.</h1>
+            <p className="mk-lede">AU$199 a month for your first project, and less for each one after. Add as many people as you like. {TRIAL_LINE}</p>
+          </div>
+          <dl className="mk-ph-facts">
+            <div><dt>Users</dt><dd>Unlimited, on every project</dd></div>
+            <div><dt>Eight projects</dt><dd>AU$1,392 a month, AU$174 each on average</dd></div>
+            <div><dt>Trial</dt><dd>30 days, two projects, 100 credits</dd></div>
+            <div><dt>Prices</dt><dd>Australian dollars, excluding GST</dd></div>
+          </dl>
         </div>
       </section>
       <section style={{ paddingBottom: 'clamp(96px, 12vw, 160px)' }}>

@@ -308,7 +308,7 @@ export type Output = { kind: string; title: string; meta: string; c: 'rose' | 'a
 // Kestrel Street, Stage 2 (the same pack as every panel below the hero).
 // "Today" is Monday 12 October 2026, Brisbane business days.
 export const SOURCES: Source[] = [
-  { label: 'Subcontract', meta: 'HV2291-SC-014 · 28 pages', icon: 'contract' },
+  { label: 'Subcontract', meta: 'SC-014 · 28 pages', icon: 'contract' },
   { label: 'Correspondence', meta: '2,318 letters and emails', icon: 'mail' },
   { label: 'Site instructions', meta: 'SI-001 to SI-014', icon: 'si' },
   { label: 'Programme', meta: 'Rev 8 · critical path', icon: 'programme' },

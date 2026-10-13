@@ -177,7 +177,7 @@ export function IssueWindow() {
     <div className="ui ui-window">
       <aside className="ui-side">
         <div className="ui-side-brand"><Mark /><Wordmark /></div>
-        <div className="ui-side-proj"><ISide.folder className="ui-ic" /><span><b>Kestrel Street, Stage 2</b><small>Subcontract HV2291-SC-014</small></span></div>
+        <div className="ui-side-proj"><ISide.folder className="ui-ic" /><span><b>Kestrel Street, Stage 2</b><small>Façade subcontract</small></span></div>
         <span className="ui-nav"><INotice />Notices<em className="ui-count is-hot">2 due</em></span>
         <span className="ui-nav is-on"><ISide.draft className="ui-ic" />Issues<em className="ui-count">3</em></span>
         <span className="ui-nav"><ISide.mail className="ui-ic" />Mail</span>
