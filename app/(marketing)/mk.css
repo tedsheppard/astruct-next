@@ -190,7 +190,7 @@ html.dark body:has(.mk) { background: #0a0a0b; }
 .mk-header:not(.is-scrolled) .mk-header-bar { background: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
 .mk-brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); }
 .mk-brand svg.mk-mark { width: 30px; height: auto; }
-.mk-wordmark { display: inline-block; height: 15px; aspect-ratio: 556 / 106; background: currentColor; -webkit-mask: url(/brand/astruct-wordmark.png) center / contain no-repeat; mask: url(/brand/astruct-wordmark.png) center / contain no-repeat; }
+.mk .mk-wordmark { display: inline-block; height: 15px; width: auto; aspect-ratio: 2224 / 424; flex: none; overflow: visible; }
 .mk-nav { display: flex; align-items: center; gap: 28px; margin-left: auto; font-size: 14px; color: var(--ink-2); }
 .mk-nav a:hover { color: var(--ink); }
 .mk-header-cta { display: flex; align-items: center; gap: 18px; font-size: 14px; }

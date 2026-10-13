@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { WORDMARK_D } from './wordmark-path'
 
 // The Astruct mark, traced from astruct_logo_only_transparent_*.png, in
 // currentColor so it follows the theme.
@@ -11,10 +12,14 @@ export function Mark({ className }: { className?: string }) {
   )
 }
 
-// The wordmark is the brand's own lettering, used as a mask so it takes the
-// text colour in light and dark.
+// The wordmark is the brand's own lettering, inline, in currentColor so it
+// takes the text colour in light and dark and paints with the HTML.
 export function Wordmark() {
-  return <span className="mk-wordmark" role="img" aria-label="Astruct" />
+  return (
+    <svg className="mk-wordmark" viewBox="0 0 2224 424" role="img" aria-label="Astruct">
+      <path transform="translate(0 424) scale(.25 -.25)" d={WORDMARK_D} fill="currentColor" />
+    </svg>
+  )
 }
 
 export function Brand() {
