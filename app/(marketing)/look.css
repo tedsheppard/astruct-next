@@ -422,3 +422,11 @@
   .pb-narrow { display: flex; flex-direction: column; }
   .pb-n-brain { order: -1; margin: 0 auto 12px; width: min(86%, 380px); }
 }
+
+/* Phone register: the business-day figure stays on one line. */
+@media (max-width: 900px) {
+  .rg-left b { white-space: nowrap; }
+}
+@media (max-width: 560px) {
+  .rg-row:not(.is-done) .rg-left small { display: none; }
+}
