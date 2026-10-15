@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
   if (!details) {
     const missing: string[] = []
     if (!name) missing.push('your name')
-    if (!EMAIL_RE.test(email)) missing.push('a valid work email')
+    if (!EMAIL_RE.test(email)) missing.push('a work email address')
     if (!company) missing.push('your company')
     if (missing.length) return Response.json({ error: `Please add ${missing.join(', ')}.` }, { status: 400 })
   } else if (!EMAIL_RE.test(email)) {

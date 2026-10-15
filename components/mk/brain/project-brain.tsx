@@ -95,18 +95,18 @@ function Defs({ id }: { id: string }) {
 }
 
 const LABEL =
-  'The project brain on a demo project, Kestrel Street, Stage 2, with fictional parties. It reads the subcontract HV2291-SC-014, the correspondence, site instructions, programme, RFIs, drawings and Outlook, and shows the notices and time bars: an EOT claim due Thursday 15 October under SC 7.2, 3 days away; variation particulars for SI-014 due Monday 19 October under SC 8.2; payment claim PC-10 with a reference date of 25 October under the BIF Act (Qld); and the delay notice under SC 7.1, given on time on 29 September.'
+  'The project brain on a demo project, Kestrel Street, Stage 2, with fictional parties. It reads the subcontract HV2291-SC-014, the correspondence, site instructions, programme, RFIs, drawings and Outlook, and shows what it found: an EOT claim issue, with the SC 7.2 period ending Thursday 15 October and 4 documents linked; a variation issue for SI-014 under SC 8.1, with the evidence linked; payment claim PC-10 with a reference date of 25 October under the BIF Act (Qld); and notice of delay ARC-KS2-L-041, sent on 29 September and filed to Notices.'
 
 export function ProjectBrain() {
   const b = BRAIN
   const cx = b.box.x + b.box.w / 2
   return (
     <figure className="pb" role="img" aria-label={LABEL}>
-      {/* Wide screens: one drawing, sources on the left, actions on the right. */}
+      {/* Wide screens: one drawing, sources on the left, what it found on the right. */}
       <svg className="pb-wide" viewBox={`0 0 ${W} ${H}`} aria-hidden="true">
         <Defs id="pbw" />
         <text className="pb-col" x="2" y={COL_Y}>What it reads</text>
-        <text className="pb-col" x={OUT_X + 2} y={COL_Y}>Notices and time bars · Mon 12 Oct</text>
+        <text className="pb-col" x={OUT_X + 2} y={COL_Y}>What it found · Mon 12 Oct</text>
         <text className="pb-cap" x={cx} y={COL_Y} textAnchor="middle">Kestrel Street, Stage 2</text>
         <text className="pb-cap-sub" x={cx} y={COL_Y + 20} textAnchor="middle">4,812 documents read · demo project, fictional parties</text>
 
@@ -169,7 +169,7 @@ export function ProjectBrain() {
           <Defs id="pbn" />
           <BrainBody id="pbn" />
         </svg>
-        <p className="pb-n-col">Notices and time bars · Mon 12 Oct</p>
+        <p className="pb-n-col">What it found · Mon 12 Oct</p>
         <ul className="pb-n-out">
           {OUTPUTS.map((o, i) => (
             <li key={o.kind} data-c={o.c} style={{ ['--d' as string]: `${i * 2.5}s` }}>

@@ -65,7 +65,7 @@ export function ReadLive() {
         <div className="ui-dl">
           {FACTS.map((r, i) => row(r, i))}
         </div>
-        <div className="ui-pad lv-read-sub"><span className="ui-kind">Notice periods and time bars</span></div>
+        <div className="ui-pad lv-read-sub"><span className="ui-kind">Notice periods</span></div>
         <div className="ui-dl">
           {NOTICES.map((r, i) => row(r, FACTS.length + i))}
         </div>

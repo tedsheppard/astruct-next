@@ -1,6 +1,6 @@
 ---
 title: Upstream and downstream
-summary: Astruct works for your side of each contract, whether you are giving notices or receiving them.
+summary: Astruct works for your side of each contract, whether you give notices or receive them.
 category: agent
 order: 4
 keywords: upstream downstream head contractor principal subcontractor role both sides
@@ -9,21 +9,23 @@ Most businesses sit in the middle of a chain of contracts. Astruct works in both
 
 ## Upstream
 
-Your contract with the **principal** or **head contractor**. Here you are usually the one who must give notices and claims on time:
+Your contract with the **principal** or **head contractor**. Here you usually give notices and claims:
 
 - variation notices and particulars;
-- delay notices and EOT claims;
+- notices of delay and EOT claims;
 - payment claims.
 
-Astruct flags the directions and delays that start these clocks.
+Astruct opens issues for the directions and delays it finds in the mail, with the clause and the period the contract states.
 
 ## Downstream
 
-Your contracts with **subcontractors** and suppliers. Here you usually receive notices and claims, and owe responses:
+Your contracts with **subcontractors** and suppliers. Here you usually receive notices and claims, and respond to them:
 
-- notices and claims from subcontractors, and whether they were given on time;
-- payment schedules you must give in response to payment claims, within the time your contract and the security of payment law allow;
-- directions you give, and the notices they may trigger.
+- notices and claims from subcontractors, filed to the project with the date they arrived and the clause they refer to;
+- payment schedules in response to payment claims, with the period your contract and the security of payment law state;
+- directions you give, and the notices they may lead to.
+
+Astruct shows what each contract says and when each document arrived. Your team decides how to respond.
 
 ## Set your role on each project
 

@@ -323,10 +323,10 @@ export const SOURCES: Source[] = [
 ]
 
 export const OUTPUTS: Output[] = [
-  { kind: 'EOT claim', title: 'Due Thu 15 Oct, SC 7.2', meta: '3 business days left · TC1, L6 access', c: 'rose' },
-  { kind: 'Variation particulars', title: 'SI-014 façade brackets', meta: 'Due Mon 19 Oct · SC 8.2', c: 'amber' },
-  { kind: 'Payment claim', title: 'PC-10, reference date 25 Oct', meta: 'Work to 25 Oct · BIF Act (Qld)', c: 'blue' },
-  { kind: 'Delay notice', title: 'Given 29 Sep, on time', meta: 'SC 7.1 · ARC-KS2-L-041 · on file', c: 'teal' },
+  { kind: 'EOT claim', title: 'Period ends Thu 15 Oct', meta: 'SC 7.2 · p 20 · 4 documents linked', c: 'violet' },
+  { kind: 'Variation', title: 'SI-014 façade brackets', meta: 'SC 8.1 · p 21 · evidence linked', c: 'amber' },
+  { kind: 'Payment claim', title: 'PC-10, reference date 25 Oct', meta: 'Item 24 · p 17 · BIF Act (Qld)', c: 'blue' },
+  { kind: 'Notice of delay', title: 'ARC-KS2-L-041, sent 29 Sep', meta: 'SC 7.1 · p 20 · filed to Notices', c: 'teal' },
 ]
 
 // Columns

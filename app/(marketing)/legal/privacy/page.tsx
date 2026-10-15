@@ -36,7 +36,7 @@ const SECTIONS: LegalSection[] = [
       <>
         <p>We use personal information to:</p>
         <ul>
-          <li>provide and operate Astruct, including reading your connected sources, detecting issues, linking evidence, computing deadlines and preparing drafts for your review;</li>
+          <li>provide and operate Astruct, including reading your connected sources, detecting issues, linking evidence, counting periods from your contract and preparing drafts for your review;</li>
           <li>respond to trial requests and enquiries, and set up and support your account;</li>
           <li>measure usage, administer plans and process payments;</li>
           <li>keep Astruct secure and detect misuse; and</li>
@@ -63,7 +63,10 @@ const SECTIONS: LegalSection[] = [
       <p>
         To read mail and documents, check issues and prepare drafts, Astruct sends the relevant parts of Your Content to
         OpenAI&rsquo;s API. OpenAI processes these requests in the United States under its business API terms, and does not
-        use data sent through its business API to train its models.
+        use data sent through its business API to train its models. If you choose to run chat on your own ChatGPT
+        account (Settings, Model account), those chat requests go to OpenAI from your Astruct Computer under your ChatGPT
+        account and OpenAI&rsquo;s terms for your plan, including how OpenAI uses data for training. We do not receive or
+        store your ChatGPT sign-in.
       </p>
     ),
   },
@@ -163,7 +166,7 @@ export default function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy policy"
-      updated="13 October 2026"
+      updated="16 October 2026"
       intro={
         <p>
           This policy explains how Astruct (<strong>we</strong>, <strong>us</strong>, <strong>our</strong>) collects, uses,

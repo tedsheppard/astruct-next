@@ -1,9 +1,9 @@
 // Where the data goes: stored in Sydney, model requests to OpenAI in the US,
-// nothing sent until a person presses Send. Used on the landing and /security.
+// and Astruct never sends: you send what it drafts. Used on the landing and /security.
 
 export function DataFlow() {
   return (
-    <div className="df" role="img" aria-label="Your documents, mail and drafts are stored in Sydney. Model requests go to OpenAI in the United States and are not used for training. A letter or email leaves only when a person on your team presses Send.">
+    <div className="df" role="img" aria-label="Your documents, mail and drafts are stored in Sydney. Model requests go to OpenAI in the United States and are not used for training. Astruct never sends a letter or email. You send what it drafts, from your own mail.">
       <div className="df-node">
         <span className="df-k">Your team</span>
         <b>Documents, mail and drafts</b>
@@ -22,13 +22,13 @@ export function DataFlow() {
       </div>
       <span className="df-down" aria-hidden="true" />
       <div className="df-node df-gate">
-        <span className="df-k">Only when</span>
-        <b>A person presses Send</b>
+        <span className="df-k">Sending</span>
+        <b>You, not Astruct</b>
       </div>
       <span className="df-arrow df-arrow-2" aria-hidden="true" />
       <div className="df-node df-out">
-        <span className="df-k">Then</span>
-        <b>The letter or email leaves</b>
+        <span className="df-k">From</span>
+        <b>Your own mail</b>
       </div>
     </div>
   )

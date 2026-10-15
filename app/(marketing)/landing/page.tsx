@@ -5,7 +5,7 @@ import { ProjectBrain } from '@/components/mk/brain/project-brain'
 import { Clause, IssueWindow, Replay } from '@/components/mk/fragments'
 import { AskLive, DraftLive, SearchLive, WatchLive } from '@/components/mk/live/fragments'
 import { ReadLive } from '@/components/mk/live/read'
-import { NoticeRegister } from '@/components/mk/register'
+import { Chronology } from '@/components/mk/chronology'
 import { DataFlow } from '@/components/mk/data-flow'
 import { Faq, HOME_FAQ, faqJsonLd } from '@/components/mk/faq'
 import { GGmail, GOutlook, GSharePoint, GUpload, IArrow, ICheck } from '@/components/mk/icons'
@@ -46,19 +46,19 @@ const ic = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinec
 
 // The four things the project brain does, in this order everywhere on the page.
 const BRAIN: { n: string; href: string; c: string; title: string; line: string }[] = [
-  { n: '1', href: '#read', c: 'teal', title: 'Reads the contract', line: 'Contract sum, practical completion, LDs, payment dates and every notice period.' },
-  { n: '2', href: '#ask', c: 'blue', title: 'Answers with the clause', line: 'Ask anything. Every answer cites the clause and the page.' },
-  { n: '3', href: '#draft', c: 'violet', title: 'Drafts the notice', line: 'On your letterhead, in one click, before the time bar.' },
-  { n: '4', href: '#watch', c: 'amber', title: 'Reads the project mail', line: 'Outlook, read for variations, delays and claims.' },
+  { n: '1', href: '#read', c: 'teal', title: 'Reads the contract', line: 'Contract sum, practical completion, LDs, payment dates and every notice period, each with its clause and page.' },
+  { n: '2', href: '#ask', c: 'blue', title: 'Answers with the clause', line: 'Search every page and email. Every answer cites the clause and page.' },
+  { n: '3', href: '#draft', c: 'violet', title: 'Drafts from the contract', line: 'Notices, letters and claims in Word, on your letterhead. You send them.' },
+  { n: '4', href: '#mail', c: 'amber', title: 'Files every record', line: 'Documents and email filed by project and type. Issues opened from the mail.' },
 ]
 
 const SAFE: { title: string; body: string; icon: React.ReactNode }[] = [
   {
-    title: 'Nothing leaves without a person', body: 'Astruct drafts. No letter or email leaves until a person on your team presses Send.',
+    title: 'Astruct never sends', body: 'Astruct drafts. You check the draft and send it yourself. Nothing goes out from your mailbox.',
     icon: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10 14" {...ic} /><path d="M21 3l-7 18-4-7-7-4z" {...ic} /></svg>,
   },
   {
-    title: 'Only what you connect', body: 'Astruct reads only the mailboxes you connect. Disconnect one from Settings at any time.',
+    title: 'Only what you connect', body: 'Astruct reads only the mailboxes and apps you connect. Disconnect one from Settings at any time.',
     icon: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" {...ic} /><circle cx="12" cy="12" r="2.8" {...ic} /></svg>,
   },
   {
@@ -67,10 +67,11 @@ const SAFE: { title: string; body: string; icon: React.ReactNode }[] = [
   },
 ]
 
-const COMPANY: { title: string; body: string }[] = [
+// The company account: priced per project, every user included, and what each person gets.
+const PLAN: { title: string; body: string }[] = [
   { title: 'Unlimited users', body: 'Astruct is priced per project, not per person. Add every contract administrator, project manager, estimator and executive on the job at no extra cost.' },
-  { title: 'Spend follows your projects', body: 'You choose which projects are on Astruct, and the bill is the number of projects. Hiring or adding a consultant to a project doesn’t change it.' },
-  { title: 'Your letterhead', body: 'Upload a letter you have sent. Astruct takes its letterhead, page size, margins, fonts, header and footer, and every draft from then on uses them.' },
+  { title: 'Spend follows your projects', body: 'You choose which projects are on Astruct, and the bill is the number of projects, plus credits for AI use.' },
+  { title: 'A cloud computer for each user', body: 'A browser and a terminal in the cloud, for the web apps and files your projects run on.' },
   { title: 'Roles and access', body: 'Owners and admins invite people, set their roles and remove them. A person who is removed loses access to the company’s projects straight away.' },
 ]
 
@@ -78,31 +79,31 @@ type WhoItem = { kind: string; title: string; meta: string; c: 'rose' | 'amber' 
 const WHO: { title: string; body: string; points: string[]; item: WhoItem }[] = [
   {
     title: 'Head contractors',
-    body: 'Give notices to the principal on time, check subcontractor claims against their subcontracts, and give payment schedules inside the security of payment deadlines.',
-    points: ['Delay notices and EOT claims under the head contract', 'Subcontractor claims checked against each subcontract', 'Payment schedules inside the statutory time'],
-    item: { kind: 'Payment schedule', title: 'Arcline PC-09, due today', meta: 'Item 27 · 10 business days from Fri 25 Sep', c: 'blue' },
+    body: 'Keep the head contract, every subcontract and the project mail in one place, and read each subcontractor claim against its subcontract with the clause and page.',
+    points: ['Head contract and subcontracts read clause by clause', 'Subcontractor claims and notices filed to each project', 'Payment schedules drafted from the contract and the claim'],
+    item: { kind: 'Payment claim received', title: 'Arcline PC-09, Fri 25 Sep', meta: 'Filed to Payment claims · Item 27, p 17', c: 'blue' },
   },
   {
     title: 'Subcontractors',
-    body: 'Catch directions that change your scope, even when they say “no change”, and draft variation notices, delay notices and EOT claims from the evidence.',
-    points: ['Directions compared against your scope of work', 'Variation notices before the time bar', 'Payment claims on the reference date'],
-    item: { kind: 'Variation notice', title: 'SI-014 given Tue 29 Sep, on time', meta: 'SC 8.1 · due Fri 2 Oct, 5:00 pm', c: 'teal' },
+    body: 'See each direction next to your scope, including one that says “no change”, and draft variation notices, notices of delay and EOT claims from the evidence.',
+    points: ['Variations found in the mail, with the evidence linked', 'Notices drafted from the clause and the evidence', 'Payment claims drafted for each reference date'],
+    item: { kind: 'Variation notice', title: 'ARC-KS2-L-042, sent 29 Sep', meta: 'SC 8.1 · p 21 · filed to Notices', c: 'teal' },
   },
   {
     title: 'Developers',
-    body: 'Check each variation and EOT claim against the contract, the programme and the correspondence, and respond within the time the contract allows.',
-    points: ['Claims checked against the contract and programme', 'The clause and page behind every answer', 'Responses inside the time the contract allows'],
-    item: { kind: 'EOT claim received', title: '14 days claimed, wet weather', meta: 'AS 4000 cl 34.5 · decision due within 28 days', c: 'amber' },
+    body: 'Read each variation and EOT claim against the contract, the programme and the correspondence, with the clause and page behind every answer.',
+    points: ['Claims read against the contract and programme', 'The clause and page behind every answer', 'Responses drafted from the contract'],
+    item: { kind: 'EOT claim received', title: '14 days claimed, wet weather', meta: 'AS 4000 cl 34.5 · evidence linked', c: 'amber' },
   },
 ]
 
 // The request and the steps beside the drafted letter (demo pack, fictional).
-const DRAFT_PROMPT = 'Draft the EOT claim for the crane outage and late Level 6 access, on our letterhead'
+const DRAFT_PROMPT = 'Draft the EOT claim for the crane outage and the Level 6 access, on our letterhead'
 const DRAFT_STEPS = [
   'Read Subcontract HV2291-SC-014: SC 7.2, p 20',
-  'Linked delay notice ARC-KS2-L-041 of 29 September',
+  'Linked notice of delay ARC-KS2-L-041 of 29 September',
   'Checked Programme Rev 8 for the critical path',
-  'Drafted on the Arcline letterhead, due Thu 15 Oct',
+  'Drafted on the Arcline letterhead as ARC-KS2-L-044.docx',
 ]
 
 function Bullets({ items }: { items: string[] }) {
@@ -131,16 +132,17 @@ export default function HomePage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(HOME_FAQ)) }} />
 
-      {/* Hero: the project brain */}
+      {/* Hero: what it is, who it is for, and the project brain */}
       <section className="mk-hero2">
         <div className="mk-field mk-field-hero2" aria-hidden="true"><i /><i /><i /></div>
         <div className="mk-wrap mk-hero2-wrap">
           <div className="mk-hero2-top">
-            <h1 className="mk-h1 mk-hero2-h1">The <span className="mk-grad">project brain</span> for Australian construction contracts.</h1>
+            <h1 className="mk-h1 mk-hero2-h1">Contract administration for construction. <span className="mk-grad">Every clause cited.</span></h1>
             <div className="mk-hero2-side">
               <p className="mk-hero2-lede">
-                Astruct reads the contract, the correspondence and the project mail, and shows what needs a notice and
-                when. Every answer cites the clause and page. The notice is drafted on your letterhead before the time bar.
+                For contract administrators at Australian builders and subcontractors. Astruct reads the contract, files every
+                document and email to its project, keeps the chronology, and drafts notices and claims from the contract
+                and the evidence, on your letterhead. You check them and send them.
               </p>
               <div className="mk-hero2-cta">
                 <div className="mk-cta-row">
@@ -165,17 +167,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* The register: what is due, from which clause, and how long is left */}
-      <section className="mk-sec mk-alt mk-sec-reg" id="register">
+      {/* The chronology: the project diary, each entry linked to its source */}
+      <section className="mk-sec mk-alt mk-sec-reg" id="chronology">
         <div className="mk-wrap">
           <div className="mk-reg-head">
-            <h2 className="mk-h2">Every notice, its clause and the days left.</h2>
+            <h2 className="mk-h2">The project diary, every entry linked to its source.</h2>
             <p className="mk-lede">
-              Astruct keeps the register for you. Each notice and time bar comes from the contract, each date is counted
-              in business days, and each one shows whether it went out on time.
+              Astruct builds the chronology from the documents and email it files, day by day. Each entry opens the
+              letter, email or drawing it came from. Export it as CSV.
             </p>
           </div>
-          <NoticeRegister />
+          <Chronology />
         </div>
       </section>
 
@@ -187,12 +189,13 @@ export default function HomePage() {
             <h2 className="mk-h2">Your contract, read in about a minute.</h2>
             <p className="mk-body mk-feature-body">
               Head contract or subcontract, standard form or bespoke. Special conditions are read with the general
-              conditions, so a replaced clause is never the one relied on.
+              conditions, and every figure links to the words it came from.
             </p>
             <Bullets items={[
               'Contract sum, date for practical completion and liquidated damages',
               'Reference dates for payment claims and the time for payment schedules',
-              'Every notice period and time bar, with its clause and page',
+              'Every notice period, with its clause and page',
+              'A project brain map where each clause opens its quoted words and page',
             ]} />
           </div>
           <div className="mk-panel"><ReadLive /></div>
@@ -215,28 +218,28 @@ export default function HomePage() {
             <span className="mk-kicker" data-c="blue">2. Answers with the clause</span>
             <h2 className="mk-h2">Ask anything. Get the clause and the page.</h2>
             <p className="mk-body mk-feature-body">
-              Ask in your own words. Astruct answers from the contract, its amendments and the correspondence, and cites
-              the clause and page for each point.
+              Ask in your own words. Astruct answers from the contract, its amendments and the correspondence, quotes
+              the clause and cites the page for each point. You read the clause and decide.
             </p>
             <Bullets items={[
               'Reads AS 2124, AS 4000, AS 4300, AS 4902 and AS 4903 style contracts, their subcontracts and amendments',
-              'Knows the security of payment time limits, such as under SOPA and Queensland’s BIF Act',
-              'Every answer cites the clause and the page',
+              'Each point quotes the clause and cites its page',
+              'What the documents say, not legal advice',
             ]} />
           </div>
           <div className="mk-panel mk-panel-card"><AskLive /></div>
         </div>
         <div className="mk-wrap mk-feature mk-feature-2" id="search">
           <div className="mk-feature-copy">
-            <h3 className="mk-h2">Search thousands of documents.</h3>
+            <h3 className="mk-h2">Search every page of every document and email.</h3>
             <p className="mk-body mk-feature-body">
-              One search runs across every document and email in the project that you are allowed to see, in Boolean or
-              plain English.
+              Plain English or exact Boolean, across the whole project you are allowed to see. Each result says in a
+              line why it matches.
             </p>
             <Bullets items={[
               'AND, OR, NOT, “exact phrases”, brackets and wildcards',
               'Proximity: w/5, NEAR/10 and pre/3 for words close together or in order',
-              'Results across documents and mail, each with its page reference',
+              'Each result opens on its page, documents and email together',
             ]} />
             <p className="mk-fine mk-feature-note"><Link className="mk-link" href="/support/boolean-search">Boolean search reference<IArrow /></Link></p>
           </div>
@@ -244,15 +247,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. Drafts the notice */}
+      {/* 3. Drafts from the contract */}
       <section className="mk-sec mk-feature-sec" id="draft">
         <div className="mk-wrap mk-feature mk-feature-draft">
           <div className="mk-feature-copy">
-            <span className="mk-kicker" data-c="violet">3. Drafts the notice</span>
-            <h2 className="mk-h2">The notice, on your letterhead, before the time bar.</h2>
+            <span className="mk-kicker" data-c="violet">3. Drafts from the contract</span>
+            <h2 className="mk-h2">Notices and claims, drafted from the contract and the evidence.</h2>
             <p className="mk-body mk-feature-body">
-              Variation notices, delay notices, EOT claims and letters, drafted from the contract and the evidence.
-              Upload a letter your company has sent and every draft uses its letterhead, fonts and layout.
+              Notices of delay, EOT claims, variation notices, payment claims and letters, in a real Word editor on
+              your letterhead. It opens as .docx, in Arial or Times as Word has them, and downloads as PDF.
             </p>
             <div className="mk-ask-card ui" aria-label="The request and what Astruct did">
               <div className="dp-sent">{DRAFT_PROMPT}</div>
@@ -262,29 +265,29 @@ export default function HomePage() {
             </div>
             <Bullets items={[
               'The clause, dates, parties and references come from the project’s own documents',
-              'Downloaded as a Word file, ready to check and sign',
-              'Nothing leaves until a person on your team presses Send',
+              'Opens in Word as .docx, or downloads as PDF',
+              'Astruct never sends. You check it and send it yourself',
             ]} />
           </div>
           <div className="mk-draft-panel"><DraftLive /></div>
         </div>
       </section>
 
-      {/* 4. Reads the project mail */}
-      <section className="mk-sec mk-feature-sec mk-alt" id="watch">
+      {/* 4. Files every record */}
+      <section className="mk-sec mk-feature-sec mk-alt" id="mail">
         <div className="mk-wrap mk-feature mk-feature-flip">
           <div className="mk-feature-copy">
-            <span className="mk-kicker" data-c="amber">4. Reads the project mail</span>
-            <h2 className="mk-h2">Connect Outlook. Astruct reads the project mail.</h2>
+            <span className="mk-kicker" data-c="amber">4. Files every record</span>
+            <h2 className="mk-h2">Every document and email, filed to its project.</h2>
             <p className="mk-body mk-feature-body">
-              As mail arrives, Astruct reads it for variations, delays and claims. It compares each direction with your
-              scope of work, flags likely variations and potential delays, links the evidence and works out when the
-              notice is due. Upstream and downstream.
+              Upload files and folders, or connect Outlook. Astruct files each one by type, from contract and
+              correspondence to notices, payment claims, RFIs and drawings. Notices of delay, EOT claims, variations and
+              payment claims in the mail become issues, with the evidence linked and the period the contract states.
             </p>
             <Bullets items={[
-              'Directions compared against the scope of work',
-              'Potential delays flagged from mail, minutes and programme updates',
-              'Claims and payment schedules picked up, with the dates the contract sets',
+              'Uploads keep their folders',
+              'Issues from the mail, with the evidence and the clause linked',
+              'Astruct reads mail. It never sends from your mailbox',
             ]} />
             <p className="mk-fine mk-feature-note">New mail is picked up within about five minutes. Astruct reads only the mailboxes you connect.</p>
           </div>
@@ -294,7 +297,7 @@ export default function HomePage() {
           <div className="mk-srcs" id="sources" aria-label="What Astruct reads">
             <div className="mk-src">
               <span className="mk-int-logo" style={{ color: 'var(--ink)' }}><GUpload /></span>
-              <div><b>Your documents</b><span>The contract, drawings, programme and correspondence. Files, folders, zips and saved emails.</span></div>
+              <div><b>Your documents</b><span>The contract, drawings, programme and correspondence. Uploaded with their folder structure.</span></div>
               <span className="mk-int-status"><i className="ui-dot" />Live</span>
             </div>
             <div className="mk-src">
@@ -304,8 +307,8 @@ export default function HomePage() {
             </div>
             <div className="mk-src">
               <span className="mk-int-logo mk-int-logo-2"><GGmail /><GSharePoint /></span>
-              <div><b>Procore, Gmail and SharePoint</b><span>Set up with you during the trial. Tell us when you request it.</span></div>
-              <span className="mk-int-status is-request"><i className="ui-dot" />On request</span>
+              <div><b>Procore, Gmail, SharePoint and more</b><span>Connected from the Apps page, or opened in your cloud computer.</span></div>
+              <span className="mk-int-status is-request"><i className="ui-dot" />Apps</span>
             </div>
           </div>
         </div>
@@ -314,11 +317,11 @@ export default function HomePage() {
       <section className="mk-sec" id="see-it-work">
         <div className="mk-wrap">
           <div className="mk-head">
-            <h3 className="mk-h2">From one email to a notice, ready for review.</h3>
-            <p className="mk-lede">A replay from Tue 29 Sep on the demo project: Arcline’s façade subcontract in Fortitude Valley, Brisbane, and the site instruction that changed its brackets. The notice went out that afternoon, three business days early.</p>
+            <h3 className="mk-h2">From one email to a drafted notice.</h3>
+            <p className="mk-lede">A replay from Tue 29 Sep on the demo project: Arcline’s façade subcontract in Fortitude Valley, Brisbane, and the site instruction that changed its brackets. Astruct opened the issue, linked the evidence and the clause, and drafted the notice. Arcline checked it and sent it that afternoon.</p>
           </div>
           <div className="mk-walk">
-            <Walkthrough label="Astruct walkthrough on the demo project, a replay from Tuesday 29 September" phone={<div className="ui mk-still-phone-pad"><Replay /><Clause /></div>}>
+            <Walkthrough label="Astruct on the demo project, a replay from Tuesday 29 September" phone={<div className="ui mk-still-phone-pad"><Replay /><Clause /></div>}>
               <IssueWindow />
             </Walkthrough>
           </div>
@@ -333,7 +336,8 @@ export default function HomePage() {
               <h2 className="mk-h2">Your project data is stored in Australia.</h2>
               <p className="mk-lede">
                 Stored in Sydney. Model requests go to OpenAI in the United States under its business API terms and are
-                not used for training. Nothing leaves until a person on your team presses Send.
+                not used for training. If you use your own ChatGPT account, your plan’s terms apply to those chats.
+                Astruct never sends a letter or email. You do.
               </p>
               <p style={{ marginTop: 24 }}><Link className="mk-link" href="/security">How Astruct handles your data<IArrow /></Link></p>
             </div>
@@ -356,7 +360,7 @@ export default function HomePage() {
         <div className="mk-wrap">
           <div className="mk-head">
             <h2 className="mk-h2">Built for the people who give and answer the notices.</h2>
-            <p className="mk-lede">Project managers, contract administrators and commercial managers, on either side of the contract.</p>
+            <p className="mk-lede">Contract administrators, project managers and commercial managers, on either side of the contract.</p>
           </div>
           <div className="mk-who">
             {WHO.map((w) => (
@@ -380,11 +384,11 @@ export default function HomePage() {
         <div className="mk-wrap">
           <div className="mk-head">
             <h2 className="mk-h2">Priced per project. Every user included.</h2>
-            <p className="mk-lede">AU$199 a month for your first project, and less for each one after. {TRIAL_LINE}</p>
+            <p className="mk-lede">From AU$199 a project a month ex GST, with unlimited users, plus credits for AI use. {TRIAL_LINE}</p>
           </div>
           <PricingCards />
           <div className="mk-company" id="company">
-            {COMPANY.map((c) => (
+            {PLAN.map((c) => (
               <div key={c.title}>
                 <h3>{c.title}</h3>
                 <p>{c.body}</p>
@@ -412,7 +416,7 @@ export default function HomePage() {
         <div className="mk-wrap">
           <h2 className="mk-h2">Start with one project.</h2>
           <p className="mk-lede" style={{ marginTop: 22, marginLeft: 'auto', marginRight: 'auto', maxWidth: 620 }}>
-            Drop in the contract, connect Outlook and ask your first question.
+            Upload the contract, connect Outlook and ask your first question.
           </p>
           <div className="mk-cta-row">
             <a className="mk-btn" href={TRIAL_URL}>{CTA_LABEL}</a>

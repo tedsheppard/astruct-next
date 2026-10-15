@@ -281,9 +281,9 @@ html.dark .mk .ui-side .is-on { background: rgba(255, 255, 255, 0.08); }
 .ui-card div { text-wrap: pretty; }
 .ui-issue-title { font-size: 13.5px; font-weight: 600; letter-spacing: -0.012em; }
 .ui-issue-meta { display: flex; align-items: center; gap: 8px; color: var(--ink-3); font-size: 12px; flex-wrap: wrap; }
-.ui-deadline { text-align: right; font-size: 12.5px; font-weight: 600; }
-.ui-deadline small { display: block; font-size: 11.5px; font-weight: 500; color: var(--ink-3); }
-.ui-deadline.is-soon { color: var(--accent-ink); }
+.ui-period { text-align: right; font-size: 12.5px; font-weight: 600; }
+.ui-period small { display: block; font-size: 11.5px; font-weight: 500; color: var(--ink-3); }
+.ui-period.is-soon { color: var(--accent-ink); }
 
 .ui-toast { position: absolute; z-index: 2; right: 28px; bottom: 28px; width: 300px; border-radius: 18px; padding: 13px 15px; display: grid; gap: 3px; font-size: 12.5px; }
 .ui-toast b { font-weight: 600; font-size: 13px; letter-spacing: -0.012em; }
@@ -328,9 +328,9 @@ html.dark .mk .ui-side .is-on { background: rgba(255, 255, 255, 0.08); }
 .ui-clause-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .ui-clause-text { font-family: var(--f-sans); font-size: 14px; line-height: 1.6; color: var(--ink); margin: 14px 0 0; letter-spacing: -0.008em; }
 .ui-clause-text mark { background: var(--accent-soft); color: inherit; border-radius: 3px; padding: 1px 2px; }
-.ui-deadline-box { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; padding: 16px 20px; background: var(--bg-3); border-top: 1px solid var(--line); border-radius: 0 0 16px 16px; }
-.ui-deadline-date { font-size: 22px; font-weight: 650; letter-spacing: -0.03em; }
-.ui-deadline-calc { font-size: 12px; color: var(--ink-3); }
+.ui-period-box { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; padding: 16px 20px; background: var(--bg-3); border-top: 1px solid var(--line); border-radius: 0 0 16px 16px; }
+.ui-period-date { font-size: 22px; font-weight: 650; letter-spacing: -0.03em; }
+.ui-period-calc { font-size: 12px; color: var(--ink-3); }
 .ui-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
 .ui-stp { display: grid; gap: 7px; font-size: 11.5px; color: var(--ink-3); font-weight: 550; }
 .ui-stp i { display: block; height: 4px; border-radius: 4px; background: var(--line); }
@@ -570,11 +570,11 @@ fieldset.mk-field { border: 0; margin: 0 0 22px; padding: 0; min-width: 0; }
 }
 
 /* ── Narrow-screen refinements ──────────────────────────────────────────── */
-.ui-deadline-date { white-space: nowrap; }
+.ui-period-date { white-space: nowrap; }
 @media (max-width: 640px) {
-  .ui-deadline-box { grid-template-columns: 1fr; gap: 10px; }
-  .ui-deadline-box > div:last-child { text-align: left !important; justify-items: start !important; }
-  .ui-deadline-box > .ui-btn { justify-self: start; }
+  .ui-period-box { grid-template-columns: 1fr; gap: 10px; }
+  .ui-period-box > div:last-child { text-align: left !important; justify-items: start !important; }
+  .ui-period-box > .ui-btn { justify-self: start; }
   .ui-src { grid-template-columns: 34px 1fr; }
   .ui-src-status { grid-column: 2; }
   .mk-walk-steps { gap: 8px 18px; }
@@ -815,6 +815,7 @@ html.dark .mk {
 .ui-page { height: 21px; padding: 0 8px; border-radius: 6px; display: inline-flex; align-items: center; font-size: 11px; font-weight: 650; color: var(--c-teal); background: color-mix(in srgb, var(--c-teal) 11%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c-teal) 26%, transparent); white-space: nowrap; }
 .ui-result-meta { font-size: 11.5px; color: var(--ink-3); margin: 3px 0 7px 24px; }
 .ui-result-snip { font-size: 12.5px; line-height: 1.55; color: var(--ink-2); margin-left: 24px; }
+.ui-result-why { margin-top: 6px; margin-bottom: 0; }
 .ui-result-snip mark { background: color-mix(in srgb, var(--c-teal) 16%, transparent); color: var(--ink); border-radius: 3px; padding: 0 1px; }
 
 .ui-kinds { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }

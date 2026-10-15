@@ -23,6 +23,7 @@ const RETIRED: [string, string][] = [
   ['/help/:path*', '/support/:path*'],
   ['/support/house-style-and-word-files', '/support/letterhead-and-word-files'],
   ['/support/seats-and-credits', '/support/projects-and-users'],
+  ['/support/deadlines-and-check-the-clause', '/support/notice-periods-and-check-the-clause'],
   ['/support/how-the-agent-watches-mail', '/support/how-astruct-reads-mail'],
   ['/support/gmail-pilot', '/support/connections-on-request'],
   ['/support/sharepoint-and-onedrive', '/support/connections-on-request'],

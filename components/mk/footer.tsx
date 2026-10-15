@@ -10,15 +10,16 @@ export default function Footer() {
         <div className="mk-footer-top">
           <div className="mk-footer-brand">
             <Brand />
-            <p>The project brain for Australian construction contracts. It reads the contract, cites the clause and drafts the notice.</p>
+            <p>Contract administration for Australian construction. It reads the contract, files the record, cites the clause and drafts the notice.</p>
           </div>
           <div>
             <h4>Product</h4>
             <ul>
               <li><Link href="/#read">Reads the contract</Link></li>
               <li><Link href="/#ask">Answers with the clause</Link></li>
-              <li><Link href="/#draft">Drafts the notice</Link></li>
-              <li><Link href="/#watch">Reads the project mail</Link></li>
+              <li><Link href="/#draft">Drafts from the contract</Link></li>
+              <li><Link href="/#mail">Files every record</Link></li>
+              <li><Link href="/#chronology">Chronology</Link></li>
               <li><Link href="/pricing">Pricing</Link></li>
               <li><Link href="/security">Security</Link></li>
             </ul>

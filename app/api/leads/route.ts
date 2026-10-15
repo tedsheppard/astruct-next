@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const email = (clip(b.email, 254) || '').toLowerCase()
     const name = clip(b.name, 200)
     const message = clip(b.message, 4000)
-    if (!name || !EMAIL_RE.test(email)) return Response.json({ error: 'Please add your name and a valid email address.' }, { status: 400 })
+    if (!name || !EMAIL_RE.test(email)) return Response.json({ error: 'Please add your name and your email address.' }, { status: 400 })
     if (!message) return Response.json({ error: 'Please include a message.' }, { status: 400 })
 
     const result = await insertLead({

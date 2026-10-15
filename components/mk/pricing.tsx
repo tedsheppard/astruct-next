@@ -6,15 +6,16 @@ import { PriceCalculator } from './pricing-calc'
 
 // The plain-text summary of the price, for metadata and the FAQ.
 export const PRICE_LINE =
-  `From AU$199 per project, per month, ex GST, with unlimited users. Each further project costs less: AU$179 for projects 2–5, AU$159 for 6–15, AU$139 for 16–30 and AU$119 from the 31st.`
+  `From AU$199 a project a month ex GST, with unlimited users, plus credits for AI use. Each further project costs less: AU$179 for projects 2–5, AU$159 for 6–15, AU$139 for 16–30 and AU$119 from the 31st.`
 
 export const INCLUDED = [
   'Unlimited users under one company account',
-  'The contract read, with every notice period and its clause',
-  'Ask, Search and Draft across thousands of documents',
-  'Outlook mail read for variations, delays and claims',
-  'Your letterhead, with drafts downloaded as .docx',
-  'Procore, Gmail and SharePoint on request',
+  'The contract read, with every notice period and its clause and page',
+  'Every document and email filed to the project, with a chronology',
+  'Search, Ask and Draft across every page, each answer cited',
+  'Drafts on your letterhead, as .docx or PDF',
+  'A cloud computer for each user',
+  'Outlook, plus Procore, Gmail, SharePoint and other apps',
 ]
 
 export function PricingCards({ onPricingPage = false }: { onPricingPage?: boolean }) {
@@ -24,7 +25,7 @@ export function PricingCards({ onPricingPage = false }: { onPricingPage?: boolea
       <div className="mk-price-card">
         <span className="mk-h4">Astruct</span>
         <div className="mk-price-amount"><b>AU$199</b><span>per project, per month, ex GST</span></div>
-        <p className="mk-price-sub">Each project after the first costs less. Every user is included.</p>
+        <p className="mk-price-sub">Each project after the first costs less. Every user is included. Credits for AI use are on top.</p>
         <table className="mk-tiers">
           <caption className="mk-sr">Price per project, per month, ex GST</caption>
           <tbody>
@@ -52,11 +53,18 @@ export function PricingCards({ onPricingPage = false }: { onPricingPage?: boolea
           <div className="mk-price-mini mk-lg"><PriceCalculator /></div>
         </div>
         <div className="mk-price-mini">
+          <h3>Paying for AI use</h3>
+          <ul className="mk-trial-steps">
+            <li><span>1</span>Use your own ChatGPT account, the cheaper option. Chat runs on your ChatGPT plan and uses no Astruct credits.</li>
+            <li><span>2</span>Or use Astruct credits, with nothing else to sign in to. AU$1.00 a credit beyond those included, billed monthly.</li>
+          </ul>
+        </div>
+        <div className="mk-price-mini">
           <h3>Free for 30 days</h3>
           <ul className="mk-trial-steps">
             <li><span>1</span>Request a trial. We email you an invite link.</li>
             <li><span>2</span>Use two projects and 100 credits for 30 days. No card.</li>
-            <li><span>3</span>Keep going at the per-project price, or let the trial end. Nothing is charged unless you subscribe.</li>
+            <li><span>3</span>Keep going at the per-project price, plus credits, or let the trial end. Nothing is charged unless you subscribe.</li>
           </ul>
         </div>
         <div className="mk-price-mini">

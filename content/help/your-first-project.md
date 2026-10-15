@@ -5,17 +5,17 @@ category: getting-started
 order: 2
 keywords: project create new setup contract parties role jurisdiction state
 ---
-Everything in Astruct belongs to a project: its documents, its mail, its questions and its drafts. Answers and deadlines come from that project’s contract, so it is worth setting the project up properly once.
+Everything in Astruct belongs to a project: its documents, its mail, its questions and its drafts. Answers, clauses and notice periods come from that project’s contract, so it is worth setting the project up properly once.
 
 ## Create the project
 
 1. In the sidebar, find **Projects** and choose **+**.
 2. Give the project the name your team uses, for example *Kestrel Street, Stage 2*.
-3. Open the project. Its page shows what needs attention, upcoming time bars, the issues Astruct is keeping and the project’s documents.
+3. Open the project. Its page shows what needs attention, the issues Astruct has opened, the project brain map of the contract and the project’s documents.
 
 ## Add the contract first
 
-Upload the executed contract or subcontract, including every annexure, special condition and amendment. Astruct reads the special conditions with the general conditions, so a clause that has been replaced is not used.
+Upload the executed contract or subcontract, including every annexure, special condition and amendment. Astruct reads the special conditions with the general conditions, and each figure links to the words it came from.
 
 Add the contract before anything else if you can. The notice periods, business day rules and scope of work all come from it.
 

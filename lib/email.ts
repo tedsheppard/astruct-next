@@ -84,7 +84,7 @@ export async function sendWelcome({ to, name }: { to: string; name: string | nul
 <p>Three quick things to try first:</p>
 <ol>
   <li>Upload your latest contract — Astruct will extract the parties, key dates, and clause map automatically.</li>
-  <li>Ask the assistant a question grounded in the contract: "What are the time bars I need to know?"</li>
+  <li>Ask the assistant a question grounded in the contract: "What notice periods does the contract state, and in which clauses?"</li>
   <li>Pin a notice template — drafts will use your letterhead and signatory automatically.</li>
 </ol>
 <p style="margin-top:28px;">

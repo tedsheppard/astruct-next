@@ -8,9 +8,9 @@ import './live.css'
 import './brain.css'
 import './look.css'
 
-const TITLE = 'Astruct: the project brain for Australian construction contracts'
+const TITLE = 'Astruct: contract administration for Australian construction'
 const DESCRIPTION =
-  'Drop in your contract and Astruct reads it in about a minute: contract sum, practical completion, LDs, payment claim dates and every notice period, with its clause. Every answer cites the clause and page. Notices drafted on your letterhead before the time bar. Outlook mail read for variations, delays and claims.'
+  'Astruct reads the contract, files every document and email to its project, keeps the chronology and answers with the clause and page. Notices, letters and claims are drafted from the contract and the evidence, in Word, on your letterhead. You check them and send them.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),
@@ -58,16 +58,18 @@ const ORG_JSONLD = {
       description: DESCRIPTION,
       featureList: [
         'Reads construction contracts: contract sum, practical completion, liquidated damages, payment claim dates and notice periods, with the clause and page',
-        'Answers questions about the contract, citing the clause and page',
-        'Boolean and plain-English search across project documents and mail',
-        'Drafts variation notices, delay notices, EOT claims and letters on your letterhead as Word files',
-        'Reads Outlook mail for variations, delays and claims',
+        'Files every document and email to its project, by type',
+        'Chronology of the project, each entry linked to its source, with CSV export',
+        'Boolean and plain-English search across every page of every document and email',
+        'Answers questions about the contract, quoting the clause and citing the page',
+        'Drafts notices, letters and claims on your letterhead in a Word editor, as .docx or PDF',
+        'A cloud computer for each user, with a browser and a terminal',
       ],
       offers: {
         '@type': 'Offer',
         price: '199',
         priceCurrency: 'AUD',
-        description: `Per project, per month, excluding GST, for the first project; projects 2–5 AU$179 each, 6–15 AU$159, 16–30 AU$139, 31 and over AU$119. Unlimited users. ${TRIAL_LINE}`,
+        description: `Per project, per month, excluding GST, for the first project; projects 2 to 5 AU$179 each, 6 to 15 AU$159, 16 to 30 AU$139, 31 and over AU$119. Unlimited users. Credits for AI use on top, or AI work on your own ChatGPT account. ${TRIAL_LINE}`,
       },
       publisher: { '@id': `${SITE_ORIGIN}/#org` },
     },

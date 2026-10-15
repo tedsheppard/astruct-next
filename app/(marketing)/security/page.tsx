@@ -6,7 +6,7 @@ import { DataFlow } from '@/components/mk/data-flow'
 export const metadata: Metadata = {
   title: 'Security',
   description:
-    'Stored in Sydney. Model requests processed by OpenAI in the United States under its business API terms and not used for training. Mailbox access set by your admin. Nothing leaves until a person on your team presses Send.',
+    'Stored in Sydney. Model requests processed by OpenAI in the United States under its business API terms and not used for training. Mailbox access set by your admin. Astruct never sends: you send what it drafts.',
   alternates: { canonical: '/security' },
 }
 
@@ -22,6 +22,7 @@ const ROWS: { h: string; p: React.ReactNode[] }[] = [
     h: 'Models run by OpenAI, in the United States',
     p: [
       'Astruct uses OpenAI’s API to read contracts, mail and documents, answer questions and prepare drafts. Model requests are processed by OpenAI in the United States, under its business API terms.',
+      'If you choose to run chat on your own ChatGPT account, those chats go to OpenAI under your account and OpenAI’s terms for your plan, not under Astruct’s business API terms.',
     ],
   },
   {
@@ -36,12 +37,12 @@ const ROWS: { h: string; p: React.ReactNode[] }[] = [
     ],
   },
   {
-    h: 'Nothing leaves without a person',
-    p: ['Astruct prepares notices and correspondence for review. No letter or email leaves until a person on your team presses Send.'],
+    h: 'Astruct never sends',
+    p: ['Astruct drafts notices and correspondence for review. You check each draft and send it yourself. Nothing goes out from your mailbox.'],
   },
   {
-    h: 'Deadlines you can check',
-    p: ['Every deadline shows the clause text it came from and how it was counted, and stays marked “check the clause” until your team confirms the rule. Every piece of evidence is a verbatim quote that opens its source.'],
+    h: 'Periods you can check',
+    p: ['Every date or period Astruct shows is counted from the words of your contract, with the clause, its page and how it was counted, and stays marked “check the clause” until your team confirms the rule. Every piece of evidence is a verbatim quote that opens its source. Astruct does not give legal advice.'],
   },
   {
     h: 'You can switch it off',

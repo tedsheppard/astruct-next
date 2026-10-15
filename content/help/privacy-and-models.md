@@ -1,6 +1,6 @@
 ---
 title: Privacy and AI models
-summary: OpenAI processes model requests in the United States under its business API terms. Not used for training. Nothing leaves without a person.
+summary: OpenAI processes model requests in the United States under its business API terms. Not used for training. Astruct never sends.
 category: security
 order: 2
 keywords: privacy openai model training ai confidential united states api terms
@@ -17,9 +17,13 @@ Model requests are processed by **OpenAI in the United States**, under its busin
 
 Under those terms, your mail, documents and drafts are **not used to train models**, by us or by OpenAI.
 
-## Nothing leaves without a person
+## If you use your own ChatGPT account
 
-Astruct drafts letters and notices for review. No letter or email leaves until a person on your team presses Send. See [Nothing is sent automatically](/support/nothing-is-sent-automatically).
+You can choose to run Astruct’s chat on your own ChatGPT account instead of on Astruct credits ([how](/support/your-chatgpt-or-credits)). Those chats go to OpenAI under your ChatGPT account, and OpenAI’s terms for your plan apply, including how OpenAI uses data for training. The business API terms and no training above cover work on Astruct credits.
+
+## Astruct never sends
+
+Astruct drafts letters and notices for review. It never sends them, and nothing goes out from your mailbox. You check each draft and send it yourself. See [Nothing is sent automatically](/support/nothing-is-sent-automatically).
 
 ## Your privacy rights
 

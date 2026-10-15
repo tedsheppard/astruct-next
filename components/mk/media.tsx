@@ -55,27 +55,30 @@ export function HeroLoop({ label }: { label: string }) {
 }
 
 /**
- * The walkthrough slot. Shows the still with a glass play control once the
- * video file exists; clicking plays it inline with controls. Until the file is
- * delivered the still stands on its own, with no control that goes nowhere.
+ * The walkthrough slot. With `video`, it shows the still with a glass play
+ * control once that file exists; clicking plays it inline with controls.
+ * Without one, the still stands on its own, with no control that goes nowhere.
+ * The recorded walkthrough (public/media/walkthrough.mp4) shows the product
+ * before the October 2026 changes, so the landing passes no video for now.
  */
-export function Walkthrough({ children, phone, label }: { children: React.ReactNode; phone: React.ReactNode; label: string }) {
+export function Walkthrough({ children, phone, label, video, poster }: { children: React.ReactNode; phone: React.ReactNode; label: string; video?: string; poster?: string }) {
   const ref = useRef<HTMLVideoElement>(null)
   const [available, setAvailable] = useState(false)
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
+    if (!video) return
     let live = true
-    fetch('/media/walkthrough.mp4', { method: 'HEAD' })
+    fetch(video, { method: 'HEAD' })
       .then((r) => { if (live && r.ok && (r.headers.get('content-type') || '').startsWith('video')) setAvailable(true) })
       .catch(() => {})
     return () => { live = false }
-  }, [])
+  }, [video])
 
   const play = () => {
     const v = ref.current
-    if (!v) return
-    v.src = '/media/walkthrough.mp4'
+    if (!v || !video) return
+    v.src = video
     v.controls = true
     setOpen(true)
     v.play().catch(() => {})
@@ -85,7 +88,7 @@ export function Walkthrough({ children, phone, label }: { children: React.ReactN
     <div className={`mk-media mk-media-16x9 mk-media-walk${open ? ' is-open' : ''}`}>
       <div className="mk-media-still mk-still-desktop" aria-hidden={open}>{children}</div>
       <div className="mk-media-still mk-still-phone" aria-hidden={open}>{phone}</div>
-      <video ref={ref} playsInline preload="none" poster="/media/walkthrough-poster.jpg" aria-label={label} style={{ pointerEvents: open ? 'auto' : 'none' }} />
+      {video && <video ref={ref} playsInline preload="none" poster={poster} aria-label={label} style={{ pointerEvents: open ? 'auto' : 'none' }} />}
       {available && !open && (
         <button type="button" className="mk-play mk-glass" onClick={play} aria-label={`Play: ${label}`}>
           <IPlay />Watch the walkthrough

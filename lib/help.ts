@@ -22,9 +22,9 @@ export const HELP_CATEGORIES: HelpCategory[] = [
   { id: 'connecting', title: 'Connecting', blurb: 'Outlook, admin consent, connections on request and the demo mailbox.', c: 'blue' },
   { id: 'asking', title: 'Asking and searching', blurb: 'Good questions, Boolean and plain-English search, page references.', c: 'teal' },
   { id: 'drafting', title: 'Drafting', blurb: 'Letters, emails, variation notices, notices of delay and EOT claims.', c: 'violet' },
-  { id: 'agent', title: 'Mail, variations and delays', blurb: 'How Astruct reads project mail, flags directions and delays, and works out deadlines.', c: 'amber' },
+  { id: 'agent', title: 'Mail, variations and delays', blurb: 'How Astruct reads project mail, files it, opens issues and counts periods from the contract.', c: 'amber' },
   { id: 'team', title: 'Team and access', blurb: 'Members, roles and who can search which mailbox.', c: 'rose' },
-  { id: 'billing', title: 'Billing', blurb: 'Your free trial, per-project pricing and cancelling.', c: 'ink' },
+  { id: 'billing', title: 'Billing', blurb: 'Your free trial, per-project pricing, paying for AI use and cancelling.', c: 'ink' },
   { id: 'security', title: 'Security and privacy', blurb: 'Where your data lives and how models use it.', c: 'ink' },
 ]
 

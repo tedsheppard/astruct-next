@@ -44,7 +44,7 @@ export function Evidence() {
     },
     {
       q: <>&ldquo;<mark>Proceed as directed, no change to the subcontract sum.</mark>&rdquo;</>,
-      src: 'Same email · a notice is still needed (SC 9(b))', role: 'Flagged', icon: <IMail className="" />,
+      src: 'Same email · SC 9(b), p 22 deals with this wording', role: 'Quoted', icon: <IMail className="" />,
     },
     {
       q: <>&ldquo;A-512 Rev C – Façade Bracket and Slab Edge Details (22/09/2026) – <mark>supersedes Rev B</mark>&rdquo;</>,
@@ -75,7 +75,7 @@ export function Evidence() {
   )
 }
 
-/** Beat 4: the clause that governs it and the deadline it sets. */
+/** Beat 4: the clause, quoted, and the period it states. */
 export function Clause() {
   return (
     <div className="ui">
@@ -90,14 +90,14 @@ export function Clause() {
             Variation, the Subcontractor must, <mark>within 5 Business Days after receiving the Direction</mark>&hellip;&rdquo;
           </p>
         </div>
-        <div className="ui-deadline-box">
+        <div className="ui-period-box">
           <div>
-            <div className="ui-deadline-calc">Received Fri 25 Sep, 3:12 pm · 5 business days · Brisbane</div>
-            <div className="ui-deadline-calc" style={{ marginTop: 6 }}>Variation notice due</div>
-            <div className="ui-deadline-date">Fri 2 Oct, 5:00 pm</div>
-            <div className="ui-deadline-calc">Particulars due Mon 19 Oct (5 Oct is King’s Birthday)</div>
+            <div className="ui-period-calc">Counted in Brisbane business days from receipt, Fri 25 Sep, 3:12 pm</div>
+            <div className="ui-period-calc" style={{ marginTop: 6 }}>Period ends</div>
+            <div className="ui-period-date">Fri 2 Oct</div>
+            <div className="ui-period-calc">SC 8.2 particulars: a further 10 business days. Mon 5 Oct is the King’s Birthday.</div>
           </div>
-          <span className="ui-btn ui-btn-dark">Confirm rule</span>
+          <span className="ui-btn ui-btn-dark">Open p 21</span>
         </div>
       </div>
     </div>
@@ -105,15 +105,15 @@ export function Clause() {
 }
 
 const STEPS: [string, string][] = [
-  ['Detected', 'done'], ['Evidence linked', 'done'], ['Deadline set', 'done'], ['Draft prepared', 'now'], ['Sent', ''],
+  ['Found in mail', 'done'], ['Evidence linked', 'done'], ['Clause linked', 'done'], ['Draft prepared', 'now'], ['Sent by you', ''],
 ]
 
 /** Beat 5: the issue's state and its history. */
 export function StateHistory() {
   const hist = [
-    ['Fri 3:16 pm', 'Detected in the project mailbox from SI-014'],
+    ['Fri 3:16 pm', 'Issue opened from SI-014 in the project mailbox'],
     ['Fri 3:16 pm', 'Linked TR-0412 and A-512 Rev C'],
-    ['Fri 3:17 pm', 'Deadline set from SC 8.1, marked check the clause'],
+    ['Fri 3:17 pm', 'Linked SC 8.1, p 21 and SC 9(b), p 22'],
     ['Mon 9:44 am', 'Linked Tasman quote Q-26-1187'],
     ['Tue 8:30 am', 'Variation notice V-06 prepared for review'],
   ]
@@ -135,7 +135,7 @@ export function StateHistory() {
   )
 }
 
-/** Beat 6: the prepared notice (ARC-KS2-L-042), waiting for a person. */
+/** Beat 6: the drafted notice (ARC-KS2-L-042), for Arcline to check and send. */
 export function Notice() {
   return (
     <div className="ui">
@@ -153,7 +153,7 @@ export function Notice() {
           <p style={{ marginTop: 12, color: 'var(--ink)' }}>Maya Brennan<br /><span style={{ color: 'var(--ink-3)' }}>Commercial Manager, Arcline Façades Pty Ltd</span></p>
         </div>
         <div className="ui-doc-bar">
-          <span className="ui-review"><IDoc className="" />Prepared for review · Not sent</span>
+          <span className="ui-review"><IDoc className="" />Draft for review · Not sent</span>
           <span className="ui-btn">Download .docx</span>
           <span className="ui-btn ui-btn-dark">Open in Draft</span>
         </div>
@@ -162,16 +162,16 @@ export function Notice() {
   )
 }
 
-function INotice() {
+function IDiary() {
   return (
     <svg className="ui-ic" viewBox="0 0 16 16" aria-hidden="true">
-      <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" strokeWidth="1.4" />
-      <path d="M8 4.8V8l2.2 1.4" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="2.5" y="3.2" width="11" height="10.3" rx="1.6" fill="none" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M2.5 6.5h11M5.5 2v2.4M10.5 2v2.4" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
     </svg>
   )
 }
 
-/** The walkthrough is a replay: the frames are as they stood on Tue 29 Sep, before the notice went. */
+/** The walkthrough is a replay: the frames are as they stood on Tue 29 Sep, before Arcline sent the notice. */
 export function Replay() {
   return <span className="ui-replay"><i aria-hidden="true" />Replay · Tue 29 Sep, 2:40 pm</span>
 }
@@ -183,11 +183,12 @@ export function IssueWindow() {
       <aside className="ui-side">
         <div className="ui-side-brand"><Mark /><Wordmark /></div>
         <div className="ui-side-proj"><ISide.folder className="ui-ic" /><span><b>Kestrel Street, Stage 2</b><small>Façade subcontract</small></span></div>
-        <span className="ui-nav"><INotice />Notices<em className="ui-count is-hot">2 due</em></span>
-        <span className="ui-nav is-on"><ISide.draft className="ui-ic" />Issues<em className="ui-count">3</em></span>
-        <span className="ui-nav"><ISide.mail className="ui-ic" />Mail</span>
-        <span className="ui-nav"><ISide.library className="ui-ic" />Library</span>
         <span className="ui-nav"><ISide.search className="ui-ic" />Search</span>
+        <span className="ui-nav"><ISide.computer className="ui-ic" />Computer</span>
+        <span className="ui-nav"><ISide.library className="ui-ic" />Library</span>
+        <span className="ui-nav"><IDiary />Chronology</span>
+        <span className="ui-nav"><ISide.draft className="ui-ic" />Draft</span>
+        <span className="ui-nav is-on"><ISide.mail className="ui-ic" />Mail<em className="ui-count">3 issues</em></span>
         <div className="ui-side-label">Other projects</div>
         <span className="ui-nav"><ISide.folder className="ui-ic" />Wharf Lane Apartments</span>
         <span className="ui-nav"><ISide.folder className="ui-ic" />Northgate Health Hub</span>
@@ -195,7 +196,7 @@ export function IssueWindow() {
       <div className="ui-main" style={{ gap: 16 }}>
         <div className="ui-issue-head">
           <div>
-            <div className="ui-muted" style={{ fontSize: 12 }}>Kestrel Street, Stage 2 · Issues · Variation</div>
+            <div className="ui-muted" style={{ fontSize: 12 }}>Kestrel Street, Stage 2 · Mail · Issue · Variation</div>
             <div className="ui-proj-title" style={{ marginTop: 4 }}>{ISSUE_TITLE}</div>
           </div>
           <Replay />
@@ -216,12 +217,12 @@ export function IssueWindow() {
             </div>
             <div className="ui-card">
               <div className="ui-pad" style={{ paddingBottom: 14 }}>
-                <div className="ui-clause-head"><span className="ui-kind">SC 8.1 · Variation notice</span><span className="ui-tag">Check the clause</span></div>
+                <div className="ui-clause-head"><span className="ui-kind">SC 8.1 · Variation notice · p 21</span><span className="ui-tag">Check the clause</span></div>
                 <p className="ui-clause-text" style={{ fontSize: 13 }}>&ldquo;&hellip;the Subcontractor must, <mark>within 5 Business Days after receiving the Direction</mark>&hellip;&rdquo;</p>
               </div>
-              <div className="ui-deadline-box">
-                <div><div className="ui-deadline-calc">Notice due · 3 business days left</div><div className="ui-deadline-date" style={{ fontSize: 19 }}>Fri 2 Oct, 5:00 pm</div></div>
-                <span className="ui-btn ui-btn-dark">Confirm rule</span>
+              <div className="ui-period-box">
+                <div><div className="ui-period-calc">Period ends · 5 business days from receipt</div><div className="ui-period-date" style={{ fontSize: 19 }}>Fri 2 Oct</div></div>
+                <span className="ui-btn ui-btn-dark">Open p 21</span>
               </div>
             </div>
           </div>

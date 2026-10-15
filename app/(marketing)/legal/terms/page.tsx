@@ -21,10 +21,11 @@ const SECTIONS: LegalSection[] = [
         </p>
         <p>You acknowledge that:</p>
         <ul>
-          <li>Astruct&rsquo;s outputs, including detected issues, deadlines and drafts, are produced with the help of artificial intelligence and may be inaccurate or incomplete;</li>
-          <li>every deadline Astruct computes shows the clause it came from and must be confirmed by a person before it is relied on;</li>
+          <li>Astruct&rsquo;s outputs, including issues, dates, periods, answers and drafts, are produced with the help of artificial intelligence and may be inaccurate or incomplete;</li>
+          <li>dates and periods Astruct shows are counted from the words of the contract, show the clause and page they came from, and are for you to check against the contract before you rely on them;</li>
+          <li>Astruct says what your documents say. It does not tell you what your rights are or what action to take;</li>
           <li>you are responsible for reviewing, correcting and approving every output before you send, serve or rely on it; and</li>
-          <li>you remain responsible for meeting your own contractual and statutory obligations, notices and time bars.</li>
+          <li>you remain responsible for your own contractual and statutory obligations, including giving and answering notices.</li>
         </ul>
         <p>Astruct never sends correspondence on your behalf. Drafts are prepared for your review.</p>
       </>
@@ -35,7 +36,7 @@ const SECTIONS: LegalSection[] = [
     h: '2. Accounts',
     body: (
       <p>
-        You must be at least 18 and able to form a binding contract. If you use Astruct for a company, you confirm you
+        To use Astruct you need to be at least 18 and able to form a binding contract. If you use Astruct for a company, you confirm you
         have authority to bind it. Keep your account details accurate and your sign-in secure. You are responsible for
         activity under your account. We may suspend or close accounts that breach these terms.
       </p>
@@ -51,7 +52,8 @@ const SECTIONS: LegalSection[] = [
           needed and nothing is charged when the trial ends. The Free Trial Terms you accept with the invitation also
           apply to the trial. To keep going, start a paid company account. Astruct is then billed per project per month
           at the prices shown on our <Link href="/pricing">pricing page</Link>, in Australian dollars excluding GST. Each project
-          is charged at the rate for its band. There is no charge per user.
+          is charged at the rate for its band. There is no charge per user. Credits for AI use are charged on top, at the
+          rate shown on the pricing page, billed monthly.
         </p>
         <p>
           Subscriptions renew monthly until cancelled. Unless the law requires otherwise, fees are not refundable. We may change prices or plans for future periods and will give you reasonable notice
@@ -81,7 +83,10 @@ const SECTIONS: LegalSection[] = [
         Astruct uses third-party providers to run the service, including OpenAI (model processing in the United States,
         under its business API terms), Supabase (storage in Sydney), Vercel (hosting, partly in the United States) and Stripe (billing). When you
         connect a Microsoft 365, Google or Procore account, that provider&rsquo;s own terms also apply to your use of it. We are not responsible for the
-        availability of third-party services.
+        availability of third-party services. AI work runs on Astruct credits, or, if you choose, on your own ChatGPT
+        account: you sign in to OpenAI&rsquo;s Codex yourself on your Astruct Computer, chat requests are made from that
+        computer under your ChatGPT account and OpenAI&rsquo;s terms for your plan, and they use no Astruct credits. We do
+        not receive, store or pass on your ChatGPT sign-in.
       </p>
     ),
   },
@@ -132,7 +137,7 @@ const SECTIONS: LegalSection[] = [
         <ul>
           <li>the service is provided as is, and we do not warrant that any output is accurate, complete or fit for a particular purpose;</li>
           <li>we are not liable for indirect or consequential loss, or loss of profit, revenue, data or opportunity;</li>
-          <li>we are not liable for loss arising from reliance on an output that you did not review, including a missed notice or time bar; and</li>
+          <li>we are not liable for loss arising from reliance on an output that you did not review, including a notice that was not given or not given as the contract requires; and</li>
           <li>our total liability is limited to the fees you paid us in the 12 months before the event giving rise to the claim, or AU$100 if greater.</li>
         </ul>
       </>
@@ -171,7 +176,7 @@ export default function TermsPage() {
   return (
     <LegalPage
       title="Terms of use"
-      updated="13 October 2026"
+      updated="16 October 2026"
       intro={
         <p>
           These terms are an agreement between you and Astruct (<strong>we</strong>, <strong>us</strong>, <strong>our</strong>)

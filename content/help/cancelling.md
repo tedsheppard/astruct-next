@@ -2,7 +2,7 @@
 title: Cancelling
 summary: Cancel a company account any time in Settings > Billing and credits. A free trial needs no cancelling.
 category: billing
-order: 3
+order: 4
 keywords: cancel stop subscription end trial refund close account
 ---
 You can cancel any time. Owners and admins manage the subscription.

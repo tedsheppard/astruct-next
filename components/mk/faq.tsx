@@ -33,11 +33,11 @@ function qa(q: string, text: string, a?: React.ReactNode): QA {
 export const HOME_FAQ: QA[] = [
   qa(
     'What is the project brain?',
-    'Everything Astruct has read on a project, in one place: the contract and its special conditions, the drawings, programme and correspondence you upload, and the project mail in Outlook. Ask it anything and the answer cites the clause and page. Search it in Boolean or plain English. Draft letters, notices, variations and EOT claims from it as Word files on your letterhead.',
+    'Everything Astruct has read on a project, in one place: the contract and its special conditions, the documents you upload and the project mail in Outlook, each filed by type, with a chronology built from them. Ask it anything and the answer quotes the clause and cites the page. Search every page in Boolean or plain English. Draft letters, notices and claims from it in Word, on your letterhead.',
   ),
   qa(
     'What does Astruct take from the contract?',
-    'Drop in the contract and Astruct reads it in about a minute. It sets out the contract sum, the date for practical completion, liquidated damages, the reference dates for payment claims, the time for payment schedules, and every notice period and time bar, each with its clause and page. Special conditions are read with the general conditions, so a replaced clause is not the one used.',
+    'Drop in the contract and Astruct reads it in about a minute. It sets out the contract sum, the date for practical completion, liquidated damages, the reference dates for payment claims, the time for payment schedules, and every notice period, each with its clause and page. Special conditions are read with the general conditions, and each figure links to the words it came from.',
   ),
   qa(
     'How is it different from ChatGPT or Copilot?',
@@ -48,26 +48,26 @@ export const HOME_FAQ: QA[] = [
     'The contract you give it. That includes AS 2124, AS 4000, AS 4300, AS 4902 and AS 4903 style head contracts and subcontracts, and bespoke or heavily amended forms. It also works with security of payment law, such as SOPA in NSW and Queensland’s BIF Act.',
   ),
   qa(
-    'How does it spot variations, delays and claims in the mail?',
-    'Connect Outlook and Astruct reads project mail as it arrives. It compares each direction with the scope of work in your contract and flags the ones that look like variations, flags events that may delay you, and picks up claims and payment schedules. It works upstream, for notices you must give the principal or head contractor, and downstream, for notices and claims from your subcontractors.',
+    'How does it find variations, delays and claims in the mail?',
+    'Connect Outlook and Astruct reads project mail as it arrives and files each email to its project. When an email looks like a variation, a delay, an EOT claim or a payment claim, it opens an issue with the evidence and the clause linked, and the period the contract states. It works both ways: notices and claims you give the principal or head contractor, and those you receive from subcontractors.',
   ),
   qa(
-    'Can I rely on the deadlines it works out?',
-    'Each deadline shows the clause text it came from and how it was counted: the notice period, business or calendar days and your state’s public holidays. It stays marked “check the clause” until someone on your team confirms the rule for the project. Astruct only reads the mailboxes you connect, so your team stays responsible for your notices. Astruct helps you give them on time.',
+    'How are dates and periods worked out?',
+    'From the words of your contract. Each date shows the clause and page it came from and how it was counted: the period, business or calendar days and your state’s public holidays. It stays marked “check the clause” until someone on your team confirms the rule. Astruct says what the contract says. It does not give legal advice, and your team decides what to send and when.',
     <p>
-      Each deadline shows the clause text it came from and how it was counted: the notice period, business or calendar
-      days and your state’s public holidays. It stays marked “check the clause” until someone on your team confirms the
-      rule for the project. Astruct only reads the mailboxes you connect, so your team stays responsible for your
-      notices. Astruct helps you give them on time. <Link href="/support/deadlines-and-check-the-clause">How deadlines are worked out</Link>.
+      From the words of your contract. Each date shows the clause and page it came from and how it was counted: the
+      period, business or calendar days and your state’s public holidays. It stays marked “check the clause” until
+      someone on your team confirms the rule. Astruct says what the contract says. It does not give legal advice, and
+      your team decides what to send and when. <Link href="/support/notice-periods-and-check-the-clause">How periods are counted</Link>.
     </p>,
   ),
   qa(
     'Does it send anything on our behalf?',
-    'No. Astruct drafts letters, notices and claims for review. Nothing leaves until a person on your team presses Send, or downloads the .docx and sends it through your normal process.',
+    'No. Astruct drafts letters, notices and claims for review. It never sends, and nothing goes out from your mailbox. You check the draft and send it yourself, from Outlook or as a signed letter.',
   ),
   qa(
     'Which systems does it connect to?',
-    'Outlook, today: personal and shared Microsoft 365 mailboxes. Procore, Gmail and SharePoint are available on request. Tell us when you request your trial and we will set them up with you. Documents from anywhere else can be uploaded as files, folders or zips.',
+    'Outlook: personal and shared Microsoft 365 mailboxes. Procore, Gmail, SharePoint and other apps connect from the Apps page. Tell us when you request your trial and we will set them up with you. Any web app can also be opened in your cloud computer, and documents from anywhere else can be uploaded as files and folders.',
   ),
   qa(
     'How quickly does it see new mail?',
@@ -84,12 +84,13 @@ export const HOME_FAQ: QA[] = [
   ),
   qa(
     'How is Astruct priced?',
-    `Per project, per month, with unlimited users. Your first project is AU$199, projects 2–5 are AU$179 each, 6–15 are AU$159 each, 16–30 are AU$139 each and every project from the 31st is AU$119. Each project is charged at the rate for its band, so 8 projects cost AU$199 + 4 × AU$179 + 3 × AU$159 = AU$1,392 a month. Prices are in Australian dollars and exclude GST.`,
+    `Per project, per month, with unlimited users. Your first project is AU$199, projects 2–5 are AU$179 each, 6–15 are AU$159 each, 16–30 are AU$139 each and every project from the 31st is AU$119. Each project is charged at the rate for its band, so 8 projects cost AU$199 + 4 × AU$179 + 3 × AU$159 = AU$1,392 a month. Prices are in Australian dollars and exclude GST. Credits for AI use are on top, or AI work can run on your own ChatGPT account, the cheaper option.`,
     <p>
       Per project, per month, with unlimited users. Your first project is AU$199, projects 2–5 are AU$179 each, 6–15 are
       AU$159 each, 16–30 are AU$139 each and every project from the 31st is AU$119. Each project is charged at the rate
       for its band, so 8 projects cost AU$199 + 4 × AU$179 + 3 × AU$159 = AU$1,392 a month. Prices are in Australian
-      dollars and exclude GST. <Link href="/pricing">Work out your price</Link>.
+      dollars and exclude GST. Credits for AI use are on top, or AI work can run on your own ChatGPT account, the
+      cheaper option. <Link href="/pricing">Work out your price</Link>.
     </p>,
   ),
   qa(
@@ -98,11 +99,12 @@ export const HOME_FAQ: QA[] = [
   ),
   qa(
     'Where is our data stored?',
-    'In Australia, in Sydney. Model requests are processed by OpenAI in the United States under its business API terms, and are not used to train models. No letter or email leaves until a person on your team presses Send.',
+    'In Australia, in Sydney. Model requests are processed by OpenAI in the United States under its business API terms, and are not used to train models. If you choose to run chat on your own ChatGPT account, OpenAI’s terms for your plan apply to those chats instead. Astruct never sends a letter or email: you send what it drafts.',
     <p>
       In Australia, in Sydney. Model requests are processed by OpenAI in the United States under its business API
-      terms, and are not used to train models. No letter or email leaves until a person on your team presses Send. More
-      on the <Link href="/security">security page</Link>.
+      terms, and are not used to train models. If you choose to run chat on your own ChatGPT account, OpenAI’s terms for
+      your plan apply to those chats instead. Astruct never sends a letter or email: you send what it drafts. More on
+      the <Link href="/security">security page</Link>.
     </p>,
   ),
 ]
