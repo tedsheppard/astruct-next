@@ -14,6 +14,7 @@ const PROJECTS = ['1 project', '2 to 5 projects', '6 to 20 projects', 'More than
 const MAIL = ['Outlook / Microsoft 365', 'Gmail / Google Workspace', 'Other']
 const FORMS = ['AS 4000 or AS 4001', 'AS 2124 or AS 2545', 'AS 4902 or AS 4903', 'AS 4300 or AS 4303', 'GC21', 'Bespoke or heavily amended', 'Not sure']
 const STATES = ['QLD', 'NSW', 'VIC', 'WA', 'SA', 'TAS', 'ACT', 'NT']
+const APPS = ['Procore', 'Aconex', 'Asite', 'InEight / TeamBinder', 'Autodesk Construction Cloud', 'SharePoint / OneDrive', 'Payapps', 'CostX', 'Bluebeam', 'HammerTech', 'Sitemate Dashpivot', 'SafetyCulture', 'Microsoft Project', 'Primavera P6', 'Jobpac', 'Viewpoint Vista', 'Xero', 'MYOB']
 
 type Step = 'contact' | 'details' | 'done'
 
@@ -64,6 +65,7 @@ export default function TrialRequestForm() {
   const [who, setWho] = useState({ name: '', email: '', company: '' })
   const [forms, setForms] = useState<string[]>([])
   const [states, setStates] = useState<string[]>([])
+  const [apps, setApps] = useState<string[]>([])
 
   async function submitContact(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -94,7 +96,7 @@ export default function TrialRequestForm() {
       await post({
         step: 'details', ...who,
         role: f.get('role') || null, companySize: f.get('companySize') || null, projects: f.get('projects') || null,
-        mail: f.get('mail') || null, contractForms: forms, states, pain: f.get('pain') || null,
+        mail: f.get('mail') || null, contractForms: forms, states, apps, pain: f.get('pain') || null,
         elapsed: Date.now() - started.current,
       })
       trackPixel('CompleteRegistration', { content_name: 'trial-request-details' })
@@ -131,6 +133,7 @@ export default function TrialRequestForm() {
         </div>
         <Toggles legend="Contracts you work under" options={FORMS} value={forms} onChange={setForms} />
         <Toggles legend="States" options={STATES} value={states} onChange={setStates} />
+        <Toggles legend="Which of these applications do you use?" options={APPS} value={apps} onChange={setApps} />
         <label className="wl-l wl-pain">
           <span>Biggest contract headache right now</span>
           <textarea className="mk-input wl-ta" name="pain" rows={2} maxLength={4000} />

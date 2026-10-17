@@ -16,6 +16,8 @@ const PROJECTS = ['1 project', '2 to 5 projects', '6 to 20 projects', 'More than
 const FORMS = ['AS 4000 or AS 4001', 'AS 2124 or AS 2545', 'AS 4902 or AS 4903', 'AS 4300 or AS 4303', 'GC21', 'Bespoke or heavily amended', 'Not sure']
 const STATES = ['QLD', 'NSW', 'VIC', 'WA', 'SA', 'TAS', 'ACT', 'NT']
 const MAIL = ['Outlook / Microsoft 365', 'Gmail / Google Workspace', 'Other']
+// The other applications the company runs (founder, 17 Oct 2026): kept in meta.apps.
+const APPS = ['Procore', 'Aconex', 'Asite', 'InEight / TeamBinder', 'Autodesk Construction Cloud', 'SharePoint / OneDrive', 'Payapps', 'CostX', 'Bluebeam', 'HammerTech', 'Sitemate Dashpivot', 'SafetyCulture', 'Microsoft Project', 'Primavera P6', 'Jobpac', 'Viewpoint Vista', 'Xero', 'MYOB']
 
 const hits = new Map<string, number[]>()
 function limited(ip: string) {
@@ -84,6 +86,7 @@ export async function POST(req: NextRequest) {
 
   const forms = many(b.contractForms, FORMS)
   const states = many(b.states, STATES)
+  const apps = many(b.apps, APPS)
   const result = await insertLead({
     type: 'waitlist',
     email,
@@ -98,7 +101,7 @@ export async function POST(req: NextRequest) {
     pain: details ? clip(b.pain, 4000) : null,
     source: sourceOf(attribution(b.attribution)),
     user_agent: req.headers.get('user-agent')?.slice(0, 400) || null,
-    meta: { form: 'request-trial', version: '2026-10-13', step: details ? 'details' : 'contact', referrer: clip(b.referrer, 300), attribution: attribution(b.attribution) },
+    meta: { form: 'request-trial', version: '2026-10-17', step: details ? 'details' : 'contact', ...(details && apps.length ? { apps } : {}), referrer: clip(b.referrer, 300), attribution: attribution(b.attribution) },
   })
 
   if (!result.ok) {
@@ -110,7 +113,7 @@ export async function POST(req: NextRequest) {
   }
   // Tell the team straight away; never holds up the visitor's response.
   const answers: Record<string, string | null> = details
-    ? { Role: one(b.role, ROLES), 'Company size': one(b.companySize, SIZES), 'Live projects': one(b.projects, PROJECTS), 'Mail': one(b.mail, MAIL), Contracts: forms.join(', ') || null, States: states.join(', ') || null, 'Biggest pain': clip(b.pain, 4000) }
+    ? { Role: one(b.role, ROLES), 'Company size': one(b.companySize, SIZES), 'Live projects': one(b.projects, PROJECTS), 'Mail': one(b.mail, MAIL), Contracts: forms.join(', ') || null, States: states.join(', ') || null, Applications: apps.join(', ') || null, 'Biggest pain': clip(b.pain, 4000) }
     : {}
   after(() => sendWaitlistAlert({ step: details ? 'details' : 'contact', name, email, company, source: sourceOf(attribution(b.attribution)), answers }).then(() => undefined, (e) => console.error('[waitlist] alert failed', e)))
   return Response.json({ success: true })
