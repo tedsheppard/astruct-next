@@ -83,10 +83,10 @@ const SECTIONS: LegalSection[] = [
         Astruct uses third-party providers to run the service, including OpenAI (model processing in the United States,
         under its business API terms), Supabase (storage in Sydney), Vercel (hosting, partly in the United States) and Stripe (billing). When you
         connect a Microsoft 365, Google or Procore account, that provider&rsquo;s own terms also apply to your use of it. We are not responsible for the
-        availability of third-party services. AI work runs on Astruct credits, or, if you choose, on your own ChatGPT
-        account: you sign in to OpenAI&rsquo;s Codex yourself on your Astruct Computer, chat requests are made from that
-        computer under your ChatGPT account and OpenAI&rsquo;s terms for your plan, and they use no Astruct credits. We do
-        not receive, store or pass on your ChatGPT sign-in.
+        availability of third-party services. Astruct&rsquo;s chat runs on Astruct credits or your own OpenAI or Anthropic
+        API key. If you add your own API key, those requests go to that provider under your agreement with them, and
+        the provider bills you for them. You may sign in to your own Codex or Claude Code in the Terminal on your Astruct
+        Computer and use them yourself, under OpenAI&rsquo;s or Anthropic&rsquo;s terms. Astruct&rsquo;s chat does not use them.
       </p>
     ),
   },
@@ -176,7 +176,7 @@ export default function TermsPage() {
   return (
     <LegalPage
       title="Terms of use"
-      updated="16 October 2026"
+      updated="17 October 2026"
       intro={
         <p>
           These terms are an agreement between you and Astruct (<strong>we</strong>, <strong>us</strong>, <strong>our</strong>)

@@ -17,9 +17,9 @@ Model requests are processed by **OpenAI in the United States**, under its busin
 
 Under those terms, your mail, documents and drafts are **not used to train models**, by us or by OpenAI.
 
-## If you use your own ChatGPT account
+## If you add your own API key
 
-You can choose to run Astruct’s chat on your own ChatGPT account instead of on Astruct credits ([how](/support/your-chatgpt-or-credits)). Those chats go to OpenAI under your ChatGPT account, and OpenAI’s terms for your plan apply, including how OpenAI uses data for training. The business API terms and no training above cover work on Astruct credits.
+You can add your own OpenAI or Anthropic API key instead of using Astruct credits ([how](/support/credits-or-your-own-api-key)). Astruct’s chat then sends those requests to that provider under your agreement with them, and the provider bills you. The business API terms and no training above cover work on Astruct credits.
 
 ## Astruct never sends
 

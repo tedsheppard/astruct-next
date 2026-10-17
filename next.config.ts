@@ -27,6 +27,7 @@ const RETIRED: [string, string][] = [
   ['/support/how-the-agent-watches-mail', '/support/how-astruct-reads-mail'],
   ['/support/gmail-pilot', '/support/connections-on-request'],
   ['/support/sharepoint-and-onedrive', '/support/connections-on-request'],
+  ['/support/your-chatgpt-or-credits', '/support/credits-or-your-own-api-key'],
   ['/about', '/'],
   ['/start', '/'],
   ['/platform', '/'],

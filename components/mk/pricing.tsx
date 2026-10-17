@@ -55,8 +55,8 @@ export function PricingCards({ onPricingPage = false }: { onPricingPage?: boolea
         <div className="mk-price-mini">
           <h3>Paying for AI use</h3>
           <ul className="mk-trial-steps">
-            <li><span>1</span>Use your own ChatGPT account, the cheaper option. Chat runs on your ChatGPT plan and uses no Astruct credits.</li>
-            <li><span>2</span>Or use Astruct credits, with nothing else to sign in to. AU$1.00 a credit beyond those included, billed monthly.</li>
+            <li><span>1</span>Use Astruct credits, the default, with nothing else to set up. AU$1.00 a credit beyond those included, billed monthly.</li>
+            <li><span>2</span>Or add your own OpenAI or Anthropic API key. Chat runs on your key and that provider bills you for it.</li>
           </ul>
         </div>
         <div className="mk-price-mini">

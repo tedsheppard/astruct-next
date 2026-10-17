@@ -22,7 +22,7 @@ const ROWS: { h: string; p: React.ReactNode[] }[] = [
     h: 'Models run by OpenAI, in the United States',
     p: [
       'Astruct uses OpenAI’s API to read contracts, mail and documents, answer questions and prepare drafts. Model requests are processed by OpenAI in the United States, under its business API terms.',
-      'If you choose to run chat on your own ChatGPT account, those chats go to OpenAI under your account and OpenAI’s terms for your plan, not under Astruct’s business API terms.',
+      'If you add your own OpenAI or Anthropic API key, those chat requests go to that provider under your agreement with them, not under Astruct’s business API terms.',
     ],
   },
   {
