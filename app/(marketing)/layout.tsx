@@ -69,7 +69,7 @@ const ORG_JSONLD = {
         '@type': 'Offer',
         price: '199',
         priceCurrency: 'AUD',
-        description: `Per project, per month, excluding GST, for the first project; projects 2 to 5 AU$179 each, 6 to 15 AU$159, 16 to 30 AU$139, 31 and over AU$119. Unlimited users. Credits for AI use on top, or your own OpenAI or Anthropic API key. ${TRIAL_LINE}`,
+        description: `Per project, per month, excluding GST, for the first project; projects 2 to 5 AU$179 each, 6 to 15 AU$159, 16 to 30 AU$139, 31 and over AU$119. Unlimited users. Credits for AI use on top, or your own OpenAI API key. ${TRIAL_LINE}`,
       },
       publisher: { '@id': `${SITE_ORIGIN}/#org` },
     },

@@ -19,7 +19,7 @@ Under those terms, your mail, documents and drafts are **not used to train model
 
 ## If you add your own API key
 
-You can add your own OpenAI or Anthropic API key instead of using Astruct credits ([how](/support/credits-or-your-own-api-key)). Astruct’s chat then sends those requests to that provider under your agreement with them, and the provider bills you. The business API terms and no training above cover work on Astruct credits.
+You can add your own OpenAI API key instead of using Astruct credits ([how](/support/credits-or-your-own-api-key)). Astruct’s chat then sends those requests to that provider under your agreement with them, and the provider bills you. The business API terms and no training above cover work on Astruct credits.
 
 ## Astruct never sends
 
