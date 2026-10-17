@@ -55,7 +55,7 @@ export function PricingCards({ onPricingPage = false }: { onPricingPage?: boolea
         <div className="mk-price-mini">
           <h3>Paying for AI use</h3>
           <ul className="mk-trial-steps">
-            <li><span>1</span>Use Astruct credits, the default, with nothing else to set up. AU$1.00 a credit beyond those included, billed monthly.</li>
+            <li><span>1</span>Use Astruct credits, the default, with nothing else to set up. Credits are charged as used, AU$1.00 each, billed monthly.</li>
             <li><span>2</span>Or add your own OpenAI API key. Chat runs on your key and OpenAI bills you for it.</li>
           </ul>
         </div>

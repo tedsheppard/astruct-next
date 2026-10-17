@@ -9,7 +9,7 @@ Astruct is priced per project per month, with unlimited users, plus credits for 
 
 ## Use Astruct credits
 
-The default. Astruct’s own models, under OpenAI’s business API terms, with no training on your data. Use is metered as credits, shown in **Settings > Billing and credits**. Beyond the credits included, each credit is AU$1.00, billed monthly.
+The default. Astruct’s own models, under OpenAI’s business API terms, with no training on your data. Use is metered as credits, shown in **Settings > Billing and credits**. Credits are charged as used, AU$1.00 each, billed monthly.
 
 ## Use your own API key
 

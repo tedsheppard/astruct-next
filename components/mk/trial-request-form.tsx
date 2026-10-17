@@ -18,14 +18,19 @@ const APPS = ['Procore', 'Aconex', 'Asite', 'InEight / TeamBinder', 'Autodesk Co
 
 type Step = 'contact' | 'details' | 'done'
 
+// The one message shown when a request does not go through. Raw browser or
+// server text (for example "Failed to fetch") is never shown.
+const SEND_ERROR = "We couldn't send that just now. Please try again, or email info@astruct.io."
+// The same check the server makes (lib/leads.ts EMAIL_RE).
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
 async function post(body: Record<string, unknown>) {
   const r = await fetch('/api/waitlist', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
-  const j = await r.json().catch(() => ({}))
-  if (!r.ok) throw new Error(j.error || 'We could not save that just now. Please try again.')
+  if (!r.ok) throw new Error(`waitlist ${r.status}`)
 }
 
 function Select({ name, label, options }: { name: string; label: string; options: string[] }) {
@@ -72,6 +77,9 @@ export default function TrialRequestForm() {
     if (busy) return
     const f = new FormData(e.currentTarget)
     const next = { name: String(f.get('name') || '').trim(), email: String(f.get('email') || '').trim(), company: String(f.get('company') || '').trim() }
+    // Checked here, in the form's own words, so a server reply is never shown.
+    const missing = [!next.name && 'your name', !EMAIL_RE.test(next.email) && 'a work email address', !next.company && 'your company'].filter(Boolean)
+    if (missing.length) { setError(`Please add ${missing.join(', ')}.`); return }
     setError('')
     setBusy(true)
     try {
@@ -79,8 +87,8 @@ export default function TrialRequestForm() {
       trackPixel('Lead', { content_name: 'trial-request' })
       setWho(next)
       setStep('details')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'We could not save that just now. Please try again.')
+    } catch {
+      setError(SEND_ERROR)
     } finally {
       setBusy(false)
     }
@@ -101,8 +109,8 @@ export default function TrialRequestForm() {
       })
       trackPixel('CompleteRegistration', { content_name: 'trial-request-details' })
       setStep('done')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'We could not save that just now. Please try again.')
+    } catch {
+      setError(SEND_ERROR)
     } finally {
       setBusy(false)
     }
