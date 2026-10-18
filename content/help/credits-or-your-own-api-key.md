@@ -1,6 +1,6 @@
 ---
 title: Astruct credits or your own API key
-summary: Two ways to pay for AI work. Astruct credits need nothing else; your own OpenAI API key is billed by that provider.
+summary: Two ways to pay for AI work. Astruct credits need nothing else; your own OpenAI or Anthropic API key is billed by that provider.
 category: billing
 order: 3
 keywords: credits ai usage model account openai anthropic api key billing
@@ -13,7 +13,7 @@ The default. Astruct’s own models, under OpenAI’s business API terms, with n
 
 ## Use your own API key
 
-Add your own OpenAI API key. Astruct’s chat then runs on your key, and OpenAI bills you for it. Those requests go to OpenAI under your agreement with them.
+Add your own OpenAI or Anthropic API key. Astruct’s chat then runs on your key, and that provider bills you for it. Those requests go to that provider under your agreement with them.
 
 ## Codex and Claude Code on your computer
 

@@ -84,12 +84,12 @@ export const HOME_FAQ: QA[] = [
   ),
   qa(
     'How is Astruct priced?',
-    `Per project, per month, with unlimited users. Your first project is AU$199, projects 2–5 are AU$179 each, 6–15 are AU$159 each, 16–30 are AU$139 each and every project from the 31st is AU$119. Each project is charged at the rate for its band, so 8 projects cost AU$199 + 4 × AU$179 + 3 × AU$159 = AU$1,392 a month. Prices are in Australian dollars and exclude GST. Credits for AI use are on top, or AI work can run on your own OpenAI API key.`,
+    `Per project, per month, with unlimited users. Your first project is AU$199, projects 2–5 are AU$179 each, 6–15 are AU$159 each, 16–30 are AU$139 each and every project from the 31st is AU$119. Each project is charged at the rate for its band, so 8 projects cost AU$199 + 4 × AU$179 + 3 × AU$159 = AU$1,392 a month. Prices are in Australian dollars and exclude GST. Credits for AI use are on top, or AI work can run on your own OpenAI or Anthropic API key.`,
     <p>
       Per project, per month, with unlimited users. Your first project is AU$199, projects 2–5 are AU$179 each, 6–15 are
       AU$159 each, 16–30 are AU$139 each and every project from the 31st is AU$119. Each project is charged at the rate
       for its band, so 8 projects cost AU$199 + 4 × AU$179 + 3 × AU$159 = AU$1,392 a month. Prices are in Australian
-      dollars and exclude GST. Credits for AI use are on top, or AI work can run on your own OpenAI
+      dollars and exclude GST. Credits for AI use are on top, or AI work can run on your own OpenAI or Anthropic
       API key. <Link href="/pricing">Work out your price</Link>.
     </p>,
   ),
@@ -99,10 +99,10 @@ export const HOME_FAQ: QA[] = [
   ),
   qa(
     'Where is our data stored?',
-    'In Australia, in Sydney. Model requests are processed by OpenAI in the United States under its business API terms, and are not used to train models. If you add your own OpenAI API key, those requests go to OpenAI under your agreement with them. Astruct never sends a letter or email: you send what it drafts.',
+    'In Australia, in Sydney. Model requests are processed by OpenAI in the United States under its business API terms, and are not used to train models. If you add your own OpenAI or Anthropic API key, those requests go to OpenAI under your agreement with them. Astruct never sends a letter or email: you send what it drafts.',
     <p>
       In Australia, in Sydney. Model requests are processed by OpenAI in the United States under its business API
-      terms, and are not used to train models. If you add your own OpenAI API key, those requests go to
+      terms, and are not used to train models. If you add your own OpenAI or Anthropic API key, those requests go to
       that provider under your agreement with them. Astruct never sends a letter or email: you send what it drafts. More on
       the <Link href="/security">security page</Link>.
     </p>,

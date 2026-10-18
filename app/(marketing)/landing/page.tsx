@@ -336,7 +336,7 @@ export default function HomePage() {
               <h2 className="mk-h2">Your project data is stored in Australia.</h2>
               <p className="mk-lede">
                 Stored in Sydney. Model requests go to OpenAI in the United States under its business API terms and are
-                not used for training. If you add your own API key, those requests go to OpenAI under your agreement with them.
+                not used for training. If you add your own API key, those requests go to that provider under your agreement with them.
                 Astruct never sends a letter or email. You do.
               </p>
               <p style={{ marginTop: 24 }}><Link className="mk-link" href="/security">How Astruct handles your data<IArrow /></Link></p>

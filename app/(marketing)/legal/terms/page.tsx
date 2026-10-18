@@ -83,9 +83,9 @@ const SECTIONS: LegalSection[] = [
         Astruct uses third-party providers to run the service, including OpenAI (model processing in the United States,
         under its business API terms), Supabase (storage in Sydney), Vercel (hosting, partly in the United States) and Stripe (billing). When you
         connect a Microsoft 365, Google or Procore account, that provider&rsquo;s own terms also apply to your use of it. We are not responsible for the
-        availability of third-party services. Astruct&rsquo;s chat runs on Astruct credits or your own OpenAI
-        API key. If you add your own API key, those requests go to OpenAI under your agreement with them, and
-        OpenAI bills you for them. You may sign in to your own Codex or Claude Code in the Terminal on your Astruct
+        availability of third-party services. Astruct&rsquo;s chat runs on Astruct credits or your own OpenAI or Anthropic
+        API key. If you add your own API key, those requests go to that provider under your agreement with them, and
+        that provider bills you for them. You may sign in to your own Codex or Claude Code in the Terminal on your Astruct
         Computer and use them yourself, under OpenAI&rsquo;s or Anthropic&rsquo;s terms. Astruct&rsquo;s chat does not use them.
       </p>
     ),

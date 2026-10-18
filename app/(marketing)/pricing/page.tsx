@@ -8,7 +8,7 @@ import { IArrow } from '@/components/mk/icons'
 export const metadata: Metadata = {
   title: 'Pricing',
   description:
-    `AU$199 per project, per month, ex GST, with unlimited users, plus credits for AI use. Projects 2–5 AU$179 each, 6–15 AU$159, 16–30 AU$139, 31 and over AU$119. AI work can run on your own OpenAI API key instead. ${TRIAL_LINE}`,
+    `AU$199 per project, per month, ex GST, with unlimited users, plus credits for AI use. Projects 2–5 AU$179 each, 6–15 AU$159, 16–30 AU$139, 31 and over AU$119. AI work can run on your own OpenAI or Anthropic API key instead. ${TRIAL_LINE}`,
   alternates: { canonical: '/pricing' },
 }
 
@@ -21,7 +21,7 @@ const ITEMS: QA[] = [
   item('Does every project drop to the lower price?', 'No. Each project is charged at the rate for its band. With 8 projects you pay AU$199 for the first, AU$179 for each of the next four and AU$159 for each of the last three: AU$199 + AU$716 + AU$477 = AU$1,392 a month, an average of AU$174 per project.'),
   item('How many users can we add?', 'As many as you like. Every user in your company account is included at no extra cost, on every project.'),
   item('What is included with each project?', 'Everything in Astruct: the contract read with every notice period and its clause and page, every document and email filed to the project with a chronology, Search, Ask and Draft across every page, drafts on your letterhead as .docx or PDF, a cloud computer for each user, and Outlook plus other apps such as Procore, Gmail and SharePoint.'),
-  item('How is AI use paid for?', 'Two ways, chosen in Settings > Model account. Astruct credits, the default: Astruct’s own models, metered as credits. Credits are charged as used, AU$1.00 each, billed monthly. Or add your own OpenAI API key: Astruct’s chat then runs on your key, and OpenAI bills you for it.'),
+  item('How is AI use paid for?', 'Two ways, chosen in Settings > Model account. Astruct credits, the default: Astruct’s own models, metered as credits. Credits are charged as used, AU$1.00 each, billed monthly. Or add your own OpenAI or Anthropic API key: Astruct’s chat then runs on your key, and that provider bills you for it. If your key fails or runs out, Astruct credits take over.'),
   item('How does the free trial work?', 'Request a trial and we email you an invite link. The trial is free for 30 days, with two projects and 100 credits, and no card. Credits cover the work Astruct does for you: reading documents, answering questions and drafting. To keep going after 30 days, subscribe at the prices above. Nothing is charged unless you do.'),
   item('How do I cancel?', 'Cancel any time. If you let the trial end without subscribing, nothing is charged.'),
   item('Are prices in Australian dollars?', 'Yes. All prices are in Australian dollars and exclude GST.'),
@@ -40,7 +40,7 @@ export default function PricingPage() {
           <dl className="mk-ph-facts">
             <div><dt>Users</dt><dd>Unlimited, on every project</dd></div>
             <div><dt>Eight projects</dt><dd>AU$1,392 a month, AU$174 each on average</dd></div>
-            <div><dt>AI use</dt><dd>Astruct credits, or your own OpenAI API key</dd></div>
+            <div><dt>AI use</dt><dd>Astruct credits, or your own OpenAI or Anthropic API key</dd></div>
             <div><dt>Trial</dt><dd>30 days, two projects, 100 credits</dd></div>
             <div><dt>Prices</dt><dd>Australian dollars, excluding GST</dd></div>
           </dl>

@@ -64,8 +64,8 @@ const SECTIONS: LegalSection[] = [
         To read mail and documents, check issues and prepare drafts, Astruct sends the relevant parts of Your Content to
         OpenAI&rsquo;s API. OpenAI processes these requests in the United States under its business API terms, and does not
         use data sent through its business API to train its models. Astruct&rsquo;s chat runs on Astruct credits
-        or your own OpenAI API key (Settings, Model account). If you add your own API key, those requests go
-        to that provider under your agreement with them, and OpenAI&rsquo;s terms apply to how it handles them.
+        or your own OpenAI or Anthropic API key (Settings, Model account). If you add your own API key, those requests go
+        to that provider under your agreement with them, and that provider&rsquo;s terms apply to how it handles them.
       </p>
     ),
   },
