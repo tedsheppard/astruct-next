@@ -5,7 +5,7 @@ import { AskLive, DraftLive, SearchLive, WatchLive } from '@/components/mk/live/
 import { Chronology } from '@/components/mk/chronology'
 import { DataFlow } from '@/components/mk/data-flow'
 import { Faq, HOME_FAQ, faqJsonLd } from '@/components/mk/faq'
-import { GDrive, GGmail, GOneDrive, GOutlook, GSharePoint, GUpload, IArrow, ICheck } from '@/components/mk/icons'
+import { GDrive, GDropbox, GGmail, GOneDrive, GOutlook, GSharePoint, GUpload, IArrow, ICheck } from '@/components/mk/icons'
 import { PricingCards } from '@/components/mk/pricing'
 import { BOOKING_LABEL, BOOKING_URL, CTA_LABEL, TRIAL_LINE, TRIAL_URL } from '@/components/mk/links'
 
@@ -66,11 +66,12 @@ const LIVE: { name: string; body: string; logo: React.ReactNode; two?: boolean }
   { name: 'Your documents', body: 'Files, whole folders and zips, thousands at a time. Scanned PDFs, Word, spreadsheets and saved emails are all read.', logo: <span style={{ color: 'var(--ink)', display: 'flex' }}><GUpload /></span> },
   { name: 'Outlook', body: 'Personal and shared Microsoft 365 mailboxes. Shared ones need your admin’s consent, once.', logo: <GOutlook /> },
   { name: 'OneDrive and SharePoint', body: 'Project folders and document libraries, synced and filed into the project.', logo: <><GOneDrive /><GSharePoint /></>, two: true },
-  { name: 'Gmail and Google Drive', body: 'Google Workspace mail and Drive folders. We set up the Google sign-in with you when your trial starts.', logo: <><GGmail /><GDrive /></>, two: true },
+  { name: 'Gmail and Google Drive', body: 'Gmail and Google Drive folders. Connect in one click.', logo: <><GGmail /><GDrive /></>, two: true },
+  { name: 'Dropbox', body: 'Project folders, synced and filed into the project. Connect in one click.', logo: <GDropbox /> },
   // eslint-disable-next-line @next/next/no-img-element
   { name: 'Procore', body: 'Drawings, documents, RFIs and submittals. Your Procore admin installs the Astruct app once.', logo: <img src="/logos/procore_logo.png" alt="" width={26} height={26} style={{ borderRadius: 6 }} /> },
 ]
-const ON_REQUEST = ['Aconex', 'Autodesk Construction Cloud', 'Dropbox', 'InEight / TeamBinder', 'Xero']
+const ON_REQUEST = ['Aconex', 'Autodesk Construction Cloud', 'InEight / TeamBinder', 'Xero']
 
 const ic = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
 

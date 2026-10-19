@@ -67,7 +67,7 @@ export const HOME_FAQ: QA[] = [
   ),
   qa(
     'Which systems does it connect to?',
-    'Live now: Outlook, OneDrive and SharePoint (personal and shared Microsoft 365 mailboxes and libraries), Gmail and Google Drive (we set up the Google sign-in with you when your trial starts) and Procore (your Procore admin installs the Astruct app once). Aconex, Autodesk Construction Cloud, Dropbox, InEight / TeamBinder and Xero connect on request. Documents from anywhere else can be uploaded as files, folders and zips.',
+    'Live now: Outlook, OneDrive and SharePoint (personal and shared Microsoft 365 mailboxes and libraries), Gmail and Google Drive and Procore (your Procore admin installs the Astruct app once). Aconex, Autodesk Construction Cloud, Dropbox, InEight / TeamBinder and Xero connect on request. Documents from anywhere else can be uploaded as files, folders and zips.',
   ),
   qa(
     'How quickly does it see new mail?',

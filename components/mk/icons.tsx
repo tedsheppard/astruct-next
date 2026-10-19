@@ -91,6 +91,11 @@ export const GDrive = ({ className }: P) => (
     <path d="M5.9 20h12.2l3.4-5.9H9.3L5.9 20Z" fill="#4285F4" />
   </svg>
 )
+export const GDropbox = ({ className }: P) => (
+  <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M7 3 2 6.3l5 3.2 5-3.2L7 3Zm10 0-5 3.3 5 3.2 5-3.2L17 3ZM2 12.7l5 3.2 5-3.2-5-3.2-5 3.2Zm15-3.2-5 3.2 5 3.2 5-3.2-5-3.2ZM7 17l5 3.3 5-3.3-5-3.2L7 17Z" fill="#0061FF" />
+  </svg>
+)
 export const GComputer = ({ className }: P) => (
   <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
     <rect x="3" y="4.5" width="18" height="12" rx="2" fill="none" stroke="currentColor" strokeWidth="1.8" />

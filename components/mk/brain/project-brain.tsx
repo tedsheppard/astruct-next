@@ -106,7 +106,7 @@ export function ProjectBrain() {
       <svg className="pb-wide" viewBox={`0 0 ${W} ${H}`} aria-hidden="true">
         <Defs id="pbw" />
         <text className="pb-col" x="2" y={COL_Y}>What it reads</text>
-        <text className="pb-col" x={OUT_X + 2} y={COL_Y}>What it found · Mon 12 Oct</text>
+        <text className="pb-col" x={OUT_X + 2} y={COL_Y}>Claims and notices · Mon 12 Oct</text>
         <text className="pb-cap" x={cx} y={COL_Y} textAnchor="middle">Kestrel Street, Stage 2</text>
         <text className="pb-cap-sub" x={cx} y={COL_Y + 20} textAnchor="middle">4,812 documents read · demo project, fictional parties</text>
 
@@ -169,7 +169,7 @@ export function ProjectBrain() {
           <Defs id="pbn" />
           <BrainBody id="pbn" />
         </svg>
-        <p className="pb-n-col">What it found · Mon 12 Oct</p>
+        <p className="pb-n-col">Claims and notices · Mon 12 Oct</p>
         <ul className="pb-n-out">
           {OUTPUTS.map((o, i) => (
             <li key={o.kind} data-c={o.c} style={{ ['--d' as string]: `${i * 2.5}s` }}>
