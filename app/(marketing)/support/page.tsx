@@ -24,10 +24,9 @@ export default function SupportPage() {
   return (
     <>
       <section className="mk-help-hero">
-        <div className="mk-field mk-field-help" aria-hidden="true"><i /><i /><i /></div>
         <div className="mk-wrap">
-                    <h1 className="mk-h2">How can we help?</h1>
-          <p className="mk-lede">Everything you need to set up Astruct, connect your project, and get good answers, searches and drafts.</p>
+          <h1 className="mk-h1">Help centre</h1>
+          <p className="mk-lede">Setting up a trial and a project, connecting Outlook, searching, asking, drafting, team access and billing.</p>
         </div>
       </section>
       <section className="mk-help-main">
@@ -61,7 +60,7 @@ export default function SupportPage() {
           </HelpSearch>
           <div className="mk-help-contact">
             <div>
-              <h2>Still stuck?</h2>
+              <h2>Contact us</h2>
               <p>Email the Astruct team and we’ll reply within two business days.</p>
             </div>
             <a className="mk-btn mk-btn-ghost" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>

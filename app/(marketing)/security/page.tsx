@@ -1,12 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { CONTACT_EMAIL } from '@/components/mk/links'
-import { DataFlow } from '@/components/mk/data-flow'
 
 export const metadata: Metadata = {
   title: 'Security',
   description:
-    'Stored in Sydney. Model requests processed by OpenAI in the United States under its business API terms and not used for training. Mailbox access set by your admin. Astruct never sends: you send what it drafts.',
+    'Where Astruct stores your project data, who processes it and who can see it. Stored in Sydney. Model requests go to OpenAI in the United States under its business API terms and are not used for training. Astruct never sends a letter or email.',
   alternates: { canonical: '/security' },
 }
 
@@ -41,11 +40,11 @@ const ROWS: { h: string; p: React.ReactNode[] }[] = [
     p: ['Astruct drafts notices and correspondence for review. You check each draft and send it yourself. Nothing goes out from your mailbox.'],
   },
   {
-    h: 'Periods you can check',
-    p: ['Every date or period Astruct shows is counted from the words of your contract, with the clause, its page and how it was counted, and stays marked “check the clause” until your team confirms the rule. Every piece of evidence is a verbatim quote that opens its source. Astruct does not give legal advice.'],
+    h: 'Dates and periods',
+    p: ['A date or period in Astruct is counted from the words of your contract and shows the clause, its page and how it was counted. It stays marked “check the clause” until someone on your team confirms the rule. Quotes used as evidence are word for word and open the source document. Astruct does not give legal advice.'],
   },
   {
-    h: 'You can switch it off',
+    h: 'Disconnecting and deleting',
     p: [
       'Disconnect a mailbox from Settings at any time. Your Microsoft 365 admin can also revoke Astruct’s consent in Microsoft Entra.',
       <>To have your organisation’s data deleted at the end of a trial or subscription, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</>,
@@ -59,7 +58,7 @@ const ROWS: { h: string; p: React.ReactNode[] }[] = [
   },
   {
     h: 'Reporting a concern',
-    p: [<>If you think you have found a security issue, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. We reply to every report.</>],
+    p: [<>To report a security issue, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. We reply to every report.</>],
   },
 ]
 
@@ -67,15 +66,21 @@ export default function SecurityPage() {
   return (
     <>
       <section className="mk-page-head">
-        <div className="mk-wrap mk-sec-top mk-secpage-top">
+        <div className="mk-wrap mk-page-top">
           <div>
-            <h1 className="mk-h1" style={{ fontSize: 'clamp(40px, 5.4vw, 72px)' }}>Your project data<br />stays yours.</h1>
+            <h1 className="mk-h1">Security</h1>
             <p className="mk-lede">
-              Commercial correspondence is some of the most sensitive material on a project. Here is exactly where it goes,
-              who can see it, and what Astruct will and will not do with it.
+              Project correspondence is commercially sensitive. This page sets out where Astruct keeps it, who
+              processes it, who on your team can see it, and what Astruct will and won’t do with it.
             </p>
           </div>
-          <DataFlow />
+          <dl className="mk-facts">
+            <div><dt>Stored</dt><dd>Sydney, Australia</dd></div>
+            <div><dt>Model requests</dt><dd>OpenAI, United States, under business API terms</dd></div>
+            <div><dt>Training</dt><dd>Your data isn’t used to train models</dd></div>
+            <div><dt>Mailbox access</dt><dd>Set by your Microsoft 365 admin</dd></div>
+            <div><dt>Sending</dt><dd>You send. Astruct only drafts.</dd></div>
+          </dl>
         </div>
       </section>
       <section style={{ paddingBottom: 'clamp(96px, 12vw, 160px)' }}>

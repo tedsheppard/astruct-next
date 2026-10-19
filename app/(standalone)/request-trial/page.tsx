@@ -11,7 +11,7 @@ import './request-trial.css'
 // leads table (app/api/waitlist); Ted reads the request and sends the invite.
 export const metadata: Metadata = {
   title: `${CTA_LABEL} · Astruct`,
-  description: `${TRIAL_LINE} Leave your details and we will email you an invite link to Astruct, AI for construction.`,
+  description: `${TRIAL_LINE} Leave your details and we will email you an invite link to Astruct, AI for Australian construction.`,
   alternates: { canonical: '/request-trial' },
   robots: { index: true, follow: true },
 }
@@ -19,7 +19,6 @@ export const metadata: Metadata = {
 export default function RequestTrialPage() {
   return (
     <div className="mk wl">
-      <div className="mk-field wl-field" aria-hidden="true"><i /><i /><i /><i /></div>
       <main className="wl-main">
         <Link href="/" className="mk-brand wl-brand" aria-label="Astruct home">
           <Mark />

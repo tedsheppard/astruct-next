@@ -1,20 +1,15 @@
-/* astruct.io/request-trial: one centred screen over soft colour. */
+/* astruct.io/request-trial: one centred screen, plain background. */
 .wl { position: relative; isolation: isolate; min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 40px 16px; }
-.wl-field { position: fixed; inset: 0; }
-.wl-field i:nth-child(1) { width: 42vw; height: 42vw; left: -6%; top: 8%; background: var(--f-teal); }
-.wl-field i:nth-child(2) { width: 40vw; height: 40vw; right: -8%; top: -4%; background: var(--f-blue); }
-.wl-field i:nth-child(3) { width: 34vw; height: 34vw; right: 6%; bottom: -6%; background: var(--f-violet); }
-.wl-field i:nth-child(4) { width: 26vw; height: 26vw; left: 18%; bottom: -8%; background: var(--f-amber); opacity: 0.7; }
 
 .wl-main { position: relative; z-index: 1; width: 100%; max-width: 580px; text-align: center; display: flex; flex-direction: column; align-items: center; }
 .wl-brand { margin-bottom: 36px; }
-.wl-h { font-size: clamp(30px, 5vw, 44px); line-height: 1.08; letter-spacing: -0.035em; font-weight: 650; margin: 0 0 18px; text-wrap: balance; }
+.wl-h { font-family: var(--f-serif); font-size: clamp(32px, 5vw, 46px); line-height: 1.08; letter-spacing: -0.016em; font-weight: 400; margin: 0 0 18px; text-wrap: balance; }
 .wl-p { font-size: 17px; line-height: 1.55; color: var(--ink-2); margin: 0 0 10px; text-wrap: pretty; }
-.wl-card { width: 100%; margin-top: 26px; text-align: left; border-radius: 26px; }
+.wl-card { width: 100%; margin-top: 26px; text-align: left; }
 
 .wl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .wl-l { display: grid; gap: 6px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
-.wl .mk-input { height: 44px; font-size: 15.5px; background: color-mix(in srgb, var(--bg) 82%, transparent); }
+.wl .mk-input { height: 44px; font-size: 15.5px; }
 .wl-select { appearance: none; -webkit-appearance: none; padding-right: 34px; cursor: pointer;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%2386868b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 13px center; }
@@ -30,8 +25,8 @@
 .wl-set { border: 0; padding: 0; margin: 14px 0 0; min-width: 0; }
 .wl-set legend { padding: 0; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
 .wl-toggles { display: flex; flex-wrap: wrap; gap: 6px; }
-.wl-tog { font: inherit; font-size: 13.5px; height: 32px; padding: 0 12px; border-radius: 10px; border: 0; cursor: pointer; color: var(--ink-2);
-  background: color-mix(in srgb, var(--bg) 82%, transparent); box-shadow: inset 0 0 0 1px var(--line); transition: box-shadow .15s ease, color .15s ease, background .15s ease; }
+.wl-tog { font: inherit; font-size: 13.5px; height: 32px; padding: 0 12px; border-radius: 4px; border: 0; cursor: pointer; color: var(--ink-2);
+  background: var(--bg); box-shadow: inset 0 0 0 1px var(--line); transition: box-shadow .15s ease, color .15s ease, background .15s ease; }
 .wl-tog:hover { color: var(--ink); }
 .wl-tog.is-on { color: var(--ink); background: var(--bg); box-shadow: inset 0 0 0 1.5px var(--ink); }
 .wl-tog:focus-visible { outline: none; box-shadow: inset 0 0 0 1.5px var(--ink), var(--focus); }
@@ -44,7 +39,7 @@
 .wl-details { animation: wl-in .4s ease both; }
 
 .wl-done { text-align: center; padding: 14px 6px 8px; }
-.wl-tick { display: inline-flex; width: 44px; height: 44px; border-radius: 99px; align-items: center; justify-content: center; color: #fff; background: var(--grad); margin-bottom: 12px; }
+.wl-tick { display: inline-flex; width: 40px; height: 40px; align-items: center; justify-content: center; color: var(--accent-ink); margin-bottom: 8px; }
 .wl-done-h { font-size: 20px; font-weight: 650; letter-spacing: -0.02em; margin: 0 0 4px; }
 .wl-done-p { font-size: 15.5px; color: var(--ink-2); margin: 0; }
 
@@ -63,20 +58,4 @@
   .wl-p { font-size: 16px; }
   .wl-foot { display: grid; gap: 6px; }
   .wl-dot { display: none; }
-}
-@media (prefers-reduced-transparency: reduce) {
-  .wl-card { background: var(--card); -webkit-backdrop-filter: none; backdrop-filter: none; }
-}
-
-/* A faint drawing-sheet grid instead of colour blobs. */
-.wl-field i { display: none; }
-.wl-field {
-  opacity: 1 !important;
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--ink) 6%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--ink) 6%, transparent) 1px, transparent 1px);
-  background-size: 32px 32px;
-  background-position: center;
-  -webkit-mask-image: radial-gradient(ellipse 55% 65% at 50% 45%, #000 0%, transparent 78%);
-  mask-image: radial-gradient(ellipse 55% 65% at 50% 45%, #000 0%, transparent 78%);
 }

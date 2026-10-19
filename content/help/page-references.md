@@ -21,7 +21,7 @@ It is the page of the file as it was uploaded or synced, counting from the first
 
 ## Quotes
 
-When Astruct quotes a document as evidence, the quote is the document’s own words. If a quote can’t be found word for word in its source, Astruct doesn’t show it as evidence.
+When Astruct quotes a document as evidence, the quote is the document’s own words. If a quote isn’t in its source word for word, Astruct doesn’t show it as evidence.
 
 ## If a reference looks wrong
 

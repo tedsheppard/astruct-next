@@ -96,7 +96,7 @@ export default async function HelpArticlePage({ params }: { params: Promise<{ sl
           </ReactMarkdown>
         </div>
         <div className="mk-help-foot">
-          <p>Didn’t find what you needed? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+          <p>Questions about this article? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
           <div className="mk-help-pn">
             {prev ? <Link href={`/support/${prev.slug}`} className="is-prev"><small>Previous</small>{prev.title}</Link> : <span />}
             {next ? <Link href={`/support/${next.slug}`} className="is-next"><small>Next</small>{next.title}<IArrow /></Link> : <span />}

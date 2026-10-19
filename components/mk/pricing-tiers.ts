@@ -8,9 +8,9 @@ export type Tier = { from: number; to: number | null; price: number; label: stri
 
 export const TIERS: Tier[] = [
   { from: 1, to: 1, price: 199, label: 'First project' },
-  { from: 2, to: 5, price: 179, label: 'Projects 2–5' },
-  { from: 6, to: 15, price: 159, label: 'Projects 6–15' },
-  { from: 16, to: 30, price: 139, label: 'Projects 16–30' },
+  { from: 2, to: 5, price: 179, label: 'Projects 2 to 5' },
+  { from: 6, to: 15, price: 159, label: 'Projects 6 to 15' },
+  { from: 16, to: 30, price: 139, label: 'Projects 16 to 30' },
   { from: 31, to: null, price: 119, label: 'Projects 31 and over' },
 ]
 

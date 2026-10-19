@@ -65,4 +65,4 @@ RFI* AND "slab edge" w/8 (distance OR thickness OR "150 mm")
 - Start broad, then add NOT to remove noise, such as a subcontractor with a similar name.
 - If a Boolean search finds nothing, try the same question in **Plain English**. See [Plain-English search](/support/plain-english-search).
 
-Every result shows the page it was found on. See [Page references](/support/page-references).
+Every result shows the page it is on. See [Page references](/support/page-references).

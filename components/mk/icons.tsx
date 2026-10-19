@@ -10,14 +10,8 @@ export const IArrow = ({ className }: P) => (
 export const IChevron = ({ className }: P) => (
   <svg className={className} width="12" height="12" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" {...line} strokeWidth={2} /></svg>
 )
-export const ICheck = ({ className }: P) => (
-  <svg className={className} viewBox="0 0 20 20" aria-hidden="true"><path d="M4.5 10.5 8.2 14 15.5 6.5" {...line} strokeWidth={1.9} /></svg>
-)
 export const IPlus = ({ className }: P) => (
   <svg className={className} viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v12M4 10h12" {...line} /></svg>
-)
-export const IPlay = ({ className }: P) => (
-  <svg className={className} viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13a.8.8 0 0 0 1.2.7l10.4-6.5a.8.8 0 0 0 0-1.4L9.2 4.8A.8.8 0 0 0 8 5.5Z" fill="currentColor" /></svg>
 )
 export const IMenu = ({ className }: P) => (
   <svg className={className} width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 7h13M3.5 13h13" {...line} /></svg>
@@ -25,27 +19,6 @@ export const IMenu = ({ className }: P) => (
 export const IClose = ({ className }: P) => (
   <svg className={className} width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15" {...line} /></svg>
 )
-export const IDoc = ({ className }: P) => (
-  <svg className={className} viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.8h5.2L12.5 5v9.2H4z M9 1.8V5h3.5" {...line} strokeWidth={1.3} /></svg>
-)
-export const IMail = ({ className }: P) => (
-  <svg className={className} viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3.5" width="12" height="9" rx="1.6" {...line} strokeWidth={1.3} /><path d="m2.5 4.5 5.5 4 5.5-4" {...line} strokeWidth={1.3} /></svg>
-)
-export const ILock = ({ className }: P) => (
-  <svg className={className} viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.6" {...line} strokeWidth={1.3} /><path d="M5.2 7V5a2.8 2.8 0 0 1 5.6 0v2" {...line} strokeWidth={1.3} /></svg>
-)
-
-// Sidebar glyphs for the drawn app window.
-export const ISide = {
-  chat: ({ className }: P) => <svg className={className} viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11" {...line} strokeWidth={1.4} /></svg>,
-  search: ({ className }: P) => <svg className={className} viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.3" {...line} strokeWidth={1.4} /><path d="m10.3 10.3 3.2 3.2" {...line} strokeWidth={1.4} /></svg>,
-  library: ({ className }: P) => <svg className={className} viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2.5v11M6.5 2.5v11M10 3l3 10.3" {...line} strokeWidth={1.4} /></svg>,
-  draft: ({ className }: P) => <svg className={className} viewBox="0 0 16 16" aria-hidden="true"><path d="M10.8 2.7a1.5 1.5 0 0 1 2.1 2.1L6 11.7l-3 .8.8-3z" {...line} strokeWidth={1.4} /></svg>,
-  team: ({ className }: P) => <svg className={className} viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="5.5" r="2.3" {...line} strokeWidth={1.4} /><path d="M1.8 13.2a4.3 4.3 0 0 1 8.4 0M10.8 3.4a2.3 2.3 0 0 1 0 4.3M12.2 9.4a4.3 4.3 0 0 1 2 3.8" {...line} strokeWidth={1.4} /></svg>,
-  mail: IMail,
-  computer: ({ className }: P) => <svg className={className} viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3" width="12" height="8" rx="1.4" {...line} strokeWidth={1.4} /><path d="M6 13.5h4" {...line} strokeWidth={1.4} /></svg>,
-  folder: ({ className }: P) => <svg className={className} viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4.3c0-.7.5-1.2 1.2-1.2h3l1.5 1.6h5.1c.7 0 1.2.5 1.2 1.2v6.2c0 .7-.5 1.2-1.2 1.2H3.2c-.7 0-1.2-.5-1.2-1.2z" {...line} strokeWidth={1.4} /></svg>,
-}
 
 // ── Connector glyphs (flat) ────────────────────────────────────────────────
 export const GOutlook = ({ className }: P) => (
@@ -94,11 +67,5 @@ export const GDrive = ({ className }: P) => (
 export const GDropbox = ({ className }: P) => (
   <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
     <path d="M7 3 2 6.3l5 3.2 5-3.2L7 3Zm10 0-5 3.3 5 3.2 5-3.2L17 3ZM2 12.7l5 3.2 5-3.2-5-3.2-5 3.2Zm15-3.2-5 3.2 5 3.2 5-3.2-5-3.2ZM7 17l5 3.3 5-3.3-5-3.2L7 17Z" fill="#0061FF" />
-  </svg>
-)
-export const GComputer = ({ className }: P) => (
-  <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
-    <rect x="3" y="4.5" width="18" height="12" rx="2" fill="none" stroke="currentColor" strokeWidth="1.8" />
-    <path d="M9 20h6M12 16.5V20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
   </svg>
 )

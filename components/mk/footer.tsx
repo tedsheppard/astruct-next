@@ -10,17 +10,17 @@ export default function Footer() {
         <div className="mk-footer-top">
           <div className="mk-footer-brand">
             <Brand />
-            <p>AI for construction. Every document for a project in one place, searchable, with answers and drafts from AI made for Australian contracts.</p>
+            <p>AI for Australian construction. Astruct reads a project’s contract, documents and mail, answers questions about them and drafts the correspondence.</p>
           </div>
           <div>
             <h4>Product</h4>
             <ul>
-              <li><Link href="/#project">One place</Link></li>
-              <li><Link href="/#find">Find anything</Link></li>
-              <li><Link href="/#ask">Ask it</Link></li>
-              <li><Link href="/#draft">Draft it</Link></li>
+              <li><Link href="/#project">Documents and mail</Link></li>
+              <li><Link href="/#find">Search</Link></li>
+              <li><Link href="/#ask">Questions about the contract</Link></li>
+              <li><Link href="/#draft">Drafting</Link></li>
               <li><Link href="/#chronology">Chronology</Link></li>
-              <li><Link href="/#australian">Made for Australia</Link></li>
+              <li><Link href="/#australian">Contracts and security of payment</Link></li>
               <li><Link href="/pricing">Pricing</Link></li>
               <li><Link href="/security">Security</Link></li>
             </ul>

@@ -4,13 +4,11 @@ import Footer from '@/components/mk/footer'
 import { MetaPixel, Reveal } from '@/components/mk/client-bits'
 import { SITE_ORIGIN, CONTACT_EMAIL, TRIAL_LINE } from '@/components/mk/links'
 import './mk.css'
-import './live.css'
-import './brain.css'
 import './look.css'
 
-const TITLE = 'Astruct: AI for construction'
+const TITLE = 'Astruct: AI for Australian construction'
 const DESCRIPTION =
-  'AI for construction. Put every document and email for a project in one place, then search it, ask it and draft from it, with AI that knows Australian contracts, security of payment law and how project correspondence is written.'
+  'AI for Australian construction. Upload a project’s contract, drawings and correspondence and connect its mailbox. Search it, ask questions with the clause and page given, and draft notices and claims in Word. Astruct knows the Australian standard forms and the security of payment Act in each state.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),
@@ -57,7 +55,7 @@ const ORG_JSONLD = {
       url: SITE_ORIGIN,
       description: DESCRIPTION,
       featureList: [
-        'Every document and email for a project in one place: uploads of thousands of files with their folders, and connected Outlook, OneDrive, SharePoint, Gmail, Google Drive and Procore',
+        'A project’s documents and mail together: uploads of thousands of files with their folders, and connected Outlook, OneDrive, SharePoint, Gmail, Google Drive, Dropbox and Procore',
         'Each document and email read on arrival and filed to its project by type',
         'Search across the whole project in plain English or Boolean, each result with a line on why it matches, dated by the document’s own date',
         'Answers about RFIs, scope and clauses, citing the document, clause and page',

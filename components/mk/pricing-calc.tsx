@@ -45,7 +45,7 @@ export function PriceCalculator() {
         onChange={(e) => set(Number(e.target.value))}
       />
       <div className="mk-calc-total" aria-live="polite">
-        <span className="mk-big"><span className="mk-grad">{aud(q.total)}</span></span>
+        <span className="mk-big">{aud(q.total)}</span>
         <span className="mk-calc-unit">per month, ex GST, for {n} {n === 1 ? 'project' : 'projects'}</span>
       </div>
       <ul className="mk-calc-lines">

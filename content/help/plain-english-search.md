@@ -24,6 +24,6 @@ Plain-English search finds documents by meaning, so *the crane being out of serv
 | You want the most relevant few results | You need every document that matches |
 | You are exploring | You are checking something thoroughly, such as for a claim |
 
-Both search the same documents and mail, and both show the page each result was found on. For the Boolean operators, see [Boolean search syntax](/support/boolean-search).
+Both search the same documents and mail, and both show the page each result is on. For the Boolean operators, see [Boolean search syntax](/support/boolean-search).
 
 If you want an answer rather than a list of documents, ask the question in a chat instead. See [Asking good questions](/support/asking-good-questions).

@@ -16,8 +16,15 @@ const NAV = [
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false)
-  const [open, setOpen] = useState(false)
   const pathname = usePathname()
+  // The menu is open for the page it was opened on, so it closes on navigation.
+  const page = pathname ?? ''
+  const [openOn, setOpenOn] = useState<string | null>(null)
+  const open = openOn === page
+  const setOpen = (v: boolean | ((o: boolean) => boolean)) => setOpenOn((cur) => {
+    const was = cur === page
+    return (typeof v === 'function' ? v(was) : v) ? page : null
+  })
 
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 8)
@@ -26,18 +33,17 @@ export default function Header() {
     return () => window.removeEventListener('scroll', on)
   }, [])
 
-  // Close the menu on navigation and on Escape.
-  useEffect(() => setOpen(false), [pathname])
+  // Close the menu on Escape.
   useEffect(() => {
     if (!open) return
-    const k = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
+    const k = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpenOn(null) }
     window.addEventListener('keydown', k)
     return () => window.removeEventListener('keydown', k)
   }, [open])
 
   return (
     <header className={`mk-header${scrolled || open ? ' is-scrolled' : ''}`}>
-      <div className="mk-header-bar mk-glass">
+      <div className="mk-header-bar">
         <Brand />
         <nav className="mk-nav" aria-label="Main">
           {NAV.map((n) => (
@@ -60,7 +66,7 @@ export default function Header() {
         </div>
       </div>
       {open && (
-        <div id="mk-sheet" className="mk-sheet mk-glass" style={{ pointerEvents: 'auto' }}>
+        <div id="mk-sheet" className="mk-sheet">
           {NAV.map((n) => (
             <Link key={n.href} href={n.href} onClick={() => setOpen(false)}>{n.label}</Link>
           ))}
