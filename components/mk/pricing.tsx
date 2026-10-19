@@ -10,12 +10,12 @@ export const PRICE_LINE =
 
 export const INCLUDED = [
   'Unlimited users under one company account',
-  'The contract read, with every notice period and its clause and page',
-  'Every document and email filed to the project, with a chronology',
-  'Search, Ask and Draft across every page, each answer cited',
+  'Every document and email for the project, read and filed by type',
+  'Search, Ask and Draft across the whole project, each answer cited',
+  'A chronology of the project, every entry linked to its source',
   'Drafts on your letterhead, as .docx or PDF',
+  'Outlook, OneDrive, SharePoint, Gmail, Google Drive and Procore',
   'A cloud computer for each user',
-  'Outlook, plus Procore, Gmail, SharePoint and other apps',
 ]
 
 export function PricingCards({ onPricingPage = false }: { onPricingPage?: boolean }) {

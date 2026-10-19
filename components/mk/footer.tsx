@@ -10,16 +10,17 @@ export default function Footer() {
         <div className="mk-footer-top">
           <div className="mk-footer-brand">
             <Brand />
-            <p>Contract administration for Australian construction. It reads the contract, files the record, cites the clause and drafts the notice.</p>
+            <p>AI for construction. Every document for a project in one place, searchable, with answers and drafts from AI made for Australian contracts.</p>
           </div>
           <div>
             <h4>Product</h4>
             <ul>
-              <li><Link href="/#read">Reads the contract</Link></li>
-              <li><Link href="/#ask">Answers with the clause</Link></li>
-              <li><Link href="/#draft">Drafts from the contract</Link></li>
-              <li><Link href="/#mail">Files every record</Link></li>
+              <li><Link href="/#project">One place</Link></li>
+              <li><Link href="/#find">Find anything</Link></li>
+              <li><Link href="/#ask">Ask it</Link></li>
+              <li><Link href="/#draft">Draft it</Link></li>
               <li><Link href="/#chronology">Chronology</Link></li>
+              <li><Link href="/#australian">Made for Australia</Link></li>
               <li><Link href="/pricing">Pricing</Link></li>
               <li><Link href="/security">Security</Link></li>
             </ul>

@@ -32,8 +32,8 @@ function qa(q: string, text: string, a?: React.ReactNode): QA {
 
 export const HOME_FAQ: QA[] = [
   qa(
-    'What is the project brain?',
-    'Everything Astruct has read on a project, in one place: the contract and its special conditions, the documents you upload and the project mail in Outlook, each filed by type, with a chronology built from them. Ask it anything and the answer quotes the clause and cites the page. Search every page in Boolean or plain English. Draft letters, notices and claims from it in Word, on your letterhead.',
+    'What is Astruct?',
+    'AI for construction. You set up a project, upload everything for it and connect the systems it runs on, such as Outlook, Gmail, SharePoint and Procore. Astruct reads each document and email, files it by type and builds a chronology. Then you search it, ask it about RFIs, scope and clauses, and draft variations, EOT notices, claims and letters from it. Answers cite the document, clause and page.',
   ),
   qa(
     'What does Astruct take from the contract?',
@@ -41,11 +41,11 @@ export const HOME_FAQ: QA[] = [
   ),
   qa(
     'How is it different from ChatGPT or Copilot?',
-    'General chat tools answer from whatever you paste in. Astruct works from your project: the contract with its special conditions, the drawings, the programme and the project mail. Every answer cites the clause and page, and search runs across every document in the project.',
+    'General-purpose tools answer from whatever you paste in. Astruct is made for Australian construction. It works from the whole project: the contract with its special conditions, the drawings, the programme, the project mail and the chronology built from them. It knows the standard forms, the security of payment Act in each state and how project correspondence is written. Every answer cites the document, clause and page.',
   ),
   qa(
     'Which contracts does it work with?',
-    'The contract you give it. That includes AS 2124, AS 4000, AS 4300, AS 4902 and AS 4903 style head contracts and subcontracts, and bespoke or heavily amended forms. It also works with security of payment law, such as SOPA in NSW and Queensland’s BIF Act.',
+    'The contract you give it. That includes AS 4000, AS 4902, AS 2124 and AS 4300 family head contracts and subcontracts, ABIC, GC21, and bespoke or heavily amended forms. It also knows the security of payment Act in each state and territory, such as the NSW Act and Queensland’s BIF Act.',
   ),
   qa(
     'How does it find variations, delays and claims in the mail?',
@@ -67,7 +67,7 @@ export const HOME_FAQ: QA[] = [
   ),
   qa(
     'Which systems does it connect to?',
-    'Outlook: personal and shared Microsoft 365 mailboxes. Procore, Gmail, SharePoint and other apps connect from the Apps page. Tell us when you request your trial and we will set them up with you. Any web app can also be opened in your cloud computer, and documents from anywhere else can be uploaded as files and folders.',
+    'Live now: Outlook, OneDrive and SharePoint (personal and shared Microsoft 365 mailboxes and libraries), Gmail and Google Drive (we set up the Google sign-in with you when your trial starts) and Procore (your Procore admin installs the Astruct app once). Aconex, Autodesk Construction Cloud, Dropbox, InEight / TeamBinder and Xero connect on request. Documents from anywhere else can be uploaded as files, folders and zips.',
   ),
   qa(
     'How quickly does it see new mail?',

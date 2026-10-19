@@ -20,7 +20,7 @@ Astruct files each document into the project’s folders: Contract, Corresponden
 
 ## Connect a mailbox
 
-Connect Outlook and attachments from project mail are filed as they arrive. See [Connecting Outlook](/support/connecting-outlook). SharePoint and Procore are available on request. See [Procore, Gmail and SharePoint](/support/connections-on-request).
+Connect Outlook and attachments from project mail are filed as they arrive. See [Connecting Outlook](/support/connecting-outlook). OneDrive, SharePoint, Gmail, Google Drive and Procore connect too. See [Connecting other apps](/support/connections-on-request).
 
 ## How long it takes
 

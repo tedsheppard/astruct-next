@@ -8,9 +8,9 @@ import './live.css'
 import './brain.css'
 import './look.css'
 
-const TITLE = 'Astruct: contract administration for Australian construction'
+const TITLE = 'Astruct: AI for construction'
 const DESCRIPTION =
-  'Astruct reads the contract, files every document and email to its project, keeps the chronology and answers with the clause and page. Notices, letters and claims are drafted from the contract and the evidence, in Word, on your letterhead. You check them and send them.'
+  'AI for construction. Put every document and email for a project in one place, then search it, ask it and draft from it, with AI that knows Australian contracts, security of payment law and how project correspondence is written.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),
@@ -57,13 +57,13 @@ const ORG_JSONLD = {
       url: SITE_ORIGIN,
       description: DESCRIPTION,
       featureList: [
-        'Reads construction contracts: contract sum, practical completion, liquidated damages, payment claim dates and notice periods, with the clause and page',
-        'Files every document and email to its project, by type',
-        'Chronology of the project, each entry linked to its source, with CSV export',
-        'Boolean and plain-English search across every page of every document and email',
-        'Answers questions about the contract, quoting the clause and citing the page',
-        'Drafts notices, letters and claims on your letterhead in a Word editor, as .docx or PDF',
-        'A cloud computer for each user, with a browser and a terminal',
+        'Every document and email for a project in one place: uploads of thousands of files with their folders, and connected Outlook, OneDrive, SharePoint, Gmail, Google Drive and Procore',
+        'Each document and email read on arrival and filed to its project by type',
+        'Search across the whole project in plain English or Boolean, each result with a line on why it matches, dated by the document’s own date',
+        'Answers about RFIs, scope and clauses, citing the document, clause and page',
+        'Drafts variation notices, notices of delay, EOT claims, payment claims, payment schedules, letters and emails in Word on your letterhead, as .docx or PDF',
+        'A day-by-day chronology of the project built from its documents and mail, each entry linked to its source, with CSV export',
+        'Knows Australian standard form and bespoke contracts and the security of payment Act in each state and territory',
       ],
       offers: {
         '@type': 'Offer',

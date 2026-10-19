@@ -95,7 +95,7 @@ function Defs({ id }: { id: string }) {
 }
 
 const LABEL =
-  'The project brain on a demo project, Kestrel Street, Stage 2, with fictional parties. It reads the subcontract HV2291-SC-014, the correspondence, site instructions, programme, RFIs, drawings and Outlook, and shows what it found: an EOT claim issue, with the SC 7.2 period ending Thursday 15 October and 4 documents linked; a variation issue for SI-014 under SC 8.1, with the evidence linked; payment claim PC-10 with a reference date of 25 October under the BIF Act (Qld); and notice of delay ARC-KS2-L-041, sent on 29 September and filed to Notices.'
+  'Astruct on a demo project, Kestrel Street, Stage 2, with fictional parties. It reads the subcontract HV2291-SC-014, the correspondence, site instructions, programme, RFIs, drawings and Outlook, and shows what it found: an EOT claim issue, with the SC 7.2 period ending Thursday 15 October and 4 documents linked; a variation issue for SI-014 under SC 8.1, with the evidence linked; payment claim PC-10 with a reference date of 25 October under the BIF Act (Qld); and notice of delay ARC-KS2-L-041, sent on 29 September and filed to Notices.'
 
 export function ProjectBrain() {
   const b = BRAIN

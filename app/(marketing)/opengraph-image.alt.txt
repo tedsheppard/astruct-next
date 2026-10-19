@@ -1,1 +1,1 @@
-Astruct: the project brain for Australian construction contracts.
+Astruct: AI for construction. Search, ask and draft across every document for a project.
