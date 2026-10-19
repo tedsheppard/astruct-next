@@ -53,7 +53,7 @@ const ROWS: { h: string; p: React.ReactNode[] }[] = [
   {
     h: 'Who processes your data',
     p: [
-      'Supabase (database and file storage, Sydney). Vercel (application hosting, partly in the United States). OpenAI (model processing, United States). Stripe (billing). Microsoft, and Google or Procore where you ask us to connect them, only for the accounts you connect.',
+      'Supabase (database and file storage, Sydney). Vercel (application hosting, partly in the United States). OpenAI (model processing, United States). Stripe (billing). Microsoft, Google, Dropbox, Autodesk and Procore, only for the accounts you connect.',
     ],
   },
   {

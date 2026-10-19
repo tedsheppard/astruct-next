@@ -22,7 +22,7 @@ const SECTIONS: LegalSection[] = [
           <li><strong>Contact and application details</strong> you give us on this website, for example when you request a free trial or email us: your name, work email, company, role and your answers to the request questions.</li>
           <li><strong>Account information</strong>: your name, email address, organisation and sign-in details when you create an account or are invited to one.</li>
           <li><strong>Project content</strong>: the contracts, documents, mail, drafts and other material you upload, or that Astruct reads from the mailboxes and folders you connect (<strong>Your Content</strong>). Your Content may contain personal information about you and other people, such as the names and contact details of people you correspond with.</li>
-          <li><strong>Connected-account data</strong>: where you or your administrator connect a Microsoft 365 account, or a Google or Procore account we set up on request, the mail and files Astruct is permitted to read from it.</li>
+          <li><strong>Connected-account data</strong>: where you or your administrator connect a Microsoft 365, Google, Dropbox, Autodesk or Procore account, the mail and files Astruct is permitted to read from it.</li>
           <li><strong>Usage and billing data</strong>: your plan, usage and billing details (including the card you add if you start a paid company account), handled by our payment processor. We do not store full card numbers.</li>
           <li><strong>Technical data</strong>: device and browser type, IP address, log data and cookie identifiers.</li>
         </ul>
@@ -76,7 +76,7 @@ const SECTIONS: LegalSection[] = [
       <>
         <p>
           We use these service providers: Supabase (database and file storage, Sydney), Vercel (hosting, partly in the United States), OpenAI (model
-          processing, United States), Stripe (billing), Microsoft, Google and Procore (only for the accounts you connect),
+          processing, United States), Stripe (billing), Microsoft, Google, Dropbox, Autodesk and Procore (only for the accounts you connect),
           and Meta (website advertising measurement, see section 7). Each handles data under its own terms.
         </p>
         <p>

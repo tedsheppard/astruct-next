@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Faq, HOME_FAQ, faqJsonLd } from '@/components/mk/faq'
-import { GDrive, GDropbox, GGmail, GOneDrive, GOutlook, GSharePoint, GUpload, IArrow } from '@/components/mk/icons'
+import { GAutodesk, GDrive, GDropbox, GGmail, GOneDrive, GOutlook, GSharePoint, GUpload, IArrow } from '@/components/mk/icons'
 import { PricingCards } from '@/components/mk/pricing'
 import { BOOKING_LABEL, BOOKING_URL, CTA_LABEL, TRIAL_LINE, TRIAL_URL } from '@/components/mk/links'
 
@@ -56,10 +56,9 @@ const CONNECTIONS: Conn[] = [
   { name: 'OneDrive and SharePoint', body: 'Project folders and document libraries.', logo: <><GOneDrive /><GSharePoint /></>, status: 'Available' },
   { name: 'Gmail and Google Drive', body: 'Mail and Drive folders, connected in one click.', logo: <><GGmail /><GDrive /></>, status: 'Available' },
   { name: 'Dropbox', body: 'Project folders, connected in one click.', logo: <GDropbox />, status: 'Available' },
-  // eslint-disable-next-line @next/next/no-img-element
-  { name: 'Procore', body: 'Drawings, documents, RFIs and submittals. Your Procore admin installs the Astruct app once.', logo: <img src="/logos/procore_logo.png" alt="" width={18} height={18} />, status: 'Available' },
+  { name: 'Autodesk Construction Cloud', body: 'Docs folders and files across your ACC and BIM 360 projects, connected in one click.', logo: <GAutodesk />, status: 'Available' },
+  { name: 'Procore', status: 'On request' },
   { name: 'Aconex', status: 'On request' },
-  { name: 'Autodesk Construction Cloud', status: 'On request' },
   { name: 'InEight / TeamBinder', status: 'On request' },
   { name: 'Xero', status: 'On request' },
 ]

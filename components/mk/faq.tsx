@@ -67,7 +67,7 @@ export const HOME_FAQ: QA[] = [
   ),
   qa(
     'Which systems does it connect to?',
-    'Outlook, OneDrive and SharePoint (personal and shared Microsoft 365 mailboxes and libraries), Gmail, Google Drive, Dropbox, and Procore, which your Procore admin installs once. Aconex, Autodesk Construction Cloud, InEight / TeamBinder and Xero are connected on request. Anything else can be uploaded as files, folders and zips.',
+    'Outlook, OneDrive and SharePoint (personal and shared Microsoft 365 mailboxes and libraries), Gmail, Google Drive, Dropbox and Autodesk Construction Cloud, each connected in one click. Procore, Aconex, InEight / TeamBinder and Xero are connected on request. Anything else can be uploaded as files, folders and zips.',
   ),
   qa(
     'How quickly does it see new mail?',

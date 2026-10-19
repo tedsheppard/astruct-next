@@ -69,3 +69,9 @@ export const GDropbox = ({ className }: P) => (
     <path d="M7 3 2 6.3l5 3.2 5-3.2L7 3Zm10 0-5 3.3 5 3.2 5-3.2L17 3ZM2 12.7l5 3.2 5-3.2-5-3.2-5 3.2Zm15-3.2-5 3.2 5 3.2 5-3.2-5-3.2ZM7 17l5 3.3 5-3.3-5-3.2L7 17Z" fill="#0061FF" />
   </svg>
 )
+
+export const GAutodesk = ({ className }: P) => (
+  <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M3 20 14.6 4H21L9.4 20H3Zm9.2 0 3.2-4.4H21V20h-8.8Z" fill="currentColor" />
+  </svg>
+)
