@@ -105,7 +105,7 @@ export function Clause() {
 }
 
 const STEPS: [string, string][] = [
-  ['Found in mail', 'done'], ['Evidence linked', 'done'], ['Clause linked', 'done'], ['Draft prepared', 'now'], ['Sent by you', ''],
+  ['Read from mail', 'done'], ['Evidence linked', 'done'], ['Clause linked', 'done'], ['Draft prepared', 'now'], ['Sent by you', ''],
 ]
 
 /** Beat 5: the issue's state and its history. */
