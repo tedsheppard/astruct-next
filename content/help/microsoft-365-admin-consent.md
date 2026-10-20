@@ -5,14 +5,14 @@ category: connecting
 order: 3
 keywords: admin consent approve it administrator entra azure tenant shared mailbox permission blocked
 ---
-Some Microsoft 365 organisations need an administrator to approve an app before anyone can use it. Astruct needs this approval for **shared mailboxes**, and for any organisation that stops people approving apps themselves.
+Some Microsoft 365 organisations need an administrator to approve an app before anyone can use it. Astruct needs this approval for **SharePoint**, and for any organisation that stops people approving apps themselves. Some organisations ask for it before a **shared mailbox** can be read too.
 
 It is one link, opened once.
 
 ## For the Astruct admin in your team
 
 1. Open **Settings > Connections**.
-2. Under **Ask your IT admin to approve Astruct**, choose **Copy link**.
+2. Under **Ask your IT admin to approve Astruct**, choose **Copy link for your IT admin**.
 3. Send the link to your Microsoft 365 administrator with a short note saying what it is for.
 
 Only owners and admins of your Astruct organisation see this section.

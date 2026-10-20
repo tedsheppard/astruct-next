@@ -19,7 +19,7 @@ export type HelpCategory = { id: string; title: string; blurb: string; c: 'teal'
 
 export const HELP_CATEGORIES: HelpCategory[] = [
   { id: 'getting-started', title: 'Getting started', blurb: 'Your free trial, your first project and your documents.', c: 'teal' },
-  { id: 'connecting', title: 'Connecting', blurb: 'Outlook, admin consent, connections on request and the demo mailbox.', c: 'blue' },
+  { id: 'connecting', title: 'Connecting', blurb: 'A guide for each app Astruct reads from, admin consent and the demo mailbox.', c: 'blue' },
   { id: 'asking', title: 'Asking and searching', blurb: 'Good questions, Boolean and plain-English search, page references.', c: 'teal' },
   { id: 'drafting', title: 'Drafting', blurb: 'Letters, emails, variation notices, notices of delay and EOT claims.', c: 'violet' },
   { id: 'agent', title: 'Mail, variations and delays', blurb: 'How Astruct reads project mail, files it, opens issues and counts periods from the contract.', c: 'amber' },
