@@ -19,7 +19,7 @@ Always available, for anything Astruct does not connect to.
 ## Upload to a project
 
 1. On the new project page, step 2 (Documents), drop files, folders or zips onto the box, or select Choose files or Choose a folder. Or open the project's Library and select Upload or Folder.
-2. Any number of files, in any mix. Folders keep their structure; zips are opened and keep their folders. Up to 50 MB a file.
+2. Any number of files, in any mix. Folders keep their structure; zips are opened and keep their folders. Up to 300 MB a file.
 3. Saved emails (.eml from most mail apps, .msg from Outlook) are read as emails and filed as correspondence, with their attachments.
 4. The list shows each file as it uploads. When it says Uploaded, Astruct reads it.
 
@@ -29,7 +29,7 @@ Always available, for anything Astruct does not connect to.
 
 ## If something goes wrong
 
-- **“over the 50 MB limit”** Compress the file or split it into parts of 50 MB or less.
+- **“over the 300 MB limit”** Compress the file or split it into parts of 300 MB or less.
 - **“Skipped: ”** A system file (such as .DS_Store or Thumbs.db) or an empty file. Nothing to do.
 - **“This file is password protected, so its pages cannot be read.”** Save a copy without the password and upload that.
 - **“A .mpp cannot be read directly.”** Save the programme from Microsoft Project as XML (File > Save As > XML Format) and upload that.
