@@ -1,6 +1,6 @@
 ---
 title: Connecting other apps
-summary: Outlook, OneDrive, SharePoint, Gmail, Google Drive, Dropbox and Autodesk Construction Cloud connect yourself in one click. Procore, Aconex, InEight / TeamBinder and Xero connect on request.
+summary: Outlook, OneDrive, SharePoint, Gmail, Google Drive, Dropbox and Autodesk Construction Cloud connect yourself in one click. Procore connects with keys from your Procore admin. Aconex, InEight / TeamBinder and Xero connect on request.
 category: connecting
 order: 4
 keywords: procore gmail google workspace sharepoint onedrive drive aconex autodesk acc dropbox ineight teambinder xero request connect integration
@@ -9,7 +9,9 @@ keywords: procore gmail google workspace sharepoint onedrive drive aconex autode
 
 **Gmail**, **Google Drive**, **Dropbox** and **Autodesk Construction Cloud** are live: choose Connect, sign in and approve.
 
-**Procore**, **Aconex**, **InEight / TeamBinder** and **Xero** connect on request. We set each one up with you, so it reads the right projects and folders from day one.
+**Procore** connects with read-only keys. Your Procore company admin creates a small custom app in Procore's developer portal and installs it in your company, about five minutes, then you paste the Client ID, Client Secret and Company ID on the Apps page. Astruct shows the admin the exact steps and can copy them to send.
+
+**Aconex**, **InEight / TeamBinder** and **Xero** connect on request. We set each one up with you, so it reads the right projects and folders from day one.
 
 ## Asking for one
 

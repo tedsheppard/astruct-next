@@ -57,7 +57,8 @@ const CONNECTIONS: Conn[] = [
   { name: 'Gmail and Google Drive', body: 'Mail and Drive folders, connected in one click.', logo: <><GGmail /><GDrive /></>, status: 'Available' },
   { name: 'Dropbox', body: 'Project folders, connected in one click.', logo: <GDropbox />, status: 'Available' },
   { name: 'Autodesk Construction Cloud', body: 'Docs folders and files across your ACC and BIM 360 projects, connected in one click.', logo: <GAutodesk />, status: 'Available' },
-  { name: 'Procore', status: 'On request' },
+  // eslint-disable-next-line @next/next/no-img-element
+  { name: 'Procore', body: 'Drawings, documents, RFIs and submittals. Your Procore admin sets up read-only access once and you paste two keys.', logo: <img src="/logos/procore_logo.png" alt="" width={18} height={18} />, status: 'Available' },
   { name: 'Aconex', status: 'On request' },
   { name: 'InEight / TeamBinder', status: 'On request' },
   { name: 'Xero', status: 'On request' },
