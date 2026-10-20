@@ -59,7 +59,8 @@ const CONNECTIONS: Conn[] = [
   { name: 'Autodesk Construction Cloud', body: 'Docs folders and files across your ACC and BIM 360 projects, connected in one click.', logo: <GAutodesk />, status: 'Available' },
   // eslint-disable-next-line @next/next/no-img-element
   { name: 'Procore', body: 'Drawings, documents, RFIs and submittals. Your Procore admin sets up read-only access once and you paste two keys.', logo: <img src="/logos/procore_logo.png" alt="" width={18} height={18} />, status: 'Available' },
-  { name: 'Aconex', status: 'On request' },
+  // eslint-disable-next-line @next/next/no-img-element
+  { name: 'Aconex', body: 'Document register and mail. Your Aconex Lobby admin makes read-only keys once and you paste them in.', logo: <img src="/logos/aconex_logo.png" alt="" width={18} height={18} />, status: 'Available' },
   { name: 'InEight / TeamBinder', status: 'On request' },
   { name: 'Xero', status: 'On request' },
 ]
