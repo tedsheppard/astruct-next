@@ -49,7 +49,7 @@ const LAWS: [string, string][] = [
 ]
 
 // Connections, named only as far as they are live in the app.
-type Conn = { name: string; body?: string; logo?: React.ReactNode; status: 'Available' | 'On request' }
+type Conn = { name: string; body?: string; logo?: React.ReactNode; status: 'Available' | 'On request' | 'Coming soon' }
 const CONNECTIONS: Conn[] = [
   { name: 'Uploads', body: 'Files, folders and zips, thousands at a time.', logo: <GUpload />, status: 'Available' },
   { name: 'Outlook', body: 'Personal and shared Microsoft 365 mailboxes. A shared mailbox needs your admin to approve Astruct once.', logo: <GOutlook />, status: 'Available' },
@@ -61,8 +61,13 @@ const CONNECTIONS: Conn[] = [
   { name: 'Procore', body: 'Drawings, documents, RFIs and submittals. Your Procore admin sets up read-only access once and you paste two keys.', logo: <img src="/logos/procore_logo.png" alt="" width={18} height={18} />, status: 'Available' },
   // eslint-disable-next-line @next/next/no-img-element
   { name: 'Aconex', body: 'Document register and mail. Your Aconex Lobby admin makes read-only keys once and you paste them in.', logo: <img src="/logos/aconex_logo.png" alt="" width={18} height={18} />, status: 'Available' },
-  { name: 'InEight / TeamBinder', status: 'On request' },
-  { name: 'Xero', status: 'On request' },
+  // Coming soon in the app (lib/connectors/registry.ts COMING_SOON_IDS), in Ted's order.
+  { name: 'InEight / TeamBinder', status: 'Coming soon' },
+  { name: 'Box', status: 'Coming soon' },
+  { name: 'Xero', status: 'Coming soon' },
+  { name: 'MYOB', status: 'Coming soon' },
+  { name: 'Payapps', status: 'Coming soon' },
+  { name: 'HammerTech', status: 'Coming soon' },
 ]
 
 const DATA: { title: string; body: string }[] = [
@@ -155,13 +160,13 @@ export default function HomePage() {
             <div className="ed-conn-head">
               <h3 className="mk-h3">Connections</h3>
               <p className="mk-fine">
-                If you use one of the systems marked on request, tell us when you ask for a trial. Until it’s
-                connected, export the files and upload them.
+                Systems marked coming soon cannot connect yet. Export the files from them and upload those
+                meanwhile.
               </p>
             </div>
             <ul className="ed-conn-list" aria-label="What Astruct connects to">
               {CONNECTIONS.map((c) => (
-                <li key={c.name} className={c.status === 'On request' ? 'is-request' : undefined}>
+                <li key={c.name} className={c.status === 'Available' ? undefined : 'is-request'}>
                   <span className="ed-conn-logo" aria-hidden="true">{c.logo}</span>
                   <span className="ed-conn-name">{c.name}</span>
                   <span className="ed-conn-body">{c.body}</span>

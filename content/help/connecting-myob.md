@@ -1,34 +1,29 @@
 ---
 title: Connecting MYOB
-summary: Sales invoices, bills and payments from MYOB. Not live yet: request it.
+summary: Sales invoices, bills and payments from MYOB. Coming soon.
 category: connecting
-order: 24
+order: 23
 keywords: myob connect guide accounting
 source: written from lib/connectors/guides.ts in the Astruct app by scripts/gen-help-guides.ts; edit it there
 ---
 
-Not live yet. Request it from its row and Astruct tells you when it is ready to connect.
+Coming soon. Astruct cannot connect to MYOB yet.
 
-- **Who does it:** You, with access to your MYOB company file.
-- **How long:** A minute to request it.
+- **Who does it:** You.
+- **How long:** As long as the export and upload take.
 
 ## What Astruct reads
 
-- When it is live: sales invoices, bills, payments, customers and suppliers from the MYOB Business or AccountRight company file you link, each filed to the contract it names. Read only.
+- Nothing from MYOB directly yet. Astruct reads the invoices and reports you export from it and upload.
 
-## Request it
+## Meanwhile
 
-1. Open Apps. On the MYOB row, select Request connection.
-2. Say which projects you would use it for, and send it. The row says Requested.
-3. Until then, export the invoices or reports you need from MYOB and upload them to the project.
+1. In MYOB, export the invoices, bills or reports you need as PDF or spreadsheet files.
+2. In Astruct, open the project's Library and select Upload, or drop the files onto it.
 
 ## When it is working
 
-- The row says Requested until MYOB is live for your account, then Ready, with Connect.
-
-## If something goes wrong
-
-- **“Needs more from you”** Astruct has asked a question about your request. The line under it, and an email to you, say what is needed. Select Add details on the row to answer.
+- Uploaded files show in the project's Library, each filed by what it is.
 
 ## Help from the provider
 

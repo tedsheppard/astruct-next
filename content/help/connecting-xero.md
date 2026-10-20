@@ -1,34 +1,29 @@
 ---
 title: Connecting Xero
-summary: Invoices, bills and payments from Xero. Not live yet: request it.
+summary: Invoices, bills and payments from Xero. Coming soon.
 category: connecting
-order: 23
+order: 22
 keywords: xero connect guide accounting
 source: written from lib/connectors/guides.ts in the Astruct app by scripts/gen-help-guides.ts; edit it there
 ---
 
-Not live yet. Request it from its row and Astruct tells you when it is ready to connect.
+Coming soon. Astruct cannot connect to Xero yet.
 
-- **Who does it:** You, with access to your Xero organisation.
-- **How long:** A minute to request it.
+- **Who does it:** You.
+- **How long:** As long as the export and upload take.
 
 ## What Astruct reads
 
-- When it is live: invoices, bills, credit notes, payments and contacts from the Xero organisations you link, each filed to the contract it names. Read only.
+- Nothing from Xero directly yet. Astruct reads the invoices and reports you export from it and upload.
 
-## Request it
+## Meanwhile
 
-1. Open Apps. On the Xero row, select Request connection.
-2. Say which projects you would use it for, and send it. The row says Requested.
-3. Until then, export the invoices or reports you need from Xero and upload them to the project.
+1. In Xero, export the invoices, bills or reports you need as PDF or spreadsheet files.
+2. In Astruct, open the project's Library and select Upload, or drop the files onto it.
 
 ## When it is working
 
-- The row says Requested until Xero is live for your account, then Ready, with Connect.
-
-## If something goes wrong
-
-- **“Needs more from you”** Astruct has asked a question about your request. The line under it, and an email to you, say what is needed. Select Add details on the row to answer.
+- Uploaded files show in the project's Library, each filed by what it is.
 
 ## Help from the provider
 

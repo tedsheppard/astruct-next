@@ -2,7 +2,7 @@
 title: Connecting Uploads
 summary: Files, whole folders, zips and saved emails (.eml, .msg), from any system.
 category: connecting
-order: 27
+order: 26
 keywords: uploads connect guide
 source: written from lib/connectors/guides.ts in the Astruct app by scripts/gen-help-guides.ts; edit it there
 ---

@@ -17,7 +17,7 @@ const FORMS = ['AS 4000 or AS 4001', 'AS 2124 or AS 2545', 'AS 4902 or AS 4903',
 const STATES = ['QLD', 'NSW', 'VIC', 'WA', 'SA', 'TAS', 'ACT', 'NT']
 const MAIL = ['Outlook / Microsoft 365', 'Gmail / Google Workspace', 'Other']
 // The other applications the company runs (founder, 17 Oct 2026): kept in meta.apps.
-const APPS = ['Procore', 'Aconex', 'Asite', 'InEight / TeamBinder', 'Autodesk Construction Cloud', 'SharePoint / OneDrive', 'Payapps', 'CostX', 'Bluebeam', 'HammerTech', 'Sitemate Dashpivot', 'SafetyCulture', 'Microsoft Project', 'Primavera P6', 'Jobpac', 'Viewpoint Vista', 'Xero', 'MYOB']
+const APPS = ['Procore', 'Aconex', 'InEight / TeamBinder', 'Autodesk Construction Cloud', 'SharePoint / OneDrive', 'Payapps', 'CostX', 'Bluebeam', 'HammerTech', 'Sitemate Dashpivot', 'SafetyCulture', 'Microsoft Project', 'Primavera P6', 'Jobpac', 'Viewpoint Vista', 'Xero', 'MYOB']
 
 const hits = new Map<string, number[]>()
 function limited(ip: string) {

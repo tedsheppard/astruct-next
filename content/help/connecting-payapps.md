@@ -2,15 +2,15 @@
 title: Connecting Payapps
 summary: Progress claims and assessments from Payapps. Coming soon.
 category: connecting
-order: 25
+order: 24
 keywords: payapps connect guide project platforms
 source: written from lib/connectors/guides.ts in the Astruct app by scripts/gen-help-guides.ts; edit it there
 ---
 
-Coming soon. Astruct cannot connect to Payapps yet. Request it to be told first.
+Coming soon. Astruct cannot connect to Payapps yet.
 
 - **Who does it:** You.
-- **How long:** A minute to request it.
+- **How long:** As long as the export and upload take.
 
 ## What Astruct reads
 
@@ -18,8 +18,8 @@ Coming soon. Astruct cannot connect to Payapps yet. Request it to be told first.
 
 ## Meanwhile
 
-1. On the Payapps row in Apps, select Request connection and say what you need from it.
-2. Download the claims and assessments from Payapps as PDFs and upload them to the project's Library.
+1. Download the claims and assessments you need from Payapps as PDFs.
+2. In Astruct, open the project's Library and select Upload, or drop the files onto it.
 
 ## When it is working
 

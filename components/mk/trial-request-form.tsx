@@ -14,7 +14,7 @@ const PROJECTS = ['1 project', '2 to 5 projects', '6 to 20 projects', 'More than
 const MAIL = ['Outlook / Microsoft 365', 'Gmail / Google Workspace', 'Other']
 const FORMS = ['AS 4000 or AS 4001', 'AS 2124 or AS 2545', 'AS 4902 or AS 4903', 'AS 4300 or AS 4303', 'GC21', 'Bespoke or heavily amended', 'Not sure']
 const STATES = ['QLD', 'NSW', 'VIC', 'WA', 'SA', 'TAS', 'ACT', 'NT']
-const APPS = ['Procore', 'Aconex', 'Asite', 'InEight / TeamBinder', 'Autodesk Construction Cloud', 'SharePoint / OneDrive', 'Payapps', 'CostX', 'Bluebeam', 'HammerTech', 'Sitemate Dashpivot', 'SafetyCulture', 'Microsoft Project', 'Primavera P6', 'Jobpac', 'Viewpoint Vista', 'Xero', 'MYOB']
+const APPS = ['Procore', 'Aconex', 'InEight / TeamBinder', 'Autodesk Construction Cloud', 'SharePoint / OneDrive', 'Payapps', 'CostX', 'Bluebeam', 'HammerTech', 'Sitemate Dashpivot', 'SafetyCulture', 'Microsoft Project', 'Primavera P6', 'Jobpac', 'Viewpoint Vista', 'Xero', 'MYOB']
 
 type Step = 'contact' | 'details' | 'done'
 

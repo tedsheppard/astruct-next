@@ -1,34 +1,29 @@
 ---
 title: Connecting Box
-summary: Box folders. Not live yet: request it and Astruct tells you when it is.
+summary: Box folders. Coming soon.
 category: connecting
 order: 17
 keywords: box connect guide documents
 source: written from lib/connectors/guides.ts in the Astruct app by scripts/gen-help-guides.ts; edit it there
 ---
 
-Not live yet. Request it from its row and Astruct tells you when it is ready to connect.
+Coming soon. Astruct cannot connect to Box yet.
 
 - **Who does it:** You.
-- **How long:** A minute to request it.
+- **How long:** As long as the export and upload take.
 
 ## What Astruct reads
 
-- When it is live: the files in the Box folders you link. Read only.
+- Nothing from Box directly yet. Astruct reads what you upload from it: files, folders and zips.
 
-## Request it
+## Meanwhile
 
-1. Open Apps. On the Box row, select Request connection.
-2. Say which projects you would use it for, and send it. The row says Requested.
-3. Until then, upload what you need from it to the project as files, folders or zips. See the Uploads guide.
+1. Download the files or folders you need from Box. A folder downloads as a zip.
+2. In Astruct, open the project's Library and select Upload or Folder, or drop the files or the zip onto it. Zips are opened and keep their folders.
 
 ## When it is working
 
-- The row says Requested until Box is live for your account, then Ready, with Connect.
-
-## If something goes wrong
-
-- **“Needs more from you”** Astruct has asked a question about your request. The line under it, and an email to you, say what is needed. Select Add details on the row to answer.
+- Uploaded files show in the project's Library, each filed by what it is.
 
 ## Help from the provider
 
